@@ -1,0 +1,94 @@
+/* pages/cat-edit/cat-edit.wxss */
+.page { min-height: 100vh; padding: 0 24rpx; }
+.ce-tip { padding: 28rpx 10rpx 24rpx; font-size: 25rpx; color: #9AA3AD; }
+
+/* 网格不加内边距：拖动时按它的外框和 20% 的列宽算落点 */
+.ce-grid { display: flex; flex-wrap: wrap; }
+.ce-tile {
+  position: relative;
+  box-sizing: border-box;
+  width: 20%;
+  height: 150rpx; /* 与 cat-edit.js 的 TILE_H 一致 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ce-drag { z-index: 10; opacity: 0.9; }
+
+.ce-circle {
+  position: relative;
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: #F0F1F3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ce-img { width: 52rpx; height: 52rpx; }
+.ce-letter { font-size: 34rpx; color: #333; }
+.ce-plus { font-size: 48rpx; line-height: 1; color: #1F2A26; }
+.ce-label { margin-top: 12rpx; font-size: 25rpx; color: #6B7075; }
+
+/* 右上角删除 */
+.ce-del {
+  position: absolute;
+  top: -8rpx; right: -8rpx;
+  width: 36rpx; height: 36rpx;
+  border-radius: 50%;
+  background: #F25350;
+  color: #FFFFFF;
+  font-size: 24rpx;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 新增 / 修改弹窗：放在屏幕上部，避免被键盘盖住 */
+.mask { position: fixed; left: 0; right: 0; top: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 100; }
+.dialog {
+  position: fixed;
+  left: 60rpx; right: 60rpx; top: 18vh;
+  z-index: 101;
+  background: #FFFFFF;
+  border-radius: 28rpx;
+  padding: 36rpx 32rpx 28rpx;
+}
+.dlg-title { font-size: 32rpx; font-weight: 600; color: #1F2A26; text-align: center; }
+.dlg-input {
+  margin-top: 28rpx;
+  height: 80rpx;
+  padding: 0 24rpx;
+  border-radius: 16rpx;
+  background: #F2F3F5;
+  font-size: 30rpx;
+}
+.dlg-icons { display: flex; flex-wrap: wrap; margin-top: 24rpx; }
+.dlg-icon {
+  width: 20%;
+  height: 100rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dlg-img {
+  width: 54rpx; height: 54rpx;
+  padding: 16rpx;
+  border-radius: 50%;
+  background: #F0F1F3;
+}
+.dlg-icon.on .dlg-img { background: #CDEBE0; }
+.dlg-btns { display: flex; gap: 20rpx; margin-top: 28rpx; }
+.dlg-btn {
+  flex: 1;
+  height: 76rpx;
+  border-radius: 38rpx;
+  background: #F2F3F5;
+  color: #6B7075;
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dlg-ok { background: #45A888; color: #FFFFFF; font-weight: 600; }

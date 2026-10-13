@@ -1,0 +1,332 @@
+/* pages/profile/profile.wxss */
+.page { min-height: 100vh; }
+
+/* 用户头部 */
+.hero {
+  display: flex;
+  align-items: center;
+  margin: 24rpx;
+  padding: 36rpx 30rpx;
+  background: linear-gradient(135deg, #49A989 0%, #3C9A7C 100%);
+  border-radius: 26rpx;
+  box-shadow: 0 10rpx 24rpx rgba(60,150,120,0.28);
+}
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+}
+.avatar-ph {
+  background: rgba(255,255,255,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.avatar-ph text { font-size: 22rpx; color: rgba(255,255,255,0.9); }
+
+.u-info { margin-left: 26rpx; flex: 1; min-width: 0; }
+.nick-input {
+  font-size: 38rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+.nick-ph { color: rgba(255,255,255,0.75); font-weight: 400; font-size: 32rpx; }
+.u-stat { margin-top: 14rpx; display: flex; align-items: center; }
+.us { font-size: 25rpx; color: rgba(255,255,255,0.85); }
+.us-gap { margin-left: 28rpx; }
+.us-n { font-size: 30rpx; font-weight: 700; color: #FFFFFF; }
+
+/* 分区标题 */
+.section-title {
+  padding: 26rpx 34rpx 12rpx;
+  font-size: 25rpx;
+  color: #9AA3AD;
+}
+
+/* 网格 */
+.grid {
+  margin: 0 24rpx;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 12rpx 6rpx;
+}
+.g-cell {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx 0;
+}
+.g-icon { width: 52rpx; height: 52rpx; }
+.g-label { margin-top: 12rpx; font-size: 24rpx; color: #4A5560; text-align: center; }
+
+.reset-link {
+  margin-top: 40rpx;
+  text-align: center;
+  font-size: 27rpx;
+  color: #9AA3AD;
+}
+
+.tab-space { height: 60rpx; }
+
+/* 未登录头部（登录入口） */
+.hero-login .nick-text {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+.lb-arrow { font-size: 40rpx; color: rgba(255,255,255,0.75); margin-left: 12rpx; }
+
+/* 已登录头部：OpenID / 最近上传时间（每行单行显示，标签列等宽对齐） */
+.meta-line {
+  margin-top: 8rpx;
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+  line-height: 38rpx;
+  white-space: nowrap;
+}
+.ml-k {
+  flex-shrink: 0;
+  width: 104rpx;
+  color: rgba(255,255,255,0.68);
+}
+.ml-v {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis; /* 兜底：即使极窄屏也不换行 */
+  color: rgba(255,255,255,0.95);
+}
+.ml-copy {
+  flex-shrink: 0;
+  margin-left: 12rpx;
+  padding: 0 16rpx;
+  font-size: 22rpx;
+  line-height: 34rpx;
+  color: #FFFFFF;
+  border: 1rpx solid rgba(255,255,255,0.5);
+  border-radius: 20rpx;
+}
+
+/* 已登录头部：双栏卡片 —— 左栏 昵称/头像，右栏 统计/最近上传/OpenID/退出登录。
+   两栏等高、上下 space-between：昵称与统计行顶部对齐，头像与退出按钮底部对齐 */
+.hero-card {
+  align-items: stretch;
+  padding: 26rpx 28rpx;
+}
+.hc-left {
+  width: 36%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+.hc-nick {
+  width: 100%;
+  height: 44rpx;
+  font-size: 30rpx;
+  text-align: center;
+}
+.hc-right {
+  flex: 1;
+  min-width: 0;
+  margin-left: 24rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.hc-right .u-stat { margin-top: 0; }
+.hc-right .us { font-size: 27rpx; }
+.hc-right .us-n { font-size: 32rpx; }
+.hc-right .us-gap { margin-left: 24rpx; }
+.hc-right .meta-line { margin-top: 12rpx; }
+.hc-right .cl-logout { margin-top: 18rpx; }
+
+/* 头像：固定尺寸盒子；透明按钮覆盖其上 */
+.avatar-wrap {
+  position: relative;
+  width: 120rpx;
+  height: 120rpx;
+  flex-shrink: 0;
+  margin-top: 16rpx;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.avatar-wrap .avatar { display: block; width: 100%; height: 100%; }
+.avatar-btn-ov {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  border-radius: 0;
+  background: transparent;
+  opacity: 0;
+}
+.avatar-btn-ov::after { border: none; }
+
+/* 退出登录：占满右栏宽度 */
+.cl-logout {
+  height: 60rpx;
+  line-height: 58rpx;
+  box-sizing: border-box;
+  text-align: center;
+  font-size: 26rpx;
+  color: #FFFFFF;
+  background: rgba(255,255,255,0.12);
+  border: 1rpx solid rgba(255,255,255,0.6);
+  border-radius: 30rpx;
+}
+
+/* ---------------- 登录弹层 ---------------- */
+.mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 60;
+  background: rgba(0, 0, 0, 0.32);
+}
+.login-pop {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 70;
+  width: 600rpx;
+  background: #FFFFFF;
+  border-radius: 28rpx;
+  padding: 42rpx 40rpx 34rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.18);
+}
+.lp-title { font-size: 32rpx; font-weight: 700; color: #1F2A26; }
+.lp-sub { margin-top: 8rpx; font-size: 22rpx; color: #9AA3AD; }
+
+/* 头像按钮：固定 128rpx 的正圆，自己居中，内容（占位 / 已选头像）在里面用 flex 居中。
+   之前占位 view 是 button 里的块级子元素，只有 image（行内）才会被 button 的 text-align 居中，所以未选头像时偏左 */
+.lp-avatar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  box-sizing: border-box;
+  width: 128rpx;
+  min-width: 0;
+  height: 128rpx;
+  padding: 0;
+  margin: 30rpx auto 0;
+  border-radius: 50%;
+  overflow: hidden;
+  background: transparent;
+  line-height: normal;
+}
+.lp-avatar-btn::after { border: none; }
+.lp-avatar { display: block; flex: none; width: 128rpx; height: 128rpx; border-radius: 50%; }
+.lp-avatar-ph {
+  background: #F0F2F1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.lp-avatar-ph text { font-size: 20rpx; color: #8A9097; }
+
+.lp-nick {
+  margin-top: 26rpx;
+  width: 100%;
+  height: 84rpx;
+  background: #F5F6F7;
+  border-radius: 18rpx;
+  padding: 0 24rpx;
+  box-sizing: border-box;
+  font-size: 27rpx;
+  color: #1F2A26;
+  text-align: center;
+}
+.lp-nick-ph { color: #9AA3AD; }
+.lp-tip {
+  margin-top: 16rpx;
+  font-size: 21rpx;
+  color: #A6ADB4;
+  line-height: 1.5;
+  text-align: center;
+}
+.lp-confirm {
+  margin-top: 30rpx;
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  border-radius: 44rpx;
+  background: linear-gradient(135deg, #49A989 0%, #3C9A7C 100%);
+  color: #FFFFFF;
+  font-size: 29rpx;
+  font-weight: 600;
+  padding: 0;
+}
+.lp-confirm::after { border: none; }
+.lp-confirm.lp-disabled { opacity: 0.6; }
+
+/* 隐私协议勾选行 */
+.lp-agree {
+  margin-top: 26rpx;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.lp-check {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 10rpx;
+  flex-shrink: 0;
+  border: 2rpx solid #C5CBD1;
+  border-radius: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22rpx;
+  line-height: 1;
+  color: #FFFFFF;
+  background: #FFFFFF;
+}
+.lp-check.lp-check-on { background: #45A888; border-color: #45A888; }
+.lp-agree-txt { font-size: 23rpx; color: #7A838C; }
+.lp-agree-link { font-size: 23rpx; color: #2E9C7C; }
+
+/* 「需登录」角标 */
+.g-lock {
+  margin-top: 4rpx;
+  font-size: 19rpx;
+  color: #A6ADB4;
+}
+.lp-cancel { margin-top: 24rpx; font-size: 25rpx; color: #9AA3AD; }
+
+/* 建议反馈弹窗：容器、按钮沿用登录弹层（.login-pop / .lp-confirm / .lp-cancel），这里只补进场动效和邮箱样式 */
+.mask.fb-mask { animation: fb-fade 0.2s ease-out both; }
+.fb-pop { animation: fb-pop-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes fb-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fb-pop-in {
+  from { opacity: 0; transform: translate(-50%, -46%) scale(0.94); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+.fb-tip { margin-top: 16rpx; font-size: 26rpx; color: #5A6570; line-height: 1.7; text-align: center; }
+.fb-mail {
+  margin-top: 26rpx;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 24rpx 20rpx;
+  text-align: center;
+  word-break: break-all;
+  font-size: 31rpx;
+  font-weight: 600;
+  color: #2E7E66;
+  background: #E9F5F0;
+  border-radius: 16rpx;
+}

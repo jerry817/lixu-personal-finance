@@ -1,0 +1,39 @@
+<!-- pages/cat-edit/cat-edit.wxml -->
+<view class="page">
+  <view class="ce-tip">点击图标修改，长按拖动排序</view>
+
+  <view class="ce-grid" bindtouchmove="onDragMove" bindtouchend="onDragEnd" bindtouchcancel="onDragEnd">
+    <view class="ce-tile {{item.id===dragId?'ce-drag':''}}" wx:for="{{items}}" wx:key="id"
+          style="{{item.id===dragId?dragTf:''}}"
+          data-id="{{item.id}}" data-index="{{index}}" bindtap="openSheet" bindlongpress="onDragStart">
+      <view class="ce-circle">
+        <image class="ce-img" wx:if="{{item.img}}" src="{{item.img}}"></image>
+        <text class="ce-letter" wx:else>{{item.label[0]}}</text>
+        <view class="ce-del" data-id="{{item.id}}" catchtap="deleteItem">×</view>
+      </view>
+      <text class="ce-label">{{item.label}}</text>
+    </view>
+
+    <view class="ce-tile" bindtap="openSheet">
+      <view class="ce-circle ce-add"><text class="ce-plus">＋</text></view>
+      <text class="ce-label">新增</text>
+    </view>
+  </view>
+
+  <!-- 新增 / 修改 -->
+  <view class="mask" wx:if="{{sheet}}" bindtap="closeSheet"></view>
+  <view class="dialog" wx:if="{{sheet}}">
+    <view class="dlg-title">{{sheetTitle}}</view>
+    <input class="dlg-input" value="{{name}}" focus maxlength="8" placeholder="名称" bindinput="onName"/>
+    <view class="dlg-icons" wx:if="{{!isSub}}">
+      <view class="dlg-icon {{icon===it.key?'on':''}}" wx:for="{{icons}}" wx:for-item="it" wx:key="key"
+            data-icon="{{it.key}}" bindtap="pickIcon">
+        <image class="dlg-img" src="{{it.path}}"></image>
+      </view>
+    </view>
+    <view class="dlg-btns">
+      <view class="dlg-btn" bindtap="closeSheet">取消</view>
+      <view class="dlg-btn dlg-ok" bindtap="confirmSheet">完成</view>
+    </view>
+  </view>
+</view>

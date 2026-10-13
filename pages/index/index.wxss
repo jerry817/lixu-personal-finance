@@ -1,0 +1,423 @@
+/* pages/index/index.wxss */
+.page { min-height: 100vh; }
+
+/* ---------------- 自定义导航 */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  background: #F2F3F5;
+}
+
+/* 刷新动画（导航栏下方） */
+.top-loading {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 55;
+  display: none;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 32rpx;
+  padding: 12rpx 28rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.12);
+}
+.top-loading.tl-show { display: flex; }
+.tl-spin {
+  width: 28rpx;
+  height: 28rpx;
+  border-radius: 50%;
+  border: 3rpx solid #CFE3DB;
+  border-top-color: #45A888;
+  animation: tlspin 0.7s linear infinite;
+  margin-right: 12rpx;
+}
+@keyframes tlspin { to { transform: rotate(360deg); } }
+.tl-text { font-size: 23rpx; color: #5A6570; }
+
+.nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24rpx;
+}
+.nav-left { display: flex; align-items: center; }
+.logo { width: 68rpx; height: 68rpx; }
+.book-name {
+  margin-left: 14rpx;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1A1A1A;
+}
+/* 按月：月份药丸（点击弹出月份选择器） */
+.month-pick { margin-left: 14rpx; }
+.month-pill {
+  display: flex;
+  align-items: center;
+  height: 60rpx;
+  padding: 0 22rpx;
+  border-radius: 30rpx;
+  background: #E6E8EB;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+.month-arrow {
+  width: 14rpx; height: 14rpx; margin: -6rpx 0 0 14rpx;
+  border-right: 3rpx solid #1A1A1A; border-bottom: 3rpx solid #1A1A1A;
+  transform: rotate(45deg);
+}
+.nav-right { display: flex; align-items: center; }
+.nav-icon { width: 46rpx; height: 46rpx; }
+.more-dots {
+  width: 44rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-left: 18rpx;
+}
+.vd {
+  width: 9rpx; height: 9rpx;
+  border-radius: 50%;
+  background: #45A888;
+  margin: 4rpx 0;
+}
+
+/* 导航栏占位（statusBar + navH + 16rpx）由 .content 的内联 padding-top 给出，随设备算出，不再写死 170rpx */
+.content { position: relative; }
+
+/* ---------------- 下拉添加账单（页面内横幅） ----------------
+   · .pull-banner 绝对定位，top:-300rpx 向上延伸到导航栏后面，底边 = 导航栏底边 + 下拉距离（内联 height）；
+     它与页面同属一个滚动层，iOS 顶部回弹时跟着整页一起下移，顶边仍被导航栏盖住，不会与导航栏之间露缝；
+   · .pull-body 包住下面的卡片 / 账单列表，用 transform 下移同样的距离（只合成、不重排），与横幅之间留 16rpx；
+   · 静止时横幅 visibility:hidden（否则 iOS 普通回弹也会露出一截绿色）；回弹动画结束后由 JS 撤掉 pullActive。 */
+.pull-banner {
+  position: absolute;
+  top: -300rpx; left: 24rpx; right: 24rpx;
+  visibility: hidden;
+  pointer-events: none;
+  background: #79C0B0;
+  border-bottom-left-radius: 50% 12rpx;
+  border-bottom-right-radius: 50% 12rpx;
+  transition: background-color 0.2s ease;
+}
+.pull-banner.pb-on { visibility: visible; }
+/* 达到阈值（松手即添加）：颜色略深作为反馈 */
+.pull-banner.pb-ready { background: #5FB39F; }
+/* 松手回弹：仅在非拖动状态下加过渡，拖动时必须无过渡才跟手；时长 / 曲线与 .pbd-anim 完全一致，两者才不会错位 */
+.pull-banner.pb-anim {
+  transition: height 0.26s cubic-bezier(0.22, 0.8, 0.3, 1), background-color 0.2s ease;
+}
+/* 文字区 = 横幅可见部分（高度 = 下拉距离）：贴在横幅底部，垂直居中 */
+.pull-inner {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pull-text { color: #FFFFFF; font-size: 30rpx; font-weight: 600; letter-spacing: 1rpx; }
+
+.pull-body.pbd-on { will-change: transform; }
+.pull-body.pbd-anim { transition: transform 0.26s cubic-bezier(0.22, 0.8, 0.3, 1); }
+
+/* ---------------- 数据卡片 */
+.sum-card {
+  position: relative;
+  margin: 0 24rpx;
+  border-radius: 28rpx;
+  padding: 28rpx 30rpx 26rpx;
+  overflow: hidden;
+  background: linear-gradient(135deg, #E9F5F0 0%, #D8ECE5 100%);
+  box-shadow: 0 6rpx 20rpx rgba(80, 150, 125, 0.12);
+}
+.sum-row { display: flex; position: relative; z-index: 2; }
+.sum-cell { flex: 1; display: flex; flex-direction: column; }
+.sum-label { font-size: 24rpx; color: #8C99A8; }
+.sum-value {
+  margin-top: 10rpx;
+  font-size: 33rpx;
+  font-weight: 700;
+  color: #1F2A26;
+}
+.sum-big {
+  position: relative;
+  z-index: 2;
+  margin-top: 22rpx;
+  display: flex;
+  flex-direction: column;
+}
+.sum-big-label { font-size: 25rpx; color: #8C99A8; }
+.sum-big-value {
+  margin-top: 6rpx;
+  font-size: 62rpx;
+  line-height: 1.05;
+  font-weight: 700;
+  color: #43A787;
+}
+
+/* 植物装饰 */
+.deco { position: absolute; left: 0; top: 0; right: 0; bottom: 0; z-index: 1; }
+.mt { position: absolute; border-radius: 50%; }
+.mt1 { width: 380rpx; height: 210rpx; left: -70rpx; bottom: -90rpx; background: #D3E8E1; }
+.mt2 { width: 300rpx; height: 180rpx; left: 130rpx; bottom: -95rpx; background: #DAEEE8; }
+.mt3 { width: 280rpx; height: 170rpx; right: 30rpx; bottom: -85rpx; background: #CFE6DE; }
+
+.cactus { position: absolute; border-radius: 16rpx; }
+.c1 { width: 28rpx; height: 160rpx; right: 118rpx; bottom: 0; background: #4E9C84; transform: rotate(-4deg); }
+.c2 { width: 24rpx; height: 128rpx; right: 84rpx; bottom: 0; background: #66B097; transform: rotate(5deg); }
+.c3 { width: 20rpx; height: 96rpx; right: 158rpx; bottom: 0; background: #79BEA4; transform: rotate(-9deg); }
+.carm { position: absolute; border-radius: 10rpx; }
+.ca1 { width: 14rpx; height: 48rpx; right: 146rpx; bottom: 92rpx; background: #4E9C84; transform: rotate(58deg); }
+.ca2 { width: 12rpx; height: 42rpx; right: 66rpx; bottom: 78rpx; background: #66B097; transform: rotate(-55deg); }
+
+.leaf { position: absolute; border-radius: 50%; }
+.l1 { width: 52rpx; height: 26rpx; right: 26rpx; bottom: 22rpx; background: #3E8F76; transform: rotate(-22deg); }
+.l2 { width: 44rpx; height: 22rpx; right: 176rpx; bottom: 14rpx; background: #56A68B; transform: rotate(18deg); }
+
+.flower { position: absolute; border-radius: 50%; background: #E89A9B; }
+.flower::after {
+  content: '';
+  position: absolute;
+  width: 6rpx; height: 6rpx;
+  border-radius: 50%;
+  background: #FBE3D8;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+}
+.f1 { width: 18rpx; height: 18rpx; right: 92rpx; top: 92rpx; }
+.f2 { width: 14rpx; height: 14rpx; right: 150rpx; top: 62rpx; }
+.f3 { width: 12rpx; height: 12rpx; right: 60rpx; top: 126rpx; }
+
+/* ---------------- 添加按钮 */
+.add-btn {
+  margin: 20rpx 24rpx 0;
+  height: 92rpx;
+  border-radius: 26rpx;
+  background: linear-gradient(135deg, #51B090 0%, #3E9E80 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10rpx 24rpx rgba(63, 158, 128, 0.32);
+}
+.add-ico {
+  width: 46rpx; height: 46rpx;
+  border: 4rpx solid #FFFFFF;
+  border-radius: 10rpx;
+  position: relative;
+  margin-right: 18rpx;
+}
+.ai-h, .ai-v { position: absolute; background: #FFFFFF; border-radius: 2rpx; }
+.ai-h { width: 22rpx; height: 4rpx; left: 50%; top: 50%; transform: translate(-50%,-50%); }
+.ai-v { width: 4rpx; height: 22rpx; left: 50%; top: 50%; transform: translate(-50%,-50%); }
+.add-text { color: #FFFFFF; font-size: 31rpx; font-weight: 500; }
+
+/* ---------------- 预算卡片 */
+.budget { margin: 18rpx 24rpx 0; padding: 20rpx; }
+.budget-top { display: flex; align-items: center; justify-content: space-between; }
+.budget-title { display: flex; align-items: center; }
+.budget-icon { width: 46rpx; height: 46rpx; margin-right: 14rpx; }
+.budget-title text { font-size: 30rpx; font-weight: 700; }
+.budget-num { font-size: 30rpx; font-weight: 600; color: #1F2A26; }
+
+.bar {
+  margin: 16rpx 0 14rpx;
+  height: 14rpx;
+  border-radius: 7rpx;
+  background: #ECEEF0;
+  overflow: hidden;
+}
+.bar-in {
+  height: 100%;
+  border-radius: 7rpx;
+  background: linear-gradient(90deg, #52B292, #3F9E80);
+}
+.budget-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+.bg-cell {
+  width: 50%;
+  display: flex;
+  align-items: baseline;
+  margin: 8rpx 0;
+}
+/* 右列贴 card 右内边缘，左列贴左，消除右侧大片留白 */
+.bg-cell:nth-child(even) { justify-content: flex-end; }
+.bg-label { font-size: 26rpx; color: #9AA0A6; }
+.bg-val { margin-left: 8rpx; font-size: 26rpx; color: #333; font-weight: 500; }
+
+/* ---------------- 日期分组 */
+.day-head {
+  display: flex;
+  align-items: baseline;
+  padding: 24rpx 30rpx 10rpx;
+}
+.day-md { font-size: 32rpx; font-weight: 700; }
+.day-week { font-size: 28rpx; color: #9AA0A6; margin-left: 22rpx; }
+.day-sum { margin-left: auto; display: flex; align-items: baseline; }
+.ds-label { font-size: 26rpx; color: #9AA0A6; }
+.ds-green { font-size: 27rpx; color: #43A787; font-weight: 600; }
+.ds-red { font-size: 27rpx; color: #F25350; font-weight: 600; }
+.ds-gap { margin-left: 18rpx; }
+
+.day-card { margin: 0 24rpx; }
+.bill {
+  display: flex;
+  align-items: center;
+  padding: 18rpx 18rpx;
+}
+.bill-line { border-bottom: 1rpx solid #F0F1F3; }
+.bill-icon { width: 50rpx; height: 50rpx; flex-shrink: 0; }
+.bill-mid { flex: 1; min-width: 0; margin-left: 20rpx; display: flex; flex-direction: column; }
+.bill-title-row { display: flex; align-items: center; }
+.bill-title { font-size: 29rpx; color: #1A1A1A; }
+.bill-badge {
+  margin-left: 12rpx;
+  font-size: 19rpx;
+  line-height: 1.5;
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+}
+.bd-reimb { background: #FDECEC; color: #F25350; }
+.bd-gray { background: #F0F1F3; color: #8A9199; }
+.bd-refund {
+  background: #E9F5F0;
+  color: #3E9E80;
+  border: 1rpx solid #8FCBB7;
+}
+.bill-sub-row { margin-top: 10rpx; display: flex; align-items: center; flex-wrap: wrap; }
+.bill-tag {
+  font-size: 20rpx;
+  color: #45A888;
+  background: #E9F5F0;
+  border-radius: 6rpx;
+  padding: 2rpx 10rpx;
+  margin-right: 10rpx;
+}
+.bill-remark { font-size: 24rpx; color: #9AA0A6; }
+.bill-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+  margin-left: 16rpx;
+}
+.bill-amt { font-size: 31rpx; font-weight: 600; }
+.amt-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+}
+.bill-amt-orig {
+  margin-right: 10rpx;
+  font-size: 24rpx;
+  color: #B3B9BF;
+  text-decoration: line-through;
+}
+.bill-account { margin-top: 8rpx; font-size: 22rpx; color: #B3B9BF; }
+/* 借入 / 借出卡片：金额下方的资金流向「来源 → 去向」 */
+.bill-debt-path { font-size: 24rpx; color: #9AA0A6; }
+.amt-dark { color: #1A1A1A; }
+.amt-red { color: #F25350; }
+.amt-green { color: #43A787; }
+
+.list-bottom {
+  text-align: center;
+  color: #B3B9BF;
+  font-size: 24rpx;
+  padding: 36rpx 0 20rpx;
+}
+.tab-space { height: 150rpx; }
+
+/* ---------------- 更多弹层 */
+.mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 60;
+  background: rgba(0, 0, 0, 0.28);
+}
+.more-pop {
+  position: fixed;
+  z-index: 70;
+  width: 480rpx;
+  background: #FFFFFF;
+  border-radius: 28rpx;
+  padding: 12rpx 28rpx 26rpx;
+  box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.18);
+}
+.mp-item {
+  display: flex;
+  align-items: center;
+  height: 94rpx;
+}
+.mp-icon { width: 52rpx; height: 52rpx; margin-right: 24rpx; }
+.mp-item text { font-size: 29rpx; color: #1A1A1A; }
+.mp-label {
+  font-size: 24rpx;
+  color: #B3B9BF;
+  margin: 14rpx 0 12rpx;
+}
+.mp-chips { display: flex; }
+.mp-chip {
+  flex: 1;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F4F5F7;
+  border-radius: 18rpx;
+  font-size: 27rpx;
+  color: #333;
+  margin-right: 20rpx;
+  border: 2rpx solid transparent;
+}
+.mp-chip:last-child { margin-right: 0; }
+.chip-on {
+  background: #FFFFFF;
+  border-color: #45A888;
+  color: #1A1A1A;
+}
+
+/* ---------------- 批量管理模式 */
+.content-manage { padding-bottom: 60rpx; }
+.sel-circle {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  border: 3rpx solid #C4C9CE;
+  flex-shrink: 0;
+  margin-right: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  color: #FFFFFF;
+  box-sizing: border-box;
+}
+.sel-circle.sc-on { background: #45A888; border-color: #45A888; }
+
+.manage-bar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 60;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  padding: 14rpx 10rpx calc(14rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -6rpx 20rpx rgba(0, 0, 0, 0.08);
+}
+.mb-side { width: 84rpx; flex-shrink: 0; text-align: center; }
+.mb-all { font-size: 27rpx; color: #3E9E80; font-weight: 600; }
+.mb-done { font-size: 42rpx; color: #333333; }
+.mb-actions { flex: 1; display: flex; }
+.mb-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.mb-ico { font-size: 34rpx; line-height: 1.2; color: #5A6570; }
+.mb-t { margin-top: 4rpx; font-size: 21rpx; color: #5A6570; }
+.mb-item.danger .mb-ico, .mb-item.danger .mb-t { color: #F25350; }

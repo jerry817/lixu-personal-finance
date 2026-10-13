@@ -1,0 +1,32 @@
+/* pages/account-add/account-add.wxss */
+.page { min-height: 100vh; padding-bottom: 40rpx; }
+
+.g-title {
+  margin: 30rpx 40rpx 14rpx;
+  font-size: 28rpx;
+  color: #9AA3AD;
+}
+.g-card {
+  margin: 0 24rpx;
+  padding: 24rpx 8rpx 8rpx;
+  display: flex;
+  flex-wrap: wrap;
+}
+/* 每行 5 列 */
+.k-item {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 24rpx;
+}
+.k-icon { width: 68rpx; height: 68rpx; }
+.k-label {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  color: #1F2A26;
+  white-space: nowrap;
+}
+.k-label.k-long { font-size: 22rpx; }
+
+.safe-space { height: env(safe-area-inset-bottom); }

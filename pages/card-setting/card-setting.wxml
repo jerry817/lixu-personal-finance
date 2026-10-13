@@ -1,0 +1,74 @@
+<!-- pages/card-setting/card-setting.wxml -->
+<view class="page">
+
+  <view class="hd" style="padding-top:{{statusBarHeight}}px;">
+    <view class="hd-row">
+      <image class="hd-back" src="/images/ui/back.png" bindtap="goBack"></image>
+      <text class="hd-title">数据设置</text>
+    </view>
+  </view>
+
+  <!-- 实时预览卡片 -->
+  <view class="sum-card" style="margin-top:{{cardTop}}px;">
+    <view class="deco">
+      <view class="mt mt1"></view>
+      <view class="mt mt2"></view>
+      <view class="mt mt3"></view>
+      <view class="cactus c1"></view>
+      <view class="cactus c2"></view>
+      <view class="cactus c3"></view>
+      <view class="carm ca1"></view>
+      <view class="carm ca2"></view>
+      <view class="leaf l1"></view>
+      <view class="leaf l2"></view>
+      <view class="flower f1"></view>
+      <view class="flower f2"></view>
+      <view class="flower f3"></view>
+    </view>
+    <view class="sum-row">
+      <view class="sum-cell" wx:for="{{slots.row}}" wx:key="label"
+            data-key="s{{index+1}}" bindtap="tapRow">
+        <text class="sum-label">{{item.label}}</text>
+        <text class="sum-value">{{item.value}}</text>
+      </view>
+    </view>
+    <view class="sum-big" data-key="sb" bindtap="tapRow">
+      <text class="sum-big-label">{{slots.big.label}}{{slots.big.unit}}</text>
+      <text class="sum-big-value">{{slots.big.value}}</text>
+    </view>
+  </view>
+
+  <!-- 数据位设置列表 -->
+  <view class="set-list card">
+    <view class="set-row {{index !== rowView.length-1 ? 'row-line' : ''}}"
+          wx:for="{{rowView}}" wx:key="key"
+          data-key="{{item.key}}" bindtap="tapRow">
+      <text class="sr-label">{{item.label}}</text>
+      <text class="sr-current">{{item.current}}</text>
+      <image class="sr-chev" src="/images/ui/chevron.png"></image>
+    </view>
+  </view>
+
+  <view class="tip-text">点击上方卡片或下方条目，均可设置对应位置展示的数据</view>
+
+  <!-- 指标选择弹层 -->
+  <view class="pick-mask" wx:if="{{pickShow}}" bindtap="closePick"></view>
+  <view class="pick-pop" wx:if="{{pickShow}}">
+    <view class="pick-head">
+      <text class="pick-title">{{pickTitle}}展示内容</text>
+      <text class="pick-close" bindtap="closePick">×</text>
+    </view>
+    <scroll-view scroll-y class="pick-body">
+      <view class="pk-group" wx:for="{{groups}}" wx:key="group">
+        <text class="pk-group-label">{{item.group}}</text>
+        <view class="pk-item {{it.selected ? 'pk-on' : ''}}"
+              wx:for="{{item.items}}" wx:for-item="it" wx:key="key"
+              data-key="{{it.key}}" bindtap="tapMetric">
+          <text class="pk-name">{{it.label}}</text>
+          <text class="pk-tick" wx:if="{{it.selected}}">✓</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+</view>

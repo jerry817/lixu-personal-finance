@@ -1,0 +1,157 @@
+<!-- pages/budget/budget.wxml -->
+<view class="page">
+
+  <!-- 顶部分段：月度 / 特定周期 -->
+  <view class="mode-bar">
+    <view class="mode-tab {{mode==='month'?'on':''}}" data-m="month" bindtap="switchMode">月度</view>
+    <view class="mode-tab {{mode==='period'?'on':''}}" data-m="period" bindtap="switchMode">特定周期</view>
+  </view>
+
+  <!-- ================= 月度 ================= -->
+  <block wx:if="{{mode==='month'}}">
+
+    <view class="nav-row">
+      <text class="nav-arrow" bindtap="prevMonth">‹</text>
+      <text class="nav-title">{{monthTitle}}</text>
+      <text class="nav-arrow" bindtap="nextMonth">›</text>
+    </view>
+
+    <view class="hero">
+      <text class="h-label">每月预算（默认 · 元）</text>
+      <input class="h-input" type="digit" placeholder="点击设置每月预算" placeholder-class="h-ph"
+             value="{{defaultBudget}}" bindinput="onDefaultBudget"></input>
+
+      <view class="h-line"></view>
+
+      <view class="h-override-row">
+        <text class="h-label">本月单独预算（留空则使用每月预算）</text>
+        <text class="h-clear" wx:if="{{hasOverride}}" bindtap="clearOverride">恢复默认</text>
+      </view>
+      <input class="h-input-sm" type="digit" placeholder="{{'使用每月预算 ¥' + (defaultBudget || '0')}}"
+             placeholder-class="h-ph-sm" value="{{monthOverride}}" bindinput="onMonthOverride"></input>
+
+      <view class="h-line"></view>
+      <view class="h-grid">
+        <view class="hg-cell">
+          <text class="hg-l">已支出</text>
+          <text class="hg-v red">{{spent}}</text>
+        </view>
+        <view class="hg-cell">
+          <text class="hg-l">剩余预算</text>
+          <text class="hg-v green">{{left}}</text>
+        </view>
+      </view>
+
+      <!-- 预算趋势：本月逐日累计支出 / 剩余预算（随上方月份切换） -->
+      <view class="h-line bt-split"></view>
+      <view class="bt-head">
+        <text class="bt-title">预算趋势</text>
+        <view class="bt-legend">
+          <view class="bt-lg"><view class="bt-pill bt-red"></view><text class="bt-lt">支出</text></view>
+          <view class="bt-lg"><view class="bt-pill bt-green"></view><text class="bt-lt">剩余</text></view>
+        </view>
+      </view>
+      <view class="bt-chart" wx:if="{{trend.on}}">
+        <view class="bt-yaxis">
+          <text class="bt-yt" wx:for="{{trend.y}}" wx:key="k" style="top:{{item.top}}rpx">{{item.t}}</text>
+        </view>
+        <view class="bt-main">
+          <view class="bt-plot">
+            <view class="bt-axis-y"></view>
+            <view class="bt-axis-x"></view>
+            <view class="bt-layer" wx:for="{{trend.layers}}" wx:key="k" style="{{item.style}}"></view>
+          </view>
+          <view class="bt-x">
+            <text class="bt-xl" wx:for="{{trend.x}}" wx:key="k" style="{{item.style}}">{{item.t}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="bt-empty" wx:else>{{trend.msg}}</view>
+    </view>
+
+    <view class="card settings">
+      <view class="s-row">
+        <view class="s-text">
+          <text class="s-title">多余预算结转下月</text>
+          <text class="s-desc">本月未用完的预算累加到下月</text>
+        </view>
+        <switch checked="{{carry}}" data-k="carry" bindchange="toggle" color="#45A888"/>
+      </view>
+      <view class="s-row">
+        <view class="s-text">
+          <text class="s-title">超额从下月扣除</text>
+          <text class="s-desc">本月超支将减少下月预算</text>
+        </view>
+        <switch checked="{{overcut}}" data-k="overcut" bindchange="toggle" color="#45A888"/>
+      </view>
+    </view>
+
+    <view class="save-btn" bindtap="saveMonth">保存设置</view>
+  </block>
+
+  <!-- ================= 特定周期 ================= -->
+  <block wx:if="{{mode==='period'}}">
+
+    <view class="period-add" bindtap="openPeriodSheet">
+      <text class="period-add-plus">+</text>
+      <text>新建周期预算</text>
+    </view>
+
+    <view class="period-list" wx:if="{{periods.length}}">
+      <view class="period-card" wx:for="{{periods}}" wx:key="id"
+            data-id="{{item.id}}" bindtap="openPeriodSheet">
+        <view class="pc-top">
+          <text class="pc-name">{{item.name}}</text>
+          <text class="pc-del" catchtap="removePeriod" data-id="{{item.id}}">删除</text>
+        </view>
+        <text class="pc-range">{{item.range}}</text>
+        <view class="pc-bar-track">
+          <view class="pc-bar-fill {{item.over?'over':''}}" style="width:{{item.pct}}%"></view>
+        </view>
+        <view class="pc-nums">
+          <text class="pc-num-item">预算 <text class="pc-strong">{{item.amountText}}</text></text>
+          <text class="pc-num-item">已支出 <text class="pc-strong red">{{item.spentText}}</text></text>
+          <text class="pc-num-item">{{item.over?'已超支':'剩余'}} <text class="pc-strong {{item.over?'red':'green'}}">{{item.leftText}}</text></text>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty-state" wx:else>
+      <text class="empty-title">还没有特定周期预算</text>
+      <text class="empty-desc">适合给旅行、大促、装修等有明确起止日期的事情单独设一笔预算</text>
+    </view>
+  </block>
+
+  <!-- 新建 / 编辑周期预算 -->
+  <view class="as-mask" wx:if="{{periodSheet}}" bindtap="closePeriodSheet"></view>
+  <view class="period-sheet" wx:if="{{periodSheet}}">
+    <view class="ps-head">
+      <text class="ps-title">{{periodEditId?'编辑周期预算':'新建周期预算'}}</text>
+      <text class="ps-close" bindtap="closePeriodSheet">×</text>
+    </view>
+    <view class="ps-row">
+      <text class="ps-label">名称</text>
+      <input class="ps-input" placeholder="如：日本旅行" placeholder-class="ps-ph"
+             value="{{periodName}}" bindinput="onPeriodName"></input>
+    </view>
+    <view class="ps-row">
+      <text class="ps-label">开始</text>
+      <picker mode="date" value="{{periodStart}}" bindchange="onPeriodStart">
+        <view class="ps-date">{{periodStart}}</view>
+      </picker>
+    </view>
+    <view class="ps-row">
+      <text class="ps-label">结束</text>
+      <picker mode="date" value="{{periodEnd}}" bindchange="onPeriodEnd">
+        <view class="ps-date">{{periodEnd}}</view>
+      </picker>
+    </view>
+    <view class="ps-row">
+      <text class="ps-label">预算</text>
+      <input class="ps-input" type="digit" placeholder="元" placeholder-class="ps-ph"
+             value="{{periodAmount}}" bindinput="onPeriodAmount"></input>
+    </view>
+    <view class="ps-save" bindtap="savePeriod">保存</view>
+  </view>
+
+</view>

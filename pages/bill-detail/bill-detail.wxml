@@ -1,0 +1,215 @@
+<!-- pages/bill-detail/bill-detail.wxml -->
+<view class="page">
+
+  <!-- 顶部：返回 / 标题 / ⋮（⋮ 放在微信胶囊左侧） -->
+  <view class="hd" style="padding-top:{{statusBarHeight}}px;">
+    <view class="hd-inner" style="height:{{navH}}px;">
+      <image class="hd-back" src="/images/ui/back.png" bindtap="goBack"></image>
+      <text class="hd-title">账单详情</text>
+      <view class="hd-more" style="right:{{moreRight}}px" bindtap="openMore">
+        <view class="hd-dot"></view><view class="hd-dot"></view><view class="hd-dot"></view>
+      </view>
+    </view>
+  </view>
+  <view style="height:calc({{statusBarHeight}}px + {{navH}}px + 16rpx);"></view>
+
+  <!-- 分类 / 金额 -->
+  <view class="card c-top">
+    <view class="ct-ico"><image class="ct-img" src="{{icon}}" mode="aspectFit"></image></view>
+    <text class="ct-name">{{title}}</text>
+    <view class="ct-amt-wrap">
+      <text class="ct-amt {{amountClass}}">{{amount}}</text>
+      <text class="ct-orig" wx:if="{{origAmountText}}">原额 {{origAmountText}}</text>
+    </view>
+  </view>
+
+  <!-- 日期 / 账户 / 报销 -->
+  <view class="card rows">
+    <view class="row">
+      <text class="r-label">账单日期</text>
+      <text class="r-val">{{dateText}}</text>
+    </view>
+    <view class="row {{item.id || item.pick ? 'r-tap' : ''}}" wx:for="{{accRows}}" wx:key="label"
+          data-id="{{item.id}}" data-pick="{{item.pick}}" bindtap="tapAccRow">
+      <text class="r-label">{{item.label}}</text>
+      <image class="r-acc-ico" wx:if="{{item.icon}}" src="{{item.icon}}" mode="aspectFit"></image>
+      <text class="r-val">{{item.name}}</text>
+      <view class="r-chev" wx:if="{{item.id || item.pick}}"></view>
+    </view>
+    <view class="row" wx:for="{{extraRows}}" wx:key="label">
+      <text class="r-label">{{item.label}}</text>
+      <text class="r-val">{{item.val}}</text>
+    </view>
+    <view class="row r-tap" wx:if="{{refundAmountText}}" bindtap="goRefundList">
+      <text class="r-label">退款金额</text>
+      <text class="r-val">{{refundAmountText}}</text>
+      <view class="r-chev"></view>
+    </view>
+    <!-- 选了报销账户才有：报销账户 / 报销详情 -->
+    <view class="row" wx:if="{{reimb}}">
+      <text class="r-label">报销账户</text>
+      <text class="r-val">{{reimb.accountName}}</text>
+    </view>
+    <view class="row r-tap" wx:if="{{reimb}}" bindtap="goReimbDetail">
+      <text class="r-label">报销详情</text>
+      <text class="r-val">{{reimb.receivedText}}</text>
+      <view class="r-chev"></view>
+    </view>
+  </view>
+
+  <!-- 备注 / 标签 / 附件 / 属性 -->
+  <view class="card rows">
+    <view class="row r-tap" bindtap="openRemark">
+      <text class="r-label">备注</text>
+      <text class="r-val {{remark ? '' : 'r-ph'}}">{{remark || '点击添加'}}</text>
+    </view>
+    <view class="row r-tap" bindtap="openTag">
+      <text class="r-label">标签</text>
+      <text class="r-val {{tag ? '' : 'r-ph'}}">{{tag || '点击添加'}}</text>
+    </view>
+    <view class="row r-tap" bindtap="addAttach">
+      <text class="r-label">附件</text>
+      <text class="r-val {{attachments.length ? '' : 'r-ph'}}">{{attachments.length ? attachments.length + ' 个附件' : '点击添加'}}</text>
+    </view>
+    <scroll-view class="att-strip" scroll-x wx:if="{{attachments.length}}" enable-flex>
+      <view class="att" wx:for="{{attachments}}" wx:key="id" data-id="{{item.id}}" bindtap="previewAttach" bindlongpress="removeAttach">
+        <image class="att-img" wx:if="{{item.type === 'image' && (item.path || cloudOn && item.fileID)}}" src="{{item.path || item.fileID}}" mode="aspectFill"
+               data-id="{{item.id}}" binderror="onAttachError"></image>
+        <view class="att-file" wx:else><text class="att-fn">{{item.name}}</text></view>
+      </view>
+      <view class="att att-add" bindtap="addAttach"><view class="att-plus"></view></view>
+    </scroll-view>
+    <view class="row" wx:if="{{showCount}}">
+      <text class="r-label">不计入收支</text>
+      <switch class="r-switch" checked="{{noCount}}" color="#45A888" bindchange="onCount"></switch>
+    </view>
+    <view class="row" wx:if="{{showBudget}}">
+      <text class="r-label">不计入预算</text>
+      <switch class="r-switch" checked="{{noBudget}}" color="#45A888" bindchange="onBudget"></switch>
+    </view>
+  </view>
+
+  <!-- 账本 / 地点 / 记录信息 -->
+  <view class="card rows">
+    <view class="row">
+      <text class="r-label">所属账本</text>
+      <text class="r-val">{{ledger}}</text>
+    </view>
+    <view class="row r-tap" bindtap="pickLocation">
+      <text class="r-label">记录地点</text>
+      <text class="r-val">{{location || '无'}}</text>
+    </view>
+    <view class="row">
+      <text class="r-label">记录时间</text>
+      <text class="r-val">{{createText}}</text>
+    </view>
+    <view class="row">
+      <text class="r-label">记录方式</text>
+      <text class="r-val">{{viaText}}</text>
+    </view>
+  </view>
+
+  <view class="bar-space"></view>
+
+  <!-- 底部操作：退款 / 报销 / 编辑（勾选「结束报销」保存后「报销」消失） -->
+  <view class="bar">
+    <view class="btn btn-gray" wx:if="{{showRefund}}" hover-class="btn-hover" bindtap="refund">退款</view>
+    <view class="btn btn-light" wx:if="{{reimbBtn}}" hover-class="btn-hover" bindtap="openReimb">报销</view>
+    <view class="btn btn-green" hover-class="btn-hover" bindtap="edit">编辑</view>
+  </view>
+
+  <!-- ================= 收支账户选择 ================= -->
+  <view class="mask" wx:if="{{accPick}}" bindtap="closeAccPick" catchtouchmove="noop"></view>
+  <view class="pk" wx:if="{{accPick}}" catchtap="noop">
+    <view class="pk-head"><text class="pk-title">选择账户</text></view>
+    <scroll-view scroll-y class="pk-list">
+      <view class="pk-row" wx:for="{{accPickList}}" wx:key="id" data-id="{{item.id}}" bindtap="pickAccPick">
+        <view class="pk-noacc" wx:if="{{item.noAcc}}"><view class="pk-noacc-slash"></view></view>
+        <image wx:else class="pk-ico" src="{{item.icon}}" mode="aspectFit"></image>
+        <text class="pk-name {{accPickId === item.id ? 'on' : ''}}">{{item.name}}</text>
+        <text class="pk-bal" wx:if="{{item.balance}}">{{item.balance}}</text>
+        <view class="pk-tick" wx:if="{{accPickId === item.id}}"></view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- ================= 备注 / 标签 编辑 ================= -->
+  <view class="mask" wx:if="{{dlg}}" bindtap="closeDlg" catchtouchmove="noop"></view>
+  <view class="dlg" wx:if="{{dlg}}" catchtap="noop">
+    <view class="dlg-head">
+      <text class="dlg-cancel" bindtap="closeDlg">取消</text>
+      <text class="dlg-title">{{dlgTitle}}</text>
+      <text class="dlg-ok" bindtap="saveDlg">完成</text>
+    </view>
+    <view class="dlg-input">
+      <input class="dlg-in" value="{{dlgValue}}" focus="{{dlg}}" maxlength="{{dlgKind === 'tag' ? 12 : 50}}"
+             placeholder="{{dlgKind === 'tag' ? '输入标签' : '选填'}}" placeholder-class="ph"
+             confirm-type="done" bindinput="onDlgInput" bindconfirm="saveDlg"></input>
+      <view class="dlg-clear" wx:if="{{dlgValue}}" bindtap="clearDlg"><view class="dlg-x"></view></view>
+    </view>
+    <view class="dlg-tags" wx:if="{{dlgKind === 'tag' && dlgTags.length}}">
+      <text class="dlg-tag {{dlgValue === item ? 'on' : ''}}" wx:for="{{dlgTags}}" wx:key="*this" data-t="{{item}}" bindtap="pickDlgTag">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- ================= 报销信息（到账账户 / 到账金额 / 备注 / 结束报销） ================= -->
+  <view class="mask" wx:if="{{rb}}" bindtap="closeReimb" catchtouchmove="noop"></view>
+  <view class="rb" wx:if="{{rb}}" style="height:calc(100vh - {{statusBarHeight}}px - 24rpx);" catchtap="noop">
+    <view class="rb-grab"></view>
+    <view class="rb-head">
+      <text class="rb-cancel" bindtap="closeReimb">取消</text>
+      <text class="rb-title">报销信息</text>
+      <text class="rb-done" bindtap="saveReimb">完成</text>
+    </view>
+
+    <text class="rb-label">到账账户</text>
+    <view class="rb-box rb-acc" bindtap="openRbAcc">
+      <image class="rb-acc-ico" wx:if="{{rbAccIcon}}" src="{{rbAccIcon}}" mode="aspectFit"></image>
+      <text class="rb-acc-name">{{rbAccName || '请选择'}}</text>
+      <view class="r-chev"></view>
+    </view>
+
+    <text class="rb-label">到账金额<text class="rb-hint">（待报销 {{rbRemain}}）</text></text>
+    <view class="rb-box">
+      <input class="rb-amount" type="digit" focus="{{rb}}" value="{{rbAmount}}" adjust-position="{{false}}"
+             placeholder="0.00" placeholder-class="ph" bindinput="onRbAmount"></input>
+      <view class="rb-clear" wx:if="{{rbAmount}}" bindtap="clearRbAmount"><view class="dlg-x"></view></view>
+    </view>
+
+    <text class="rb-label">备注</text>
+    <view class="rb-box">
+      <input class="rb-remark" value="{{rbRemark}}" maxlength="50" adjust-position="{{false}}"
+             placeholder="选填" placeholder-class="ph" bindinput="onRbRemark"></input>
+    </view>
+
+    <view class="rb-finish">
+      <view class="rf-left">
+        <text class="rf-label">结束报销</text>
+        <switch class="rf-switch" checked="{{rbFinish}}" color="#45A888" bindchange="onRbFinish"></switch>
+      </view>
+      <picker class="rf-right" mode="date" value="{{rbDate}}" bindchange="onRbDate">
+        <view class="rf-date">
+          <view class="rf-cal"><text class="rf-cal-n">{{rbDate ? rbDate.slice(8) * 1 : ''}}</text></view>
+          <text class="rf-date-t">{{rbDateLabel}}</text>
+          <view class="r-chev"></view>
+        </view>
+      </picker>
+    </view>
+    <text class="rb-tip">{{rbFinish ? '结束后这笔账单不再待报销，未到账的部分按个人支出计，「报销」按钮也会隐藏' : '未勾选「结束报销」时，可以分多次记录到账'}}</text>
+
+    <!-- 到账账户列表 -->
+    <view class="rbs-mask" wx:if="{{rbAccSheet}}" bindtap="closeRbAcc"></view>
+    <view class="rbs" wx:if="{{rbAccSheet}}">
+      <view class="rbs-head"><text class="rbs-title">选择到账账户</text></view>
+      <scroll-view scroll-y class="rbs-list">
+        <view class="rbs-row" wx:for="{{rbAccounts}}" wx:key="id" data-id="{{item.id}}" bindtap="pickRbAcc">
+          <image class="rbs-ico" src="{{item.icon}}" mode="aspectFit"></image>
+          <text class="rbs-name">{{item.name}}</text>
+          <text class="rbs-bal">{{item.balance}}</text>
+          <view class="rbs-tick" wx:if="{{rbAccId === item.id}}"></view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+</view>

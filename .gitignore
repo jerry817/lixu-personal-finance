@@ -1,0 +1,21 @@
+# 私有本地配置
+project.private.config.json
+.private.config.json
+.project.config.json
+
+# 真实环境配置（关键！）
+config/env.js
+.env
+.env.local
+
+# npm产物
+node_modules/
+miniprogram_npm/
+
+# IDE缓存
+.vscode/
+.idea/
+
+# 系统文件
+.DS_Store
+Thumbs.db

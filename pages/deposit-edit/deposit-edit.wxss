@@ -1,0 +1,133 @@
+/* pages/deposit-edit/deposit-edit.wxss */
+.page { min-height: 100vh; }
+
+/* ---------------- 自定义顶栏 */
+.hd { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: #F2F3F5; }
+.hd-inner { position: relative; display: flex; align-items: center; }
+.hd-back { position: absolute; left: 24rpx; width: 52rpx; height: 52rpx; }
+.hd-title { flex: 1; text-align: center; font-size: 35rpx; font-weight: 600; color: #1A1A1A; }
+.hd-act {
+  position: absolute;
+  width: 64rpx; height: 64rpx;
+  display: flex; align-items: center; justify-content: center;
+}
+/* ✓：旋转的 L 形边框，不占图片体积 */
+.tick {
+  width: 20rpx; height: 36rpx;
+  border-right: 4rpx solid #1A1A1A;
+  border-bottom: 4rpx solid #1A1A1A;
+  transform: rotate(45deg) translate(-4rpx, -4rpx);
+}
+
+/* ---------------- 表单卡片（与账户编辑页一致） */
+.card { background: #FFFFFF; border-radius: 24rpx; }
+.form { margin: 0 24rpx 24rpx; padding: 0 28rpx; }
+.f-row {
+  display: flex;
+  align-items: center;
+  min-height: 108rpx;
+  border-bottom: 1rpx solid #F2F3F5;
+}
+.f-row.last { border-bottom: none; }
+.f-label { width: 170rpx; font-size: 30rpx; color: #1F2A26; flex-shrink: 0; }
+.f-label.f-wide { width: auto; flex: 1; }
+.f-input { flex: 1; min-width: 0; font-size: 30rpx; text-align: right; color: #1F2A26; }
+.ph { color: #B3B9BF; font-size: 30rpx; }
+.f-unit { margin-left: 12rpx; font-size: 30rpx; color: #1F2A26; }
+.f-value { margin-left: auto; font-size: 30rpx; color: #B3B9BF; }
+.f-value.f-dark { color: #1F2A26; }
+.f-pick { display: block; }
+
+/* 右箭头：纯 CSS */
+.chev {
+  width: 14rpx; height: 14rpx;
+  margin: 0 6rpx 0 14rpx;
+  border-top: 3rpx solid #B3B9BF;
+  border-right: 3rpx solid #B3B9BF;
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+/* 年 / 月 / 天 分段选择：选中项白底浮起，未选中项之间用细线分隔 */
+.seg {
+  margin-left: 20rpx;
+  display: flex;
+  align-items: center;
+  width: 240rpx;
+  height: 64rpx;
+  padding: 4rpx;
+  border-radius: 18rpx;
+  background: #F0F1F3;
+  flex-shrink: 0;
+}
+.seg-item {
+  flex: 1;
+  height: 56rpx;
+  line-height: 56rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: #8C99A8;
+  border-radius: 15rpx;
+}
+.seg-item.on {
+  background: #FFFFFF;
+  color: #1F2A26;
+  font-weight: 600;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.12);
+}
+
+/* ---------------- 提示 */
+.tip {
+  margin: 8rpx 40rpx 32rpx;
+  display: flex;
+  flex-direction: column;
+  font-size: 23rpx;
+  color: #9AA3AD;
+  line-height: 1.7;
+}
+.tip-lock { margin-top: 12rpx; color: #E0924A; }
+
+/* ---------------- 删除 */
+.del-card { padding: 0; }
+.del { height: 100rpx; display: flex; align-items: center; justify-content: center; font-size: 30rpx; color: #F25350; }
+.del-hover { background: #FAF3F3; border-radius: 24rpx; }
+.safe-space { height: calc(40rpx + env(safe-area-inset-bottom)); }
+
+/* ---------------- 收益入账账户弹层 */
+.mask {
+  position: fixed;
+  left: 0; right: 0; top: 0; bottom: 0;
+  z-index: 60;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.sheet {
+  background: #FFFFFF;
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 32rpx 24rpx calc(32rpx + env(safe-area-inset-bottom));
+}
+.sheet-title { text-align: center; font-size: 30rpx; font-weight: 600; margin-bottom: 12rpx; }
+.sh-scroll { max-height: 56vh; }
+.sh-row { display: flex; align-items: center; min-height: 100rpx; padding: 0 12rpx; border-bottom: 1rpx solid #F2F3F5; }
+.sh-ico { width: 56rpx; height: 56rpx; margin-right: 20rpx; flex-shrink: 0; }
+.sh-name { flex: 1; min-width: 0; font-size: 30rpx; color: #1F2A26; }
+.sh-on { margin-left: 20rpx; font-size: 32rpx; color: #45A888; }
+.sh-hint { margin-top: 20rpx; padding: 0 12rpx; font-size: 23rpx; color: #9AA3AD; line-height: 1.6; }
+
+.sh-avail { margin-left: 20rpx; font-size: 24rpx; color: #9AA3AD; }
+
+/* ---------------- 提前支取 */
+.wd-card { padding: 0; }
+.wd { height: 100rpx; display: flex; align-items: center; justify-content: center; font-size: 30rpx; color: #E0924A; font-weight: 600; }
+.wd-hover { background: #FBF6F0; border-radius: 24rpx; }
+.wd-line { display: flex; align-items: center; min-height: 100rpx; padding: 0 12rpx; border-bottom: 1rpx solid #F2F3F5; }
+.wd-l { width: 170rpx; font-size: 30rpx; color: #1F2A26; flex-shrink: 0; }
+.wd-v { flex: 1; text-align: right; font-size: 28rpx; color: #5C6B66; }
+.wd-input { flex: 1; min-width: 0; text-align: right; font-size: 30rpx; color: #1F2A26; }
+.wd-btns { margin-top: 28rpx; display: flex; }
+.wd-btn { flex: 1; height: 88rpx; line-height: 88rpx; text-align: center; border-radius: 44rpx; font-size: 30rpx; }
+.wd-cancel { margin-right: 20rpx; background: #F2F3F5; color: #5C6B66; }
+.wd-ok { background: #45A888; color: #FFFFFF; font-weight: 600; }
+.wd-ok-hover { background: #3E9E80; }

@@ -1,0 +1,87 @@
+<!-- pages/refund/refund.wxml -->
+<view class="page">
+
+  <view class="hd" style="padding-top:{{statusBarHeight}}px;">
+    <view class="hd-inner">
+      <image class="hd-back" src="/images/ui/back.png" bindtap="goBack"></image>
+      <text class="hd-title">退款</text>
+    </view>
+  </view>
+  <!-- 与固定导航等高的占位，保证表单在任何机型都不被遮挡 -->
+  <view style="height:calc({{statusBarHeight}}px + 88rpx);"></view>
+
+  <!-- 正在修改已有退款记录的提示 -->
+  <view class="edit-tip" wx:if="{{editingId}}">
+    <text>正在修改退款记录</text>
+    <text class="et-cancel" bindtap="cancelEdit">取消</text>
+  </view>
+
+  <!-- 金额 / 备注 -->
+  <view class="card form">
+    <view class="f-row">
+      <text class="f-label">金额</text>
+      <input class="f-input" type="digit" value="{{amount}}" bindinput="onAmount" placeholder="0.00"></input>
+    </view>
+    <view class="f-line"></view>
+    <view class="f-row">
+      <text class="f-label">备注</text>
+      <input class="f-input" value="{{remark}}" bindinput="onRemark" placeholder="请输入备注"></input>
+    </view>
+  </view>
+
+  <!-- 退款账户 / 退款日期 -->
+  <view class="card form">
+    <view class="f-row f-tap" bindtap="openAccSheet">
+      <view class="f-left">
+        <text class="f-label">退款账户</text>
+        <text class="f-sub">退款金额会转入选择的账户</text>
+      </view>
+      <text class="f-val">{{accountName}}</text>
+      <image class="f-chev" src="/images/ui/chevron.png"></image>
+    </view>
+    <view class="f-line"></view>
+    <picker mode="date" value="{{date}}" bindchange="onDateChange">
+      <view class="f-row f-tap">
+        <text class="f-label">退款日期</text>
+        <text class="f-val">{{dateLabel}}</text>
+        <image class="f-chev" src="/images/ui/chevron.png"></image>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 已记录的退款：点击整行修改，右侧撤销 -->
+  <view class="card rlist" wx:if="{{refundList.length}}">
+    <view class="rl-head">退款记录 · 已退 {{refunded}} / 原额 {{origAmount}}</view>
+    <view class="rl-row" wx:for="{{refundList}}" wx:key="id"
+          data-id="{{item.id}}" bindtap="editRefund">
+      <view class="rl-left">
+        <text class="rl-amount">{{item.amountText}}<text class="rl-tag" wx:if="{{item.isReimb}}">报销</text></text>
+        <text class="rl-sub">{{item.dateLabel}} · {{item.account}}{{item.remark ? ' · ' + item.remark : ''}}</text>
+      </view>
+      <view class="rl-del" catchtap="deleteRefund" data-id="{{item.id}}">撤销</view>
+    </view>
+  </view>
+
+  <!-- 退款账户选择弹层 -->
+  <view class="as-mask" wx:if="{{accSheet}}" bindtap="closeAccSheet"></view>
+  <view class="as-sheet" wx:if="{{accSheet}}">
+    <view class="as-head">
+      <text class="as-title">选择退款账户</text>
+    </view>
+    <scroll-view class="as-list" scroll-y>
+      <view class="as-row {{a.selected ? 'ar-on' : ''}}"
+            wx:for="{{accList}}" wx:for-item="a" wx:key="id"
+            data-id="{{a.id}}" bindtap="pickAccount">
+        <image class="as-ico" src="{{a.icon}}"></image>
+        <text class="as-name">{{a.name}}</text>
+        <text class="as-bal">{{a.balanceText}}</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 底部确认按钮（右上角区域被微信胶囊占用，确认按钮放底部不会被遮挡） -->
+  <view class="bottom-bar">
+    <view class="confirm-btn" bindtap="onSave">{{saveText}}</view>
+  </view>
+
+</view>

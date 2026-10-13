@@ -1,0 +1,30 @@
+<!-- pages/category/category.wxml -->
+<view class="page">
+
+  <view class="sec-title">支出分类</view>
+  <view class="list card">
+    <view class="cat-row {{index !== expense.length-1?'line':''}}"
+          wx:for="{{expense}}" wx:key="id">
+      <image class="c-icon" src="{{item.icon}}"></image>
+      <text class="c-label">{{item.label}}</text>
+      <text class="c-count">{{item.count}}笔</text>
+      <switch checked="{{!item.isHidden}}" data-id="{{item.id}}" data-type="expense"
+              bindchange="toggle" color="#45A888"/>
+    </view>
+  </view>
+
+  <view class="sec-title">收入分类</view>
+  <view class="list card">
+    <view class="cat-row {{index !== income.length-1?'line':''}}"
+          wx:for="{{income}}" wx:key="id">
+      <image class="c-icon" src="{{item.icon}}"></image>
+      <text class="c-label">{{item.label}}</text>
+      <text class="c-count">{{item.count}}笔</text>
+      <switch checked="{{!item.isHidden}}" data-id="{{item.id}}" data-type="income"
+              bindchange="toggle" color="#45A888"/>
+    </view>
+  </view>
+
+  <view class="reset" wx:if="{{hiddenCount}}" bindtap="reset">恢复显示全部（{{hiddenCount}}）</view>
+
+</view>

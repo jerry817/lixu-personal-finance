@@ -1,0 +1,55 @@
+<!-- pages/debt-list/debt-list.wxml 债务页（应付款/借入 + 应收款/借出）/ 报销账户列表 -->
+<view class="page">
+
+  <!-- 汇总卡：债务为 应付 / 应收 两栏；报销为 待报销 / 已报销 两栏 -->
+  <view class="sum-card">
+    <block wx:if="{{mode==='all'}}">
+      <view class="sc-cell">
+        <text class="sc-label">应付款/借入</text>
+        <text class="sc-amount">{{payableText}}</text>
+      </view>
+      <view class="sc-cell">
+        <text class="sc-label">应收款/借出</text>
+        <text class="sc-amount">{{receivableText}}</text>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="sc-cell">
+        <text class="sc-label">待报销</text>
+        <text class="sc-amount">{{pendingText}}</text>
+      </view>
+      <view class="sc-sep"></view>
+      <view class="sc-cell">
+        <text class="sc-label">已报销</text>
+        <text class="sc-amount">{{doneText}}</text>
+      </view>
+    </block>
+  </view>
+
+  <!-- 分组卡：可折叠，组内列出该品类的账户 -->
+  <view class="grp card" wx:for="{{groups}}" wx:key="kind" wx:for-item="g">
+    <view class="grp-head" data-kind="{{g.kind}}" bindtap="toggleGroup">
+      <text class="grp-name">{{g.label}}</text>
+      <text class="grp-total {{g.tone}}">{{g.totalText}}</text>
+      <view class="grp-chev {{fold[g.kind]?'up':''}}"></view>
+    </view>
+    <block wx:if="{{!fold[g.kind]}}">
+      <view class="grp-row {{index!==g.rows.length-1?'line':''}}"
+            wx:for="{{g.rows}}" wx:key="id"
+            data-id="{{item.id}}" bindtap="tapAccount">
+        <image class="grp-icon" src="{{item.icon}}"></image>
+        <text class="grp-row-name">{{item.name}}</text>
+        <text class="grp-row-bal {{g.tone}}">{{item.pendingText}}</text>
+      </view>
+      <view class="grp-empty" wx:if="{{!g.rows.length}}" data-kind="{{g.kind}}" bindtap="addAccount">{{g.empty}}</view>
+    </block>
+  </view>
+
+  <!-- 添加账户 -->
+  <view class="add-row" bindtap="addAccount">
+    <view class="add-circle">+</view>
+    <text>添加账户</text>
+  </view>
+
+  <view class="tab-space"></view>
+</view>

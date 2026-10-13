@@ -1,0 +1,50 @@
+<!-- pages/about/about.wxml -->
+<view class="page">
+
+  <!-- 关于我们 -->
+  <block wx:if="{{t==='about'}}">
+    <view class="card block">
+      <view class="logo-row">
+        <image class="logo" src="/images/ui/logo.png"></image>
+        <view class="logo-text">
+          <text class="app-name">厘序记账</text>
+          <text class="app-ver">LIXU · Personal Finance · {{versions[0].v}}</text>
+        </view>
+      </view>
+      <text class="p">一款轻量、无广告的记账小程序。支持收支 / 转账 / 债务、日历回顾、账户资产、分类统计，登录后账单云端保存，清除缓存也不丢失。</text>
+    </view>
+
+    <view class="card block">
+      <text class="h">已实现功能</text>
+      <view class="li">· 多类型记账：支出、收入、转账、债务，子分类与标签</view>
+      <view class="li">· 首页数据卡片自定义、预算管理（结转 / 超额扣除）</view>
+      <view class="li">· 关键词、日期、标签、备注、金额多条件搜索</view>
+      <view class="li">· 日历月历、账户资产、分类统计排行</view>
+      <view class="li">· 微信云同步、账单导入导出</view>
+    </view>
+
+    <view class="card block">
+      <text class="h">版本更新</text>
+      <view class="ver" wx:for="{{versions}}" wx:key="v">
+        <text class="ver-no">{{item.v}}</text>
+        <text class="ver-note">{{item.note}}</text>
+      </view>
+    </view>
+  </block>
+
+  <!-- 使用手册 -->
+  <block wx:if="{{t==='guide'}}">
+    <view class="card block">
+      <text class="h">快速上手</text>
+      <view class="li">1. 首页点“记一笔”，选择分类、输入金额后完成。</view>
+      <view class="li">2. 点击顶部数据卡片可自定义展示数据。</view>
+      <view class="li">3. 右上角搜索支持关键词、日期、标签、备注、金额。</view>
+      <view class="li">4. 日历页按日回顾，账户页查看各账户余额。</view>
+      <view class="li">5. 统计页查看月度分类占比，点击分类可展开明细。</view>
+      <view class="li">6. “我的 → 云同步”登录后账单上云，换设备不丢；登录前需阅读并同意《用户隐私协议》。</view>
+      <view class="li">7. 云功能需要登录。不登录、或退出登录后也能正常记账，账单保存在本地，直到点击“清空本地缓存”才会删除。</view>
+      <view class="li">8. 记账时长按“再记”存模板，常用账单可一键填入。</view>
+    </view>
+  </block>
+
+</view>

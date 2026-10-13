@@ -1,0 +1,757 @@
+/* pages/add/add.wxss */
+.page { min-height: 100vh; }
+
+/* ---------------- 顶部栏 */
+.ah {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  background: #F2F3F5;
+}
+.ah-row {
+  display: flex;
+  align-items: center;
+  height: 88rpx;
+  padding: 0 24rpx;
+}
+.ah-back { width: 56rpx; height: 56rpx; flex-shrink: 0; }
+/* iOS 风格分段控件：灰底胶囊，选中项白底 */
+.ah-seg {
+  flex: 1;
+  display: flex;
+  background: #E6E8EA;
+  border-radius: 16rpx;
+  padding: 4rpx;
+  margin: 0 16rpx;
+}
+.ahs-item {
+  flex: 1;
+  text-align: center;
+  font-size: 26rpx;
+  color: #6B7075;
+  padding: 9rpx 0;
+  border-radius: 13rpx;
+  line-height: 1.2;
+}
+.ahs-item.on {
+  background: #FFFFFF;
+  color: #1A1A1A;
+  font-weight: 600;
+}
+/* ---------------- 分类区（顶部间距由 wxml 内联按状态栏高度给出） */
+.cat-area { padding: 0 24rpx 800rpx; }
+/* 一级分类：分行排列（每行5个，行数与每行个数由 add.js 的 chunk 决定） */
+.tiles { display: flex; width: 100%; }
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 20%;
+  margin-bottom: 20rpx;
+}
+.tile-circle {
+  position: relative;
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: #F0F1F3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.circle-on { background: #45A888; }
+.tile-img { width: 50rpx; height: 50rpx; }
+/* 「编辑」入口的加号 */
+.tile-plus { font-size: 48rpx; line-height: 1; color: #1F2A26; }
+/* 一级圆圈右下角「…」小点，提示可展开二级菜单 */
+.tile-dot {
+  position: absolute;
+  right: -8rpx; bottom: -4rpx;
+  min-width: 26rpx;
+  height: 26rpx;
+  padding: 0 4rpx;
+  border-radius: 13rpx;
+  background: #FFFFFF;
+  border: 1rpx solid #D8DCE0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17rpx;
+  line-height: 1;
+  color: #8A9097;
+  box-sizing: border-box;
+}
+
+.tile-label {
+  margin-top: 12rpx;
+  font-size: 25rpx;
+  color: #6B7075;
+}
+
+/* ---------------- 子分类面板 */
+.sub-panel {
+  background: #ECEDEE;
+  border-radius: 22rpx;
+  padding: 24rpx 12rpx 12rpx;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 6rpx 0 12rpx;
+}
+.sub-cell {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 14rpx;
+}
+.sub-badge {
+  width: 70rpx;
+  height: 70rpx;
+  border-radius: 50%;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  color: #333;
+}
+.sub-on { background: #45A888; color: #FFFFFF; }
+/* 「新增」自定义子分类入口：虚线白底 */
+.sub-add-badge {
+  background: transparent;
+  border: 2rpx dashed #B9C0C4;
+  color: #9AA0A6;
+}
+.sub-name { margin-top: 8rpx; font-size: 23rpx; color: #8A8F96; }
+
+/* ---------------- 底部录入面板 */
+.sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  background: #FFFFFF;
+  border-radius: 28rpx 28rpx 0 0;
+  padding: 20rpx 24rpx calc(16rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -8rpx 30rpx rgba(0,0,0,0.06);
+  z-index: 40;
+}
+
+/* 转账 / 债务：页面主体里的账户卡片（顶栏下方；尺寸取自设计稿 750rpx 基准） */
+.pair-wrap { padding: 12rpx 26rpx 0; }
+.pair-card {
+  background: #FFFFFF;
+  border-radius: 40rpx;
+  padding: 26rpx;
+}
+.pc-row { display: flex; align-items: center; }
+.pc-ico {
+  width: 96rpx; height: 104rpx;
+  border-radius: 30rpx;
+  background: #EEF1F6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.pc-ico-img { width: 50rpx; height: 50rpx; }
+.pc-field {
+  flex: 1;
+  min-width: 0;
+  margin-left: 26rpx;
+  height: 104rpx;
+  line-height: 104rpx;
+  padding: 0 32rpx;
+  box-sizing: border-box;
+  background: #EEF1F6;
+  border-radius: 30rpx;
+  font-size: 28rpx;
+  color: #1A1A1A;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.pc-field.ph { color: #8B9097; }
+/* 两行之间的 ⇅ / ∨ */
+.pc-mid {
+  height: 106rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pc-swap { width: 40rpx; height: 40rpx; }
+.pc-chev { width: 40rpx; height: 40rpx; }
+/* 债务「无账户」：卡片轮廓 + 斜线，纯 CSS 绘制 */
+.pc-noacc {
+  position: relative;
+  width: 44rpx; height: 34rpx;
+  border: 3rpx solid #9AA0A6;
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+.pc-noacc-slash {
+  position: absolute;
+  left: -8rpx; top: 14rpx;
+  width: 62rpx; height: 3rpx;
+  background: #9AA0A6;
+  transform: rotate(-28deg);
+}
+
+/* 标签 / 备注 / 金额 */
+.sheet-input {
+  display: flex;
+  align-items: center;
+  margin-top: 18rpx;
+  padding: 14rpx 6rpx;
+  border-bottom: 1rpx solid #F0F1F2;
+}
+.tag-box { width: 150rpx; flex-shrink: 0; }
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  background: #E9F5F0;
+  color: #2E9C7C;
+  border-radius: 8rpx;
+  padding: 4rpx 12rpx;
+  font-size: 26rpx;
+}
+.tag-x { color: #8FB9A8; }
+.inp-tag { font-size: 28rpx; width: 150rpx; }
+.inp-remark {
+  flex: 1;
+  margin-left: 16rpx;
+  font-size: 28rpx;
+  min-width: 0;
+}
+.inp-remark-flush { margin-left: 0; }
+.remark-input { width: 100%; font-size: 28rpx; min-width: 0; }
+.ph { color: #B3B9BF; }
+.si-amount {
+  margin-left: auto;
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #F25350;
+}
+.amt-green-text { color: #43A787; }
+
+/* 属性 chips：日期 / 账户 / 报销 / 附件，统一一行 */
+.chips { margin-top: 14rpx; white-space: nowrap; width: 100%; }
+/* <picker> 默认是块级元素，不加这条会自成一行，把其余 chip 挤到第二行 */
+.chips picker { display: inline-block; vertical-align: top; white-space: normal; }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  height: 58rpx;
+  padding: 0 18rpx;
+  margin-right: 14rpx;
+  background: #F5F6F8;
+  border-radius: 14rpx;
+  font-size: 25rpx;
+  color: #333;
+}
+.chip-img { width: 32rpx; height: 32rpx; margin-right: 8rpx; }
+.chip-active { background: #E9F5F0; color: #2E9C7C; }
+.chip-combine { background: #E9F5F0; color: #2E9C7C; font-weight: 600; }
+.chip-clear { color: #9AA0A6; }
+
+/* “无账户” chip：卡片轮廓 + 斜线，纯 CSS 绘制，无需额外图片资源 */
+.chip-noacc {
+  position: relative;
+  width: 32rpx; height: 24rpx;
+  margin-right: 8rpx;
+  border: 3rpx solid #9AA0A6;
+  border-radius: 5rpx;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.chip-noacc-slash {
+  position: absolute;
+  left: -6rpx; top: 10rpx;
+  width: 44rpx; height: 3rpx;
+  background: #9AA0A6;
+  transform: rotate(-28deg);
+}
+
+/* ---------------- 附件二级菜单：4 列缩略图网格 + 添加格 */
+.ats-sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 90;
+  background: #F2F3F5;
+  border-radius: 40rpx 40rpx 0 0;
+  padding: 0 24rpx calc(32rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  box-shadow: 0 -8rpx 30rpx rgba(0, 0, 0, 0.12);
+}
+.ats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20rpx; padding: 8rpx 4rpx 4rpx; min-height: 156rpx; }
+.ats-item { position: relative; height: 156rpx; }
+.ats-thumb, .ats-file {
+  width: 100%; height: 100%;
+  border-radius: 16rpx;
+  background: #FFFFFF;
+  box-sizing: border-box;
+}
+.ats-file {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 8rpx;
+}
+.ats-file-ico { font-size: 40rpx; line-height: 1; }
+.ats-file-name {
+  margin-top: 6rpx; max-width: 100%;
+  font-size: 18rpx; color: #8A8F96;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ats-del {
+  position: absolute; right: -10rpx; top: -10rpx;
+  width: 36rpx; height: 36rpx; border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55); color: #FFFFFF;
+  font-size: 24rpx; line-height: 36rpx; text-align: center;
+}
+.ats-add { position: relative; border-radius: 16rpx; background: #FFFFFF; }
+.ats-plus {
+  position: absolute; left: 50%; top: 50%; width: 44rpx; height: 44rpx;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(#9AA3AD, #9AA3AD) center / 100% 4rpx no-repeat,
+              linear-gradient(#9AA3AD, #9AA3AD) center / 4rpx 100% no-repeat;
+}
+
+/* ---------------- 键盘：4 列布局，左下「再记」右下「取消」融入键盘末行 */
+.keypad {
+  margin-top: 12rpx;
+  height: 368rpx;
+  display: flex;
+  flex-direction: column;
+}
+.kp-row { display: flex; flex: 1; }
+.key {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  color: #1A1A1A;
+  box-sizing: border-box;
+  border: 6rpx solid #FFFFFF;
+  background: #FFFFFF;
+  border-radius: 18rpx;
+}
+.key-pair {
+  flex: 1;
+  display: flex;
+  box-sizing: border-box;
+  padding: 6rpx;
+  gap: 6rpx;
+}
+.key-pair .key { font-size: 36rpx; border: none; }
+.key-fn { background: #ECEDF0; color: #4A4F55; }
+.key-cancel { background: #ECEDF0; color: #8A8F96; font-size: 32rpx; font-weight: 500; }
+.key-eq { background: #ECEDF0; color: #2E9C7C; font-weight: 600; font-size: 40rpx; }
+.key-done { background: #45A888; color: #fff; font-weight: 600; }
+.key-again { background: #ECEDF0; font-size: 32rpx; font-weight: 600; color: #1A1A1A; }
+.del-img { width: 40rpx; height: 40rpx; opacity: 0.75; }
+
+/* ---------------- 日期时间选择底部弹层 ---------------- */
+.dt-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 80;
+  background: rgba(0, 0, 0, 0.32);
+}
+.dt-sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 90;
+  background: #FFFFFF;
+  border-radius: 28rpx 28rpx 0 0;
+  padding: 20rpx 28rpx calc(20rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -8rpx 30rpx rgba(0, 0, 0, 0.12);
+}
+.dt-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8rpx 4rpx 16rpx;
+}
+.dt-title {
+  display: flex;
+  align-items: center;
+  font-size: 38rpx;
+  font-weight: 700;
+  color: #1A1A1A;
+}
+.dt-title-arrow {
+  width: 16rpx; height: 16rpx;
+  margin-left: 12rpx;
+  border-right: 3rpx solid #333333;
+  border-bottom: 3rpx solid #333333;
+  transform: rotate(45deg) translateY(-5rpx);
+}
+.dt-today {
+  font-size: 26rpx;
+  color: #45A888;
+  background: #E7F4EF;
+  border-radius: 32rpx;
+  padding: 10rpx 26rpx;
+}
+.cal-week { display: flex; padding: 8rpx 0; }
+.cw { flex: 1; text-align: center; font-size: 26rpx; color: #8A8F96; }
+.cal-grid { display: flex; flex-wrap: wrap; }
+.cal-cell {
+  width: calc(100% / 7);
+  height: 96rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cal-day {
+  width: 72rpx; height: 72rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30rpx;
+  color: #333333;
+}
+.cal-day.day-sel { background: #45A888; color: #FFFFFF; font-weight: 600; }
+.cal-day.day-today { color: #45A888; font-weight: 600; }
+
+/* 时间行 */
+.dt-time {
+  display: flex;
+  align-items: center;
+  margin-top: 12rpx;
+  padding: 22rpx 8rpx;
+  border-top: 1rpx solid #F0F1F2;
+}
+/* 时钟图标：青绿圆 + 白色时针分针，纯 CSS */
+.dt-time-ico {
+  position: relative;
+  width: 52rpx; height: 52rpx;
+  border-radius: 50%;
+  background: #45A888;
+  flex-shrink: 0;
+}
+.dt-time-ico::before {
+  content: '';
+  position: absolute;
+  left: 50%; top: 13rpx;
+  width: 3rpx; height: 15rpx;
+  background: #FFFFFF;
+  border-radius: 2rpx;
+  transform: translateX(-50%);
+}
+.dt-time-ico::after {
+  content: '';
+  position: absolute;
+  left: 23rpx; top: 26rpx;
+  width: 13rpx; height: 3rpx;
+  background: #FFFFFF;
+  border-radius: 2rpx;
+}
+.dt-time-label { margin-left: 20rpx; font-size: 30rpx; color: #1A1A1A; }
+.dt-time-val { margin-left: auto; font-size: 32rpx; color: #1A1A1A; }
+.dt-time-arrow {
+  width: 14rpx; height: 14rpx;
+  margin-left: 14rpx;
+  border-right: 3rpx solid #B3B9BF;
+  border-bottom: 3rpx solid #B3B9BF;
+  transform: rotate(45deg) translateY(-4rpx);
+}
+.dt-btns { display: flex; margin-top: 24rpx; }
+.dt-btn {
+  flex: 1;
+  height: 92rpx;
+  border-radius: 46rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+}
+.dt-cancel { background: #F1F2F4; color: #333333; margin-right: 24rpx; }
+.dt-confirm {
+  background: linear-gradient(135deg, #51B090 0%, #3E9E80 100%);
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* ---------------- 账户选择二级菜单（单列表：可拖动排序 + 组合支付） */
+.as-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 80;
+  background: rgba(0, 0, 0, 0.32);
+}
+.as-sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 90;
+  height: 72vh;
+  background: #FFFFFF;
+  border-radius: 28rpx 28rpx 0 0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 -8rpx 30rpx rgba(0,0,0,0.12);
+}
+.as-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 92rpx;
+  flex-shrink: 0;
+  padding: 0 28rpx;
+  box-sizing: border-box;
+}
+.as-title { font-size: 34rpx; font-weight: 700; color: #1A1A1A; }
+.as-cancel { font-size: 30rpx; color: #1A1A1A; }
+.as-head-actions { display: flex; align-items: center; }
+.as-combine-btn {
+  font-size: 27rpx;
+  color: #9AA0A6;
+  margin-right: 26rpx;
+}
+.as-combine-btn.on { color: #2E9C7C; font-weight: 600; }
+.as-reorder-ico {
+  width: 40rpx; height: 32rpx;
+  margin-right: 26rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.ari-bar {
+  height: 6rpx;
+  border-radius: 3rpx;
+  background: #C7CCD1;
+  margin: 4rpx 0;
+}
+.ari-bar:first-child { width: 100%; }
+.ari-bar:last-child { width: 66%; }
+.as-add-ico {
+  font-size: 40rpx;
+  line-height: 1;
+  color: #45A888;
+  font-weight: 600;
+}
+.as-sub {
+  flex-shrink: 0;
+  padding: 0 28rpx 16rpx;
+  font-size: 23rpx;
+  color: #B3B9BF;
+}
+.as-list { flex: 1; min-height: 0; padding: 0 28rpx; box-sizing: border-box; }
+.as-row {
+  display: flex;
+  align-items: center;
+  height: 100rpx;
+  border-bottom: 1rpx solid #F2F3F5;
+  transition: background-color 0.15s;
+}
+.as-row.ar-dragging {
+  background: #F7F8FA;
+  border-radius: 12rpx;
+  box-shadow: 0 6rpx 16rpx rgba(0,0,0,0.10);
+}
+.as-row.ar-on { color: #2E9C7C; }
+.as-ico { width: 48rpx; height: 48rpx; margin-right: 20rpx; flex-shrink: 0; }
+.as-noacc {
+  position: relative;
+  width: 48rpx; height: 36rpx;
+  margin-right: 20rpx;
+  border: 3rpx solid #9AA0A6;
+  border-radius: 6rpx;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.as-noacc-slash {
+  position: absolute;
+  left: -8rpx; top: 16rpx;
+  width: 66rpx; height: 3rpx;
+  background: #9AA0A6;
+  transform: rotate(-28deg);
+}
+.as-name { flex: 1; font-size: 29rpx; color: #1A1A1A; }
+.as-row.ar-on .as-name { color: #2E9C7C; font-weight: 600; }
+.as-bal { font-size: 27rpx; color: #45A888; }
+.as-empty { padding: 60rpx 0; text-align: center; font-size: 25rpx; color: #B3B9BF; }
+.as-add {
+  flex-shrink: 0;
+  height: 96rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1rpx solid #F0F1F3;
+  font-size: 28rpx;
+  color: #2E9C7C;
+  font-weight: 500;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.as-confirm {
+  flex-shrink: 0;
+  margin: 16rpx 28rpx calc(16rpx + env(safe-area-inset-bottom));
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #51B090 0%, #3E9E80 100%);
+  color: #FFFFFF;
+  border-radius: 20rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+.as-confirm.as-confirm-off { opacity: 0.45; }
+.as-check {
+  width: 36rpx; height: 36rpx;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 3rpx solid #D5D9DD;
+  box-sizing: border-box;
+}
+.as-check.on {
+  background: #45A888;
+  border-color: #45A888;
+}
+
+/* ---------------- 账单设置（属性）弹层：不计入收支 / 不计入预算 */
+.at-sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 90;
+  background: #F2F3F5;
+  border-radius: 40rpx 40rpx 0 0;
+  padding: 0 24rpx calc(48rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -8rpx 30rpx rgba(0, 0, 0, 0.12);
+}
+.at-grab { width: 96rpx; height: 10rpx; border-radius: 5rpx; background: #D2D5D9; margin: 14rpx auto 0; }
+.at-head { display: flex; align-items: center; justify-content: space-between; height: 108rpx; padding: 0 4rpx; }
+.at-title { font-size: 36rpx; font-weight: 600; color: #1A1A1A; }
+.at-done { font-size: 33rpx; font-weight: 600; color: #45A888; min-width: 80rpx; text-align: right; }
+.at-x {
+  position: relative;
+  width: 78rpx; height: 78rpx;
+  border-radius: 50%;
+  background: #E3E5E8;
+}
+.at-x-a, .at-x-b {
+  position: absolute; left: 22rpx; top: 37rpx;
+  width: 34rpx; height: 4rpx; border-radius: 2rpx;
+  background: #4A4F55;
+}
+.at-x-a { transform: rotate(45deg); }
+.at-x-b { transform: rotate(-45deg); }
+
+.at-card {
+  display: flex;
+  align-items: center;
+  height: 150rpx;
+  margin-top: 22rpx;
+  padding: 0 38rpx;
+  background: #FFFFFF;
+  border-radius: 36rpx;
+}
+.at-ico {
+  width: 80rpx; height: 80rpx;
+  border-radius: 20rpx;
+  background: #DDF0E8;
+  display: flex; align-items: center; justify-content: center;
+  margin-right: 30rpx;
+}
+.at-circle {
+  width: 44rpx; height: 44rpx;
+  border-radius: 50%;
+  background: #45A888;
+  display: flex; align-items: center; justify-content: center;
+}
+.at-pm { color: #FFFFFF; font-size: 30rpx; font-weight: 700; line-height: 1; }
+/* 饼图：绿色圆缺一块 */
+.at-pie { background: conic-gradient(#DDF0E8 0 14%, #45A888 14% 100%); }
+.at-name { flex: 1; font-size: 36rpx; color: #1A1A1A; }
+.at-radio {
+  position: relative;
+  width: 58rpx; height: 58rpx;
+  border-radius: 50%;
+  border: 3rpx solid #C4C9CE;
+  box-sizing: border-box;
+}
+.at-radio.on { background: #45A888; border-color: #45A888; }
+.at-radio.on::after {
+  content: '';
+  position: absolute;
+  left: 15rpx; top: 14rpx;
+  width: 24rpx; height: 13rpx;
+  border-left: 5rpx solid #FFFFFF;
+  border-bottom: 5rpx solid #FFFFFF;
+  transform: rotate(-45deg);
+}
+
+/* ---------------- 转账手续费弹层 */
+.fee-sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 90;
+  background: #FFFFFF;
+  border-radius: 28rpx 28rpx 0 0;
+  padding: 0 32rpx calc(40rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -8rpx 30rpx rgba(0,0,0,0.12);
+}
+.fs-head { display: flex; align-items: center; justify-content: space-between; height: 100rpx; }
+.fs-title { font-size: 34rpx; font-weight: 700; color: #1A1A1A; }
+.fs-cancel { font-size: 30rpx; color: #1A1A1A; min-width: 80rpx; }
+.fs-done { font-size: 31rpx; font-weight: 600; color: #45A888; min-width: 80rpx; text-align: right; }
+.fs-input-row {
+  display: flex;
+  align-items: center;
+  height: 112rpx;
+  padding: 0 32rpx;
+  background: #EEF1F6;
+  border-radius: 30rpx;
+}
+.fs-yen { font-size: 40rpx; font-weight: 700; color: #1A1A1A; margin-right: 12rpx; }
+.fs-input { flex: 1; height: 112rpx; font-size: 44rpx; font-weight: 700; color: #1A1A1A; }
+.fs-ph { color: #B3B9BF; font-weight: 400; }
+.fs-tip { display: block; margin-top: 22rpx; font-size: 24rpx; color: #9AA0A6; }
+.fs-clear { display: block; margin-top: 26rpx; text-align: center; font-size: 28rpx; color: #F25350; }
+
+/* ---------------- 债务：已选债务账户的两行展示 + 操作卡片（尺寸取自设计稿） */
+.pc-field-2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: normal;
+}
+.pcf-title { font-size: 30rpx; font-weight: 600; color: #1A1A1A; line-height: 42rpx; }
+.pcf-sub { font-size: 24rpx; color: #8B9097; line-height: 34rpx; }
+/* 未勾选「生成账单」时，账户一行变淡（仍可点，点选账户会自动勾上） */
+.pc-row-off { opacity: 0.5; }
+
+.act-card {
+  margin-top: 12rpx;
+  background: #FFFFFF;
+  border-radius: 40rpx;
+  padding: 26rpx 26rpx 30rpx;
+}
+.gb-row { display: flex; align-items: center; height: 56rpx; }
+.gb-box {
+  width: 30rpx; height: 30rpx;
+  box-sizing: border-box;
+  border: 2rpx solid #45A888;
+  border-radius: 7rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gb-box.gb-on { background: #45A888; }
+.gb-tick {
+  width: 8rpx; height: 15rpx;
+  border-right: 3rpx solid #FFFFFF;
+  border-bottom: 3rpx solid #FFFFFF;
+  transform: rotate(45deg) translate(-1rpx, -2rpx);
+}
+.gb-label { margin-left: 14rpx; font-size: 28rpx; color: #8B9097; }
+.act-btns { display: flex; justify-content: space-around; margin-top: 22rpx; }
+.act-btn {
+  width: 140rpx; height: 70rpx; line-height: 70rpx;
+  text-align: center;
+  border-radius: 24rpx;
+  font-size: 30rpx;
+  color: #FFFFFF;
+  background: #D9EDE6;
+}
+.act-btn.act-on { background: #45A888; }

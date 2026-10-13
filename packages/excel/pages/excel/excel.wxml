@@ -1,0 +1,85 @@
+<!-- packages/excel/pages/excel/excel.wxml -->
+<view class="page">
+
+  <block wx:if="{{phase==='idle'}}">
+    <!-- 导出入口：一个入口一行，说明写清楚导出什么 -->
+    <text class="sec">导出</text>
+    <view class="card e-card">
+      <view class="e-row {{index !== exports.length-1 ? 'e-line' : ''}}" hover-class="e-hover"
+            wx:for="{{exports}}" wx:key="kind" data-kind="{{item.kind}}" bindtap="goExport">
+        <view class="e-main">
+          <text class="e-t">{{item.title}}</text>
+          <text class="e-s">{{item.desc}}</text>
+        </view>
+        <view class="chev"></view>
+      </view>
+    </view>
+
+    <!-- 导入：选文件 -->
+    <text class="sec">导入</text>
+    <view class="card block imp">
+      <text class="h">从 Excel 导入</text>
+      <text class="p">支持 .xlsx / .xls，文件需存在于微信聊天中（如「文件传输助手」）。表格里要有「日期」和「金额」列。</text>
+      <text class="p">原始流水会归入详细分类；本应用导出的文件按原分类导入，不再分类。重复导入同一张表不会产生重复账单。</text>
+      <button class="btn" bindtap="chooseFile">选择 Excel 文件</button>
+    </view>
+  </block>
+
+  <!-- 处理中 -->
+  <view class="card block center" wx:if="{{phase==='working'}}">
+    <text class="h">{{fileName}}</text>
+    <text class="p">{{working}}</text>
+  </view>
+
+  <!-- 预览 -->
+  <block wx:if="{{phase==='preview'}}">
+    <view class="card block">
+      <text class="h">导入预览 · {{fileName}}</text>
+      <view class="sum">
+        <view class="sum-it"><text class="sum-n">{{sum.count}}</text><text class="sum-k">将导入</text></view>
+        <view class="sum-it"><text class="sum-n">{{sum.cloud}}</text><text class="sum-k">云端分类</text></view>
+        <view class="sum-it"><text class="sum-n">{{sum.local}}</text><text class="sum-k">本地规则</text></view>
+        <view class="sum-it"><text class="sum-n">{{sum.exact}}</text><text class="sum-k">沿用原分类</text></view>
+      </view>
+      <text class="note" wx:for="{{sum.notes}}" wx:key="*this">· {{item}}</text>
+    </view>
+
+    <view class="card block list">
+      <view class="row" wx:for="{{rows}}" wx:key="key">
+        <text class="r-date">{{item.date}}</text>
+        <view class="r-mid">
+          <text class="r-name">{{item.name}}</text>
+          <text class="r-cat {{item.weak ? 'weak' : ''}}">{{item.cat}}</text>
+        </view>
+        <view class="r-right">
+          <text class="r-amt {{item.cls}}">{{item.amt}}</text>
+          <text class="r-acc">{{item.acc}}</text>
+        </view>
+      </view>
+      <text class="more" wx:if="{{more}}">还有 {{more}} 笔未列出，确认后一并导入</text>
+    </view>
+
+    <view class="card block" wx:if="{{sum.skipCount}}">
+      <text class="h">已跳过 {{sum.skipCount}} 行</text>
+      <text class="note" wx:for="{{skips}}" wx:key="*this">{{item}}</text>
+      <text class="note" wx:if="{{skipMore}}">…另有 {{skipMore}} 行</text>
+    </view>
+
+    <view class="btn-row foot">
+      <button class="btn btn-ghost" bindtap="restart">重新选择</button>
+      <button class="btn" bindtap="confirmImport">导入 {{sum.count}} 笔</button>
+    </view>
+  </block>
+
+  <!-- 完成 -->
+  <view class="card block center" wx:if="{{phase==='done'}}">
+    <text class="h">导入完成</text>
+    <text class="p">新增 {{result.added}} 笔<text wx:if="{{result.existed}}">，{{result.existed}} 笔已存在或之前被删除，未重复导入</text>。</text>
+    <text class="p">导入的账单在本地，需要上云请到「我的 → 云同步」。</text>
+    <view class="btn-row">
+      <button class="btn btn-ghost" bindtap="restart">继续导入</button>
+      <button class="btn" bindtap="goBack">返回</button>
+    </view>
+  </view>
+
+</view>

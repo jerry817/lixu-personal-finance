@@ -1,0 +1,29 @@
+/* pages/reimburse/reimburse.wxss */
+.page { min-height: 100vh; background: #F2F3F5; padding-bottom: calc(40rpx + env(safe-area-inset-bottom)); }
+.hd { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: #F2F3F5; }
+.hd-inner { position: relative; height: 88rpx; display: flex; align-items: center; }
+.hd-back { position: absolute; left: 24rpx; width: 52rpx; height: 52rpx; }
+.hd-title { flex: 1; text-align: center; font-size: 35rpx; font-weight: 600; color: #1A1A1A; }
+
+.card { margin: 20rpx 24rpx 0; background: #FFFFFF; border-radius: 28rpx; padding: 0 34rpx; }
+.row { display: flex; align-items: center; height: 108rpx; border-bottom: 1rpx solid #F2F3F5; }
+.row:last-child { border-bottom: none; }
+.r-l { font-size: 31rpx; color: #1A1A1A; }
+.r-v { flex: 1; text-align: right; font-size: 31rpx; color: #8A9199; }
+.r-v.green { color: #43A787; }
+.r-v.red { color: #F25350; }
+
+.rec { display: flex; align-items: center; padding: 28rpx 0; border-bottom: 1rpx solid #F2F3F5; }
+.rec:last-child { border-bottom: none; }
+.rec-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.rec-amt { font-size: 36rpx; font-weight: 600; color: #43A787; }
+.rec-sub { margin-top: 8rpx; font-size: 24rpx; color: #9AA3AD; }
+.rec-undo { margin-left: 24rpx; padding: 10rpx 24rpx; font-size: 26rpx; color: #F25350; background: #FDECEC; border-radius: 24rpx; }
+.empty { margin-top: 80rpx; text-align: center; font-size: 27rpx; color: #B3B9BF; }
+
+.reopen {
+  margin: 44rpx 24rpx 0; height: 100rpx; border-radius: 50rpx;
+  background: #DDF0E8; color: #2E9C7C; font-size: 33rpx; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+}
+.reopen-hover { opacity: 0.85; }

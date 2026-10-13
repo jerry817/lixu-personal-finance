@@ -1,0 +1,81 @@
+<!-- packages/excel/pages/export/export.wxml -->
+<view class="page">
+
+  <!-- 概览：笔数 / 时间范围随下方选项实时变化 -->
+  <view class="card sum">
+    <text class="sum-title">{{book}}</text>
+    <view class="sum-line"></view>
+    <view class="sum-row">
+      <view class="sum-col">
+        <text class="sum-k">笔数</text>
+        <view class="sum-n-row">
+          <text class="sum-n {{count ? '' : 'sum-zero'}}">{{count}}</text>
+          <text class="sum-u">笔</text>
+        </view>
+      </view>
+      <view class="sum-col">
+        <text class="sum-k">时间范围</text>
+        <text class="sum-v">{{rangeText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 精准导出的账单是手选的，没有时间范围 -->
+  <block wx:if="{{kind !== 'picked'}}">
+    <text class="sec">时间范围</text>
+    <view class="card block">
+      <view class="seg">
+        <view class="seg-item {{range===item.id?'on':''}}" wx:for="{{ranges}}" wx:key="id"
+              data-id="{{item.id}}" bindtap="pickRange">{{item.label}}</view>
+      </view>
+      <view class="row row-top" bindtap="toggleCustom">
+        <text class="r-k">自定义</text>
+        <text class="r-v {{range==='custom' ? 'r-set' : ''}}">{{range==='custom' ? rangeText : '未设置'}}</text>
+        <view class="chev {{customOpen?'chev-open':''}}"></view>
+      </view>
+      <block wx:if="{{customOpen}}">
+        <picker mode="date" value="{{cStart}}" bindchange="pickStart">
+          <view class="row sub"><text class="r-k">开始日期</text><text class="r-v {{cStart ? 'r-set' : ''}}">{{cStart || '请选择'}}</text></view>
+        </picker>
+        <picker mode="date" value="{{cEnd}}" bindchange="pickEnd">
+          <view class="row sub"><text class="r-k">结束日期</text><text class="r-v {{cEnd ? 'r-set' : ''}}">{{cEnd || '请选择'}}</text></view>
+        </picker>
+      </block>
+    </view>
+  </block>
+
+  <text class="sec">账本</text>
+  <view class="card block">
+    <view class="row">
+      <text class="r-k">账本</text>
+      <text class="r-v">{{book}}</text>
+    </view>
+  </view>
+
+  <!-- 定存没有附件，不需要选格式 -->
+  <block wx:if="{{kind !== 'deposit'}}">
+    <text class="sec">文件格式</text>
+    <view class="card block">
+      <view class="seg">
+        <view class="seg-item {{fmt===item.id?'on':''}}" wx:for="{{formats}}" wx:key="id"
+              data-id="{{item.id}}" bindtap="pickFmt">{{item.label}}</view>
+      </view>
+    </view>
+    <text class="hint {{fmt==='xlsx' ? 'hint-on' : ''}}">Excel 只导出账单表格</text>
+    <text class="hint {{fmt==='zip' ? 'hint-on' : ''}}">Zip 会把账单表格和附件原图一起打包。</text>
+  </block>
+
+  <view class="bar-space"></view>
+
+  <!-- 底部：开始导出；生成后换成「打开 / 保存」「发送到聊天」 -->
+  <view class="bar">
+    <block wx:if="{{result}}">
+      <text class="file-name">已生成 · {{result.name}}</text>
+      <view class="btn-row">
+        <button class="btn btn-ghost" wx:if="{{result.openable}}" bindtap="openFile">打开 / 保存</button>
+        <button class="btn" bindtap="shareFile">发送到聊天</button>
+      </view>
+    </block>
+    <button class="btn {{count ? '' : 'btn-off'}}" wx:else loading="{{exporting}}" bindtap="doExport">开始导出</button>
+  </view>
+</view>

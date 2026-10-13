@@ -1,0 +1,88 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/calendar/calendar",
+    "pages/account/account",
+    "pages/stats/stats",
+    "pages/profile/profile",
+    "pages/add/add",
+    "pages/search/search",
+    "pages/card-setting/card-setting",
+    "pages/bill-detail/bill-detail",
+    "pages/reimburse/reimburse",
+    "pages/refund/refund",
+    "pages/account-detail/account-detail",
+    "pages/account-add/account-add",
+    "pages/account-edit/account-edit",
+    "pages/debt-list/debt-list",
+    "pages/deposit-list/deposit-list",
+    "pages/deposit-edit/deposit-edit",
+    "pages/budget/budget",
+    "pages/tags/tags",
+    "pages/templates/templates",
+    "pages/category/category",
+    "pages/cat-edit/cat-edit",
+    "pages/about/about",
+    "pages/privacy/privacy"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#F2F3F5",
+    "navigationBarTitleText": "日常账本",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F2F3F5"
+  },
+  "tabBar": {
+    "color": "#9AA3A0",
+    "selectedColor": "#45A888",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "images/tab/home.png",
+        "selectedIconPath": "images/tab/home_on.png"
+      },
+      {
+        "pagePath": "pages/calendar/calendar",
+        "iconPath": "images/tab/calendar.png",
+        "selectedIconPath": "images/tab/calendar_on.png"
+      },
+      {
+        "pagePath": "pages/account/account",
+        "iconPath": "images/tab/wallet.png",
+        "selectedIconPath": "images/tab/wallet_on.png"
+      },
+      {
+        "pagePath": "pages/stats/stats",
+        "iconPath": "images/tab/chart.png",
+        "selectedIconPath": "images/tab/chart_on.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "iconPath": "images/tab/smile.png",
+        "selectedIconPath": "images/tab/smile_on.png"
+      }
+    ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于记录账单发生的地点"
+    }
+  },
+  "requiredPrivateInfos": [
+    "chooseLocation"
+  ],
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "subpackages": [
+    {
+      "root": "packages/excel",
+      "name": "excel",
+      "pages": [
+        "pages/excel/excel",
+        "pages/export/export"
+      ]
+    }
+  ]
+}

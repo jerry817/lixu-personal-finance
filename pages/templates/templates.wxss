@@ -1,0 +1,41 @@
+/* pages/templates/templates.wxss */
+.page { min-height: 100vh; }
+
+.list { padding: 0 24rpx; }
+.tpl {
+  margin-top: 22rpx;
+  padding: 26rpx 28rpx 18rpx;
+}
+.tpl-main {
+  display: flex;
+  align-items: center;
+}
+.tpl-left { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.tpl-name { font-size: 32rpx; font-weight: 600; color: #1F2A26; }
+.tpl-desc {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: #9AA3AD;
+}
+.tpl-amount {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #2A333C;
+  margin-left: 20rpx;
+}
+.tpl-del {
+  margin-top: 14rpx;
+  text-align: right;
+  font-size: 24rpx;
+  color: #F25350;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 140rpx 0;
+  color: #9AA3AD;
+  font-size: 28rpx;
+}
+.e-sub { margin-top: 16rpx; font-size: 24rpx; color: #B3B9BF; }

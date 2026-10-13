@@ -1,0 +1,22 @@
+<!-- pages/templates/templates.wxml -->
+<view class="page">
+
+  <view class="list" wx:if="{{list.length}}">
+    <view class="tpl card" wx:for="{{list}}" wx:key="id">
+      <view class="tpl-main" data-id="{{item.id}}" bindtap="useTpl">
+        <view class="tpl-left">
+          <text class="tpl-name">{{item.name}}</text>
+          <text class="tpl-desc">{{item.typeLabel}} · {{item.catLabel}} · {{item.account}}</text>
+        </view>
+        <text class="tpl-amount">{{item.amount}}</text>
+      </view>
+      <view class="tpl-del" data-id="{{item.id}}" catchtap="delTpl">删除</view>
+    </view>
+  </view>
+
+  <view class="empty" wx:else>
+    <text>还没有记账模板</text>
+    <text class="e-sub">记账时点“存模板”，下次一键填入</text>
+  </view>
+
+</view>

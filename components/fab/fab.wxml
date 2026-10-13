@@ -1,0 +1,7 @@
+<!-- components/fab 悬浮钮 -->
+<view class="fab {{faded ? 'fab-hide' : ''}}" bindtap="onTap">
+  <text class="fab-icon">{{text}}</text>
+</view>
+
+<!-- ai=true：点悬浮钮弹出 AI 智能记账弹窗：日期 / 标签 / 账户 / 报销 可手动指定 -->
+<ai-sheet wx:if="{{ai}}" visible="{{aiVisible}}" bind:close="closeAI" bind:result="onAIResult"></ai-sheet>

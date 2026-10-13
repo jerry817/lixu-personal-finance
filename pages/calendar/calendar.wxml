@@ -1,0 +1,117 @@
+<!-- pages/calendar/calendar.wxml -->
+<view class="page">
+
+  <!-- 月份切换 -->
+  <view class="m-bar">
+    <view class="m-arrow" data-d="-1" bindtap="shift">
+      <view class="ar ar-left"></view>
+    </view>
+    <text class="m-title">{{title}}</text>
+    <view class="m-arrow" data-d="1" bindtap="shift">
+      <view class="ar ar-right"></view>
+    </view>
+  </view>
+
+  <!-- 月度收支汇总 -->
+  <view class="m-summary">
+    <view class="ms-cell">
+      <text class="ms-l">月支出</text>
+      <text class="ms-v red">{{monthExpense}}</text>
+    </view>
+    <view class="ms-divider"></view>
+    <view class="ms-cell">
+      <text class="ms-l">月收入</text>
+      <text class="ms-v green">{{monthIncome}}</text>
+    </view>
+    <view class="ms-divider"></view>
+    <view class="ms-cell">
+      <text class="ms-l">月结余</text>
+      <text class="ms-v">{{monthBalance}}</text>
+    </view>
+  </view>
+
+  <!-- 星期表头 -->
+  <view class="w-head">
+    <text class="wh-cell" wx:for="{{weekHead}}" wx:key="*this">{{item}}</text>
+  </view>
+
+  <!-- 月历 -->
+  <view class="cal card">
+    <view class="row" wx:for="{{weeks}}" wx:key="index">
+      <!-- slot 负责列宽与格间距；cell 是 1:1 圆角方块；补位日期不渲染 -->
+      <view class="slot" wx:for="{{item}}" wx:key="id" wx:for-item="item">
+        <view wx:if="{{!item.empty}}" class="cell {{item.isSelected?'sel':''}}"
+              style="{{item.bg?'background:'+item.bg:''}}"
+              data-date="{{item.date}}" bindtap="tapCell">
+          <view class="cell-in">
+            <text class="c-num {{item.isToday?'today':''}}">{{item.day}}</text>
+            <view class="c-amt" wx:if="{{item.hasData}}">
+              <text class="c-exp" wx:if="{{item.expense}}">{{item.expense}}</text>
+              <text class="c-inc" wx:if="{{item.income}}">{{item.income}}</text>
+            </view>
+            <view class="c-dot" wx:if="{{item.hasData && !item.expense && !item.income}}"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="today-btn" wx:if="{{!isCurrentMonth}}" bindtap="goToday">回到今天</view>
+
+  <!-- 选中日 -->
+  <view class="day-summary card">
+    <view class="ds-left">
+      <text class="ds-date">{{selectedDateText}}</text>
+      <text class="ds-week">{{selectedWeek}}</text>
+    </view>
+    <view class="ds-right">
+      <view class="ds-line">
+        <text class="ds-l">支出</text>
+        <text class="ds-v red">{{dayExpense}}</text>
+      </view>
+      <view class="ds-line">
+        <text class="ds-l">收入</text>
+        <text class="ds-v green">{{dayIncome}}</text>
+      </view>
+      <view class="ds-line">
+        <text class="ds-l">结余</text>
+        <text class="ds-v">{{dayBalance}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 当日账单 -->
+  <block wx:for="{{groups}}" wx:key="date" wx:for-item="g">
+    <view class="day-card card">
+      <view class="bill {{index !== g.items.length-1 ? 'bill-line' : ''}}"
+            wx:for="{{g.items}}" wx:key="id" wx:for-item="it"
+            data-id="{{it.id}}" bindtap="tapItem">
+        <image class="bill-icon" src="{{it.icon}}"></image>
+        <view class="bill-mid">
+          <view class="bill-title-row">
+            <text class="bill-title">{{it.title}}</text>
+            <text class="bill-badge {{bd.cls}}"
+                  wx:for="{{it.badges}}" wx:key="t" wx:for-item="bd">{{bd.t}}</text>
+          </view>
+          <view class="bill-sub-row">
+            <text class="bill-tag" wx:for="{{it.tags}}" wx:key="*this" wx:for-item="tg">{{tg}}</text>
+            <text class="bill-remark" wx:if="{{it.remark}}">{{it.remark}}</text>
+          </view>
+        </view>
+        <view class="bill-right">
+          <text class="bill-amt {{it.amountClass}}">{{it.amount}}</text>
+          <text class="bill-account {{it.debtPath ? 'bill-debt-path' : ''}}">{{it.debtPath || it.accountName}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <view class="empty" wx:if="{{!groups.length}}">
+    <text>当日暂无账单</text>
+  </view>
+
+  <view class="tab-space"></view>
+
+  <!-- 账悬浮钮（与首页同一个） -->
+  <fab id="fab" ai bind:saved="refresh"></fab>
+</view>

@@ -1,0 +1,413 @@
+<!-- pages/add/add.wxml -->
+<view class="page">
+
+  <!-- 顶部：返回 + 类型切换 + 账本名 -->
+  <view class="ah" style="padding-top:{{statusBarHeight}}px;">
+    <view class="ah-row">
+      <image class="ah-back" src="/images/ui/back.png" mode="aspectFit" bindtap="goBack"></image>
+      <view class="ah-seg" style="margin-right:{{navPadRight}}px">
+        <view class="ahs-item {{curType===item.key?'on':''}}"
+              wx:for="{{types}}" wx:key="key"
+              data-type="{{item.key}}" bindtap="tapType">{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分类区：顶部留出 状态栏+类型栏 高度，避免首行分类被固定栏遮挡 -->
+  <view class="cat-area" wx:if="{{curType==='expense' || curType==='income'}}" style="padding-top:{{statusBarHeight+54}}px;">
+    <!-- 一级分类按行排列（每行5个）；二级菜单紧跟在当前一级分类所在行的下方 -->
+    <block wx:for="{{rows}}" wx:for-item="row" wx:for-index="ri" wx:key="index">
+      <view class="tiles">
+        <view class="tile" wx:for="{{row}}" wx:key="id" data-id="{{item.id}}" bindtap="tapCat">
+          <view class="tile-circle {{selectedId===item.id?'circle-on':''}}">
+            <text class="tile-plus" wx:if="{{item.isEdit}}">＋</text>
+            <block wx:else>
+              <image class="tile-img"
+                     src="{{selectedId===item.id?item.iconOn:item.icon}}"></image>
+              <!-- 右下角「…」提示该一级分类可展开二级菜单 -->
+              <view class="tile-dot">…</view>
+            </block>
+          </view>
+          <text class="tile-label">{{item.label}}</text>
+        </view>
+      </view>
+
+      <view class="sub-panel" wx:if="{{subPanel && ri === subRow}}">
+        <view class="sub-cell" wx:for="{{subs}}" wx:key="*this"
+              data-name="{{item}}" bindtap="tapSub">
+          <view class="sub-badge {{selectedSub===item?'sub-on':''}}">{{item[0]}}</view>
+          <text class="sub-name">{{item}}</text>
+        </view>
+        <!-- 编辑子分类入口 -->
+        <view class="sub-cell" bindtap="tapEditSubs">
+          <view class="sub-badge sub-add-badge">＋</view>
+          <text class="sub-name">编辑</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 转账 / 债务：账户卡片位于页面主体（顶栏下方），没有分类网格 -->
+  <view class="pair-wrap" wx:if="{{curType==='transfer' || curType==='debt'}}" style="padding-top:{{statusBarHeight+54}}px;">
+
+    <!-- 转账：转出 ⇅ 转入，点击中间箭头对调 -->
+    <view class="pair-card" wx:if="{{curType==='transfer'}}">
+      <view class="pc-row" data-role="from" bindtap="openAccSheet">
+        <view class="pc-ico"><image class="pc-ico-img" src="{{accFrom.icon || '/images/ui/card_green.png'}}"></image></view>
+        <view class="pc-field {{accFrom.name?'':'ph'}}">{{accFrom.name || '请选择转出账户'}}</view>
+      </view>
+      <view class="pc-mid" bindtap="swapAccounts">
+        <image class="pc-swap" src="/images/ui/swap.png"></image>
+      </view>
+      <view class="pc-row" data-role="to" bindtap="openAccSheet">
+        <view class="pc-ico"><image class="pc-ico-img" src="{{accTo.icon || '/images/ui/card_green.png'}}"></image></view>
+        <view class="pc-field {{accTo.name?'':'ph'}}">{{accTo.name || '请选择转入账户'}}</view>
+      </view>
+    </view>
+
+    <!-- 债务：债务 ∨ 账户（点击债务弹出选择；借出时箭头反向） -->
+    <view class="pair-card" wx:if="{{curType==='debt'}}">
+      <view class="pc-row" bindtap="openDebtSheet">
+        <view class="pc-ico"><image class="pc-ico-img" src="{{debtIcon || '/images/ui/card_green.png'}}"></image></view>
+        <view class="pc-field pc-field-2" wx:if="{{debtLabel}}">
+          <text class="pcf-title">{{debtLabel}}</text>
+          <text class="pcf-sub" wx:if="{{debtBalText}}">{{debtBalText}}</text>
+        </view>
+        <view class="pc-field ph" wx:else>请选择债务</view>
+      </view>
+      <view class="pc-mid">
+        <image class="pc-chev" src="{{debtDown ? '/images/ui/chev_down.png' : '/images/ui/chev_up.png'}}"></image>
+      </view>
+      <view class="pc-row {{debtPicked && !genBill ? 'pc-row-off' : ''}}" data-role="from" bindtap="openAccSheet">
+        <view class="pc-ico">
+          <view class="pc-noacc" wx:if="{{accFrom.noAcc}}"><view class="pc-noacc-slash"></view></view>
+          <image wx:else class="pc-ico-img" src="{{accFrom.icon || '/images/ui/card_green.png'}}"></image>
+        </view>
+        <view class="pc-field {{accFrom.name?'':'ph'}}">{{accFrom.name || '请选择账户'}}</view>
+      </view>
+    </view>
+
+    <!-- 债务操作：借入账户 → 借入 / 还款；借出账户 → 借出 / 收款；选了债务才出现 -->
+    <view class="act-card" wx:if="{{curType==='debt' && debtPicked}}">
+      <view class="gb-row" bindtap="toggleGenBill">
+        <view class="gb-box {{genBill?'gb-on':''}}"><view class="gb-tick" wx:if="{{genBill}}"></view></view>
+        <text class="gb-label">生成账单</text>
+      </view>
+      <view class="act-btns">
+        <view class="act-btn {{selectedId===item.id?'act-on':''}}" wx:for="{{debtActions}}" wx:key="id"
+              data-id="{{item.id}}" bindtap="pickDebtAction">{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部录入面板 -->
+  <view class="sheet">
+
+    <!-- 标签 / 备注 / 金额：点击弹出系统弹窗输入，不触发原生键盘，避免盖住下方自定义键盘 -->
+    <view class="sheet-input">
+      <view class="tag-box" wx:if="{{curType!=='transfer' && curType!=='debt'}}" bindtap="editTag">
+        <view class="tag-chip" wx:if="{{tag}}">
+          <text>{{tag}}</text><text class="tag-x" catchtap="removeTag"> ×</text>
+        </view>
+        <text wx:else class="inp-tag ph">标签</text>
+      </view>
+      <view class="inp-remark {{remark?'':'ph'}} {{curType==='transfer'||curType==='debt'?'inp-remark-flush':''}}" bindtap="focusRemark">
+        <input class="remark-input" placeholder="添加备注" placeholder-class="ph"
+               value="{{remark}}" focus="{{remarkFocus}}" adjust-position="{{true}}"
+               bindinput="onRemarkInput" bindblur="blurRemark"></input>
+      </view>
+      <text class="si-amount {{curType==='income'?'amt-green-text':''}}">¥{{amount}}</text>
+    </view>
+
+    <!-- 属性 chips：日期 / 账户 / 报销 / 附件，统一一行横滑 -->
+    <scroll-view scroll-x="true" class="chips" enhanced show-scrollbar="{{false}}">
+      <view class="chip" bindtap="openDtSheet">
+        <image class="chip-img" src="/images/ui/cal.png"></image>
+        <text>{{dateLabel}}</text>
+      </view>
+
+      <!-- 账户：单账户（转账/债务的账户在面板中选择，不在此显示） -->
+      <view class="chip" wx:if="{{curType!=='transfer' && curType!=='debt' && combineAccounts.length<2}}"
+            data-role="from" bindtap="openAccSheet">
+        <view class="chip-noacc" wx:if="{{accFrom.noAcc}}"><view class="chip-noacc-slash"></view></view>
+        <image wx:else class="chip-img" src="{{accFrom.icon}}"></image>
+        <text>{{accFrom.name}}</text>
+      </view>
+      <!-- 账户：组合支付 -->
+      <view class="chip chip-combine" wx:if="{{curType!=='transfer' && curType!=='debt' && combineAccounts.length>=2}}"
+            data-role="from" bindtap="openAccSheet">
+        <text>组合支付·{{combineAccounts.length}}</text>
+      </view>
+
+      <view class="chip" wx:if="{{curType==='expense'}}" bindtap="openReimbSheet">
+        <image class="chip-img" src="{{reimburseAccountIcon || '/images/ui/noslip.png'}}"></image>
+        <text>{{reimburseAccountName || '不报销'}}</text>
+      </view>
+
+      <view class="chip {{attachments.length?'chip-active':''}}" bindtap="tapAttach">
+        <image class="chip-img" src="/images/ui/clip.png"></image>
+        <text>{{attachments.length?('附件·'+attachments.length):'附件'}}</text>
+      </view>
+
+      <!-- 属性：不计入收支 / 不计入预算（紧跟在「可报销」后面） -->
+      <view class="chip {{noCount||noBudget?'chip-active':''}}" wx:if="{{curType==='expense'||curType==='income'}}" bindtap="openAttrSheet">
+        <image class="chip-img" src="/images/ui/grid.png"></image>
+        <text>{{noCount ? '不计收支' : (noBudget ? '不计预算' : '属性')}}</text>
+      </view>
+
+      <!-- 转账：手续费（由转出账户另付，点击填写金额） -->
+      <view class="chip {{fee?'chip-active':''}}" wx:if="{{curType==='transfer' || (curType==='debt' && debtFeeMode)}}" bindtap="openFeeSheet">
+        <image class="chip-img" src="/images/ui/fee.png"></image>
+        <text>{{fee ? ('手续费 ¥' + fee) : '手续费'}}</text>
+      </view>
+
+      <!-- 债务：还款日期（选填，原生日期选择） -->
+      <picker wx:if="{{curType==='debt' && !debtFeeMode}}" mode="date" value="{{repayDate || date}}" start="{{date}}" bindchange="onRepayDate">
+        <view class="chip {{repayDate?'chip-active':''}}">
+          <image class="chip-img" src="/images/ui/cal.png"></image>
+          <text>{{repayDate ? ((selectedId==='lend' ? '收款 ' : '还款 ') + repayLabel) : (selectedId==='lend' ? '收款日期' : '还款日期')}}</text>
+        </view>
+      </picker>
+      <view class="chip chip-clear" wx:if="{{curType==='debt' && !debtFeeMode && repayDate}}" bindtap="clearRepay">
+        <text>清除</text>
+      </view>
+    </scroll-view>
+
+    <!-- 计算器键盘：4 列布局，左下「再记」保存并连续记账；
+         右下键三态：无输入时「取消」回首页，纯数字时「完成」保存返回，含运算符时「=」求值后变完成 -->
+    <view class="keypad">
+      <view class="kp-row">
+        <view class="key" data-k="1" bindtap="tapKey"><text>1</text></view>
+        <view class="key" data-k="2" bindtap="tapKey"><text>2</text></view>
+        <view class="key" data-k="3" bindtap="tapKey"><text>3</text></view>
+        <view class="key key-fn" data-k="del" bindtap="tapKey">
+          <image class="del-img" src="/images/ui/back.png"></image>
+        </view>
+      </view>
+      <view class="kp-row">
+        <view class="key" data-k="4" bindtap="tapKey"><text>4</text></view>
+        <view class="key" data-k="5" bindtap="tapKey"><text>5</text></view>
+        <view class="key" data-k="6" bindtap="tapKey"><text>6</text></view>
+        <view class="key-pair">
+          <view class="key key-fn" data-k="+" bindtap="tapKey"><text>+</text></view>
+          <view class="key key-fn" data-k="-" bindtap="tapKey"><text>-</text></view>
+        </view>
+      </view>
+      <view class="kp-row">
+        <view class="key" data-k="7" bindtap="tapKey"><text>7</text></view>
+        <view class="key" data-k="8" bindtap="tapKey"><text>8</text></view>
+        <view class="key" data-k="9" bindtap="tapKey"><text>9</text></view>
+        <view class="key-pair">
+          <view class="key key-fn" data-k="×" bindtap="tapKey"><text>×</text></view>
+          <view class="key key-fn" data-k="÷" bindtap="tapKey"><text>÷</text></view>
+        </view>
+      </view>
+      <view class="kp-row">
+        <view class="key key-again" bindtap="tapAgain" bindlongpress="longPressAgain">
+          <text>再记</text>
+        </view>
+        <view class="key" data-k="0" bindtap="tapKey"><text>0</text></view>
+        <view class="key" data-k="." bindtap="tapKey"><text>.</text></view>
+        <view class="key {{btnState==='done'?'key-done':(btnState==='equal'?'key-eq':'key-cancel')}}" bindtap="tapBottomRight">
+          <text>{{btnState==='cancel'?'取消':(btnState==='equal'?'=':'完成')}}</text>
+        </view>
+      </view>
+    </view>
+
+  </view>
+
+  <!-- 日期时间选择底部弹层 -->
+  <view class="dt-mask" wx:if="{{dtSheet}}" bindtap="cancelDt"></view>
+  <view class="dt-sheet" wx:if="{{dtSheet}}">
+    <view class="dt-head">
+      <picker mode="date" fields="month" value="{{calTitle}}" bindchange="onPickCalMonth">
+        <view class="dt-title">{{calTitle}}<view class="dt-title-arrow"></view></view>
+      </picker>
+      <view class="dt-today" bindtap="goCalToday">回今天</view>
+    </view>
+
+    <view class="cal-week">
+      <text class="cw">一</text><text class="cw">二</text><text class="cw">三</text>
+      <text class="cw">四</text><text class="cw">五</text><text class="cw">六</text>
+      <text class="cw">日</text>
+    </view>
+
+    <view class="cal-grid">
+      <view class="cal-cell" wx:for="{{calCells}}" wx:key="key"
+            data-date="{{item.date}}" bindtap="tapCalDay">
+        <view class="cal-day {{item.isSel?'day-sel':''}} {{item.isToday&&!item.isSel?'day-today':''}}">{{item.day}}</view>
+      </view>
+    </view>
+
+    <!-- 时间行：点击原生 time picker 选 HH:mm -->
+    <picker mode="time" value="{{selTime}}" bindchange="onPickTime">
+      <view class="dt-time">
+        <view class="dt-time-ico"></view>
+        <text class="dt-time-label">时间</text>
+        <text class="dt-time-val">{{selTime}}</text>
+        <view class="dt-time-arrow"></view>
+      </view>
+    </picker>
+
+    <view class="dt-btns">
+      <view class="dt-btn dt-cancel" bindtap="cancelDt">取消</view>
+      <view class="dt-btn dt-confirm" bindtap="confirmDt">完成</view>
+    </view>
+  </view>
+
+  <!-- 账户选择二级菜单：单列表，可拖动排序，支持组合支付 -->
+  <view class="as-mask" wx:if="{{accSheet}}" bindtap="closeAccSheet"></view>
+  <view class="as-sheet" wx:if="{{accSheet}}">
+    <view class="as-head">
+      <text class="as-title">选择账户</text>
+      <view class="as-head-actions">
+        <text class="as-combine-btn {{accCombine?'on':''}}"
+              wx:if="{{accRole==='from' && curType==='expense' && !editId}}"
+              bindtap="toggleCombine">组合支付</text>
+        <view class="as-reorder-ico" bindtap="tapReorderHint">
+          <view class="ari-bar"></view>
+          <view class="ari-bar"></view>
+        </view>
+        <text class="as-add-ico" bindtap="goAddAccount">＋</text>
+      </view>
+    </view>
+    <text class="as-sub">长按拖动可进行排序</text>
+
+    <scroll-view class="as-list" scroll-y="{{!accDragging}}"
+                 bindtouchmove="onDragMove" bindtouchend="onDragEnd" bindtouchcancel="onDragEnd">
+      <view class="as-row {{accDragging&&accDragId===a.id?'ar-dragging':''}} {{(accCombine?accCombineIds.indexOf(a.id)>=0:accSelectedId===a.id)?'ar-on':''}}"
+            wx:for="{{accList}}" wx:for-item="a" wx:key="id"
+            wx:if="{{!(accCombine && a.noAcc)}}"
+            data-id="{{a.id}}" bindtap="pickAccount" bindlongpress="onDragStart">
+        <view class="as-noacc" wx:if="{{a.noAcc}}"><view class="as-noacc-slash"></view></view>
+        <image wx:else class="as-ico" src="{{a.icon}}"></image>
+        <text class="as-name">{{a.name}}</text>
+        <text class="as-bal" wx:if="{{!accCombine}}">{{a.balanceText}}</text>
+        <view class="as-check {{accCombineIds.indexOf(a.id)>=0?'on':''}}" wx:if="{{accCombine}}"></view>
+      </view>
+      <view class="as-empty" wx:if="{{!accList.length}}">暂无可选账户</view>
+    </scroll-view>
+
+    <view class="as-add" wx:if="{{!accCombine}}" bindtap="goAddAccount">
+      <text>+ 添加账户</text>
+    </view>
+    <view class="as-confirm {{accCombineIds.length<2?'as-confirm-off':''}}" wx:else bindtap="confirmCombine">
+      <text>确定组合支付{{accCombineIds.length?'（'+accCombineIds.length+'）':''}}</text>
+    </view>
+  </view>
+
+  <!-- 账单设置（属性）：不计入收支 / 不计入预算 -->
+  <view class="as-mask" wx:if="{{attrSheet}}" bindtap="closeAttrSheet"></view>
+  <view class="at-sheet" wx:if="{{attrSheet}}">
+    <view class="at-grab"></view>
+    <view class="at-head">
+      <view class="at-x" bindtap="closeAttrSheet"><view class="at-x-a"></view><view class="at-x-b"></view></view>
+      <text class="at-title">账单设置</text>
+      <text class="at-done" bindtap="confirmAttr">完成</text>
+    </view>
+    <view class="at-card" data-k="attrCount" bindtap="toggleAttr">
+      <view class="at-ico"><view class="at-circle"><text class="at-pm">±</text></view></view>
+      <text class="at-name">不计入收支</text>
+      <view class="at-radio {{attrCount?'on':''}}"></view>
+    </view>
+    <view class="at-card" wx:if="{{curType==='expense'}}" data-k="attrBudget" bindtap="toggleAttr">
+      <view class="at-ico"><view class="at-circle at-pie"></view></view>
+      <text class="at-name">不计入预算</text>
+      <view class="at-radio {{attrBudget?'on':''}}"></view>
+    </view>
+  </view>
+
+  <!-- 附件二级菜单：已添加的图片 / 文件在这里预览、移除、继续添加，不再挤占主面板 -->
+  <view class="as-mask" wx:if="{{attachSheet}}" bindtap="closeAttachSheet"></view>
+  <view class="ats-sheet" wx:if="{{attachSheet}}">
+    <view class="at-grab"></view>
+    <view class="at-head">
+      <view class="at-x" bindtap="closeAttachSheet"><view class="at-x-a"></view><view class="at-x-b"></view></view>
+      <text class="at-title">附件{{attachments.length ? ' · ' + attachments.length + '/9' : ''}}</text>
+      <text class="at-done" bindtap="closeAttachSheet">完成</text>
+    </view>
+    <view class="ats-grid">
+      <view class="ats-item" wx:for="{{attachments}}" wx:key="id">
+        <image wx:if="{{item.type==='image' && (item.path || cloudOn && item.fileID)}}" class="ats-thumb" mode="aspectFill"
+               src="{{item.path || item.fileID}}" data-id="{{item.id}}" bindtap="previewAttach"
+               binderror="onAttachError"></image>
+        <view wx:else class="ats-file" data-id="{{item.id}}" bindtap="previewAttach">
+          <text class="ats-file-ico">📄</text>
+          <text class="ats-file-name">{{item.name}}</text>
+        </view>
+        <view class="ats-del" data-id="{{item.id}}" catchtap="removeAttach">×</view>
+      </view>
+      <view class="ats-item ats-add" wx:if="{{attachments.length < 9}}" bindtap="addAttach">
+        <view class="ats-plus"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 报销账户选择二级菜单：不报销 + 报销账户（付款账户保持不变） -->
+  <view class="as-mask" wx:if="{{reimbSheet}}" bindtap="closeReimbSheet"></view>
+  <view class="as-sheet" wx:if="{{reimbSheet}}">
+    <view class="as-head">
+      <text class="as-cancel" bindtap="closeReimbSheet">取消</text>
+      <text class="as-title">选择账户</text>
+      <view class="as-head-actions">
+        <text class="as-add-ico" bindtap="goAddReimbAccount">＋</text>
+      </view>
+    </view>
+    <scroll-view class="as-list" scroll-y="{{true}}">
+      <view class="as-row {{!reimburseAccountId?'ar-on':''}}"
+            data-id="" bindtap="pickReimbOption">
+        <image class="as-ico" src="/images/ui/noslip.png"></image>
+        <text class="as-name">不报销</text>
+      </view>
+      <view class="as-row {{reimburseAccountId===a.id?'ar-on':''}}"
+            wx:for="{{reimbList}}" wx:for-item="a" wx:key="id"
+            data-id="{{a.id}}" bindtap="pickReimbOption">
+        <image class="as-ico" src="{{a.icon}}"></image>
+        <text class="as-name">{{a.name}}</text>
+        <text class="as-bal">{{a.balanceText}}</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 债务选择二级菜单：借入 / 借出 + 债务分组里的应付款 / 应收款账户 -->
+  <view class="as-mask" wx:if="{{debtSheet}}" bindtap="closeDebtSheet"></view>
+  <view class="as-sheet" wx:if="{{debtSheet}}">
+    <view class="as-head">
+      <text class="as-cancel" bindtap="closeDebtSheet">取消</text>
+      <text class="as-title">选择债务</text>
+      <view class="as-head-actions">
+        <text class="as-add-ico" bindtap="goAddDebtAccount">＋</text>
+      </view>
+    </view>
+    <view class="as-empty" wx:if="{{!debtList.length}}">还没有债务账户，先添加一个应付款 / 应收款吧</view>
+    <scroll-view class="as-list" scroll-y="{{true}}">
+      <view class="as-row {{debtSelKey===item.key?'ar-on':''}}"
+            wx:for="{{debtList}}" wx:key="key" data-key="{{item.key}}" bindtap="pickDebt">
+        <image class="as-ico" src="{{item.icon}}"></image>
+        <text class="as-name">{{item.name}}</text>
+        <text class="as-bal" wx:if="{{item.sub}}">{{item.sub}}</text>
+      </view>
+    </scroll-view>
+    <view class="as-add" bindtap="goAddDebtAccount">
+      <text>+ 添加债务账户</text>
+    </view>
+  </view>
+
+  <!-- 转账手续费：由转出账户另付，不计入收支 / 预算 -->
+  <view class="as-mask" wx:if="{{feeSheet}}" bindtap="closeFeeSheet"></view>
+  <view class="fee-sheet" wx:if="{{feeSheet}}">
+    <view class="fs-head">
+      <text class="fs-cancel" bindtap="closeFeeSheet">取消</text>
+      <text class="fs-title">手续费</text>
+      <text class="fs-done" bindtap="confirmFee">完成</text>
+    </view>
+    <view class="fs-input-row">
+      <text class="fs-yen">¥</text>
+      <input class="fs-input" type="digit" focus="{{feeSheet}}" placeholder="0.00" placeholder-class="fs-ph"
+             value="{{feeInput}}" bindinput="onFeeInput" bindconfirm="confirmFee"></input>
+    </view>
+    <text class="fs-tip">{{curType==='debt' ? (selectedId==='collect' ? '手续费从收到的款项中扣除，不计入收支，也不占用预算。' : '手续费由所选账户另外扣除，不计入收支，也不占用预算。') : '手续费从转出账户另外扣除，不计入收支，也不占用预算。'}}</text>
+    <text class="fs-clear" wx:if="{{fee}}" bindtap="clearFee">清除手续费</text>
+  </view>
+
+</view>

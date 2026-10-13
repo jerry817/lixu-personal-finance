@@ -1,0 +1,120 @@
+<!-- pages/profile/profile.wxml -->
+<view class="page">
+
+  <!-- 用户头部（未登录）：登录入口，头像昵称与登录合一 -->
+  <view class="hero hero-login" wx:if="{{!loggedIn}}" bindtap="openLogin">
+    <image wx:if="{{avatar}}" class="avatar" src="{{avatar}}" binderror="onAvatarError"></image>
+    <view wx:else class="avatar avatar-ph"><text>登录</text></view>
+    <view class="u-info">
+      <text class="nick-text">{{nick||'点击登录'}}</text>
+      <view class="u-stat"><text class="us">登录后可使用云功能 · 未登录账单仅存本地</text></view>
+    </view>
+    <text class="lb-arrow">›</text>
+  </view>
+
+  <!-- 用户头部（已登录），双栏：
+       左栏  昵称（上） / 头像（下）
+       右栏  坚持记账 / 最近上传 / OpenID / 退出登录（通栏） -->
+  <view class="hero hero-card" wx:else>
+    <view class="hc-left">
+      <input class="nick-input hc-nick" type="nickname" placeholder="设置昵称"
+             placeholder-class="nick-ph" value="{{nick}}" bindblur="onNick"></input>
+      <!-- 头像盒子尺寸固定；透明的 chooseAvatar 按钮铺在上面负责点击，避免按钮默认样式影响布局 -->
+      <view class="avatar-wrap">
+        <image wx:if="{{avatar}}" class="avatar" src="{{avatar}}" binderror="onAvatarError"></image>
+        <view wx:else class="avatar avatar-ph"><text>头像</text></view>
+        <button class="avatar-btn-ov" open-type="chooseAvatar"
+                bindchooseavatar="onChooseAvatar"></button>
+      </view>
+    </view>
+    <view class="hc-right">
+      <view class="u-stat">
+        <text class="us">坚持记账 <text class="us-n">{{days}}</text> 天</text>
+        <text class="us us-gap">共 <text class="us-n">{{count}}</text> 笔</text>
+      </view>
+      <view class="meta-line">
+        <text class="ml-k">最近上传</text>
+        <text class="ml-v">{{lastUploadText}}</text>
+      </view>
+      <view class="meta-line" catchtap="copyOpenid">
+        <text class="ml-k">OpenID</text>
+        <text class="ml-v">{{openidShort}}</text>
+        <text class="ml-copy">复制</text>
+      </view>
+      <view class="cl-logout" catchtap="doLogout">退出登录</view>
+    </view>
+  </view>
+
+  <!-- 常用功能 -->
+  <view class="section-title">常用功能</view>
+  <view class="grid card">
+    <view class="g-cell" wx:for="{{features}}" wx:key="label"
+          data-url="{{item.url}}" bindtap="goPage">
+      <image class="g-icon" src="{{item.icon}}"></image>
+      <text class="g-label">{{item.label}}</text>
+    </view>
+  </view>
+
+  <!-- 数据管理 -->
+  <view class="section-title">数据管理</view>
+  <view class="grid card">
+    <view class="g-cell" wx:for="{{dataTools}}" wx:key="label"
+          data-act="{{item.act}}" bindtap="tapDataTool">
+      <image class="g-icon" src="{{item.icon}}"></image>
+      <text class="g-label">{{item.label}}</text>
+      <text class="g-lock" wx:if="{{item.needLogin && !loggedIn}}">需登录</text>
+    </view>
+  </view>
+
+  <!-- 其他 -->
+  <view class="section-title">其他</view>
+  <view class="grid card">
+    <view class="g-cell" wx:for="{{others}}" wx:key="label"
+          data-url="{{item.url}}" data-act="{{item.act}}" bindtap="tapOther">
+      <image class="g-icon" src="{{item.icon}}"></image>
+      <text class="g-label">{{item.label}}</text>
+    </view>
+  </view>
+
+  <view class="reset-link" bindtap="resetData">清空本地缓存</view>
+
+  <!-- 登录弹层：头像、昵称与登录一次完成 -->
+  <view class="mask" wx:if="{{loginShow}}" bindtap="closeLogin"></view>
+  <view class="login-pop" wx:if="{{loginShow}}">
+    <text class="lp-title">微信一键登录</text>
+    <text class="lp-sub">头像昵称仅用于本地展示</text>
+
+    <button class="lp-avatar-btn" open-type="chooseAvatar"
+            bindchooseavatar="onTmpAvatar">
+      <image wx:if="{{tmpAvatar}}" class="lp-avatar" src="{{tmpAvatar}}"></image>
+      <view wx:else class="lp-avatar lp-avatar-ph"><text>获取微信头像</text></view>
+    </button>
+
+    <input class="lp-nick" type="nickname" placeholder="点击获取微信昵称"
+           placeholder-class="lp-nick-ph" value="{{tmpNick}}" bindblur="onTmpNick"></input>
+
+    <view class="lp-tip">请设置您的头像和昵称（未设置则使用默认）</view>
+
+    <!-- 隐私协议：必须勾选后才能登录；点《用户隐私协议》阅读全文（页底可「我已阅读并同意」） -->
+    <view class="lp-agree" bindtap="toggleAgree">
+      <view class="lp-check {{agreed?'lp-check-on':''}}"><text wx:if="{{agreed}}">✓</text></view>
+      <text class="lp-agree-txt">我已阅读并同意</text>
+      <text class="lp-agree-link" catchtap="openPrivacy">《用户隐私协议》</text>
+    </view>
+
+    <button class="lp-confirm {{(syncing||!agreed)?'lp-disabled':''}}" bindtap="confirmLogin">一键登录</button>
+    <text class="lp-cancel" bindtap="closeLogin">暂不登录，仅本地记账</text>
+  </view>
+
+  <!-- 建议反馈弹窗：展示开发者邮箱，样式与登录弹层一致 -->
+  <view class="mask fb-mask" wx:if="{{feedbackShow}}" bindtap="closeFeedback" catchtouchmove="noop"></view>
+  <view class="login-pop fb-pop" wx:if="{{feedbackShow}}" catchtouchmove="noop">
+    <text class="lp-title">建议反馈</text>
+    <text class="fb-tip">遇到问题或想要新的功能，欢迎发邮件告诉开发者</text>
+    <text class="fb-mail">{{email}}</text>
+    <button class="lp-confirm" bindtap="copyEmail">复制邮箱</button>
+    <text class="lp-cancel" bindtap="closeFeedback">关闭</text>
+  </view>
+
+  <view class="tab-space"></view>
+</view>

@@ -1,0 +1,18 @@
+<!-- pages/privacy/privacy.wxml 用户隐私协议 -->
+<view class="page {{fromLogin ? 'page-foot' : ''}}">
+  <view class="card block">
+    <text class="title">厘序记账 · 用户隐私协议</text>
+    <text class="ver">版本 {{version}}</text>
+  </view>
+
+  <view class="card block" wx:for="{{sections}}" wx:key="h">
+    <text class="h">{{item.h}}</text>
+    <text class="p" wx:for="{{item.p}}" wx:for-item="para" wx:key="*this">{{para}}</text>
+  </view>
+
+  <!-- 从登录弹层进入：读完后同意并返回，登录弹层里的同意框会自动勾选 -->
+  <view class="foot" wx:if="{{fromLogin}}">
+    <button class="btn-agree" bindtap="agree">我已阅读并同意</button>
+    <text class="btn-back" bindtap="back">返回</text>
+  </view>
+</view>

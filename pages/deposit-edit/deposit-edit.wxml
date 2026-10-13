@@ -1,0 +1,126 @@
+<!-- pages/deposit-edit/deposit-edit.wxml 定期存款表单 -->
+<view class="page">
+
+  <!-- 顶部：返回 / 标题 / ✓（✓ 放在微信胶囊左侧；只读时不显示） -->
+  <view class="hd" style="padding-top:{{statusBarHeight}}px;">
+    <view class="hd-inner" style="height:{{navH}}px;">
+      <image class="hd-back" src="/images/ui/back.png" bindtap="goBack"></image>
+      <text class="hd-title">定期存款</text>
+      <view class="hd-act" wx:if="{{!locked}}" style="right:{{moreRight}}px" bindtap="save">
+        <view class="tick"></view>
+      </view>
+    </view>
+  </view>
+  <view style="height:calc({{statusBarHeight}}px + {{navH}}px + 16rpx);"></view>
+
+  <!-- 存入金额 / 年利率 / 存期 / 备注 -->
+  <view class="card form">
+    <view class="f-row">
+      <text class="f-label">存入金额</text>
+      <input class="f-input" type="digit" placeholder="请输入存入金额" placeholder-class="ph"
+             value="{{amount}}" disabled="{{locked}}" bindinput="onAmount"></input>
+    </view>
+    <view class="f-row">
+      <text class="f-label">年利率</text>
+      <input class="f-input" type="digit" placeholder="输入年利率" placeholder-class="ph"
+             value="{{rate}}" disabled="{{locked}}" bindinput="onRate"></input>
+      <text class="f-unit">%</text>
+    </view>
+    <view class="f-row">
+      <text class="f-label">存期</text>
+      <input class="f-input" type="number" placeholder="请输入存期" placeholder-class="ph"
+             value="{{term}}" disabled="{{locked}}" bindinput="onTerm"></input>
+      <view class="seg">
+        <view class="seg-item {{unit===u.key?'on':''}}" wx:for="{{units}}" wx:for-item="u" wx:key="key"
+              data-unit="{{u.key}}" bindtap="pickUnit">{{u.label}}</view>
+      </view>
+    </view>
+    <view class="f-row last">
+      <text class="f-label">备注</text>
+      <input class="f-input" placeholder="请输入备注" placeholder-class="ph"
+             value="{{remark}}" maxlength="30" disabled="{{locked}}" bindinput="onRemark"></input>
+    </view>
+  </view>
+
+  <!-- 存入日期 / 到期日期 / 收益入账账户 / 预计收益 -->
+  <view class="card form">
+    <picker class="f-pick" mode="date" value="{{startDate}}" disabled="{{locked}}" bindchange="pickStart">
+      <view class="f-row">
+        <text class="f-label">存入日期</text>
+        <text class="f-value f-dark">{{startText}}</text>
+        <view class="chev" wx:if="{{!locked}}"></view>
+      </view>
+    </picker>
+    <view class="f-row">
+      <text class="f-label">到期日期</text>
+      <text class="f-value {{maturityText ? 'f-dark' : ''}}">{{maturityText || '填写存期后自动计算'}}</text>
+    </view>
+    <view class="f-row" bindtap="openAcc">
+      <text class="f-label f-wide">存入账户</text>
+      <text class="f-value {{accountName ? 'f-dark' : ''}}">{{accountName || '请选择'}}</text>
+      <view class="chev" wx:if="{{!locked && !lockAcc}}"></view>
+    </view>
+    <view class="f-row last">
+      <text class="f-label">预计收益</text>
+      <text class="f-value f-dark">{{incomeText}}</text>
+    </view>
+  </view>
+
+  <view class="tip">
+    <text>提示：</text>
+    <text>存入金额会从存入账户的可用余额中扣除（余额不足时无法存入），仍计入总资产</text>
+    <text>到期后本金自动回到存入账户，并生成一笔收益账单；也可以随时提前支取</text>
+    <text class="tip-lock" wx:if="{{withdrawn}}">这笔定存已于 {{withdrawInfo}}，不能再修改；如需调整收益，请到账单里修改那笔收入。</text>
+    <text class="tip-lock" wx:elif="{{locked}}">这笔定存已到期，收益账单已生成，不能再修改；如需调整，请到账单里修改那笔收益。</text>
+  </view>
+
+  <!-- 在存中的定存：提前支取（手动填写已得收益） -->
+  <view class="card form wd-card" wx:if="{{canWithdraw}}">
+    <view class="wd" hover-class="wd-hover" bindtap="openWithdraw">提前支取</view>
+  </view>
+
+  <!-- 编辑已有定存：删除 -->
+  <view class="card form del-card" wx:if="{{id}}">
+    <view class="del" hover-class="del-hover" bindtap="remove">删除这笔定存</view>
+  </view>
+
+  <view class="safe-space"></view>
+
+  <!-- 提前支取：本金回到存入账户，收益手动填写 -->
+  <view class="mask" wx:if="{{wdSheet}}" bindtap="closeWithdraw" catchtouchmove="noop">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-title">提前支取</view>
+      <view class="wd-line">
+        <text class="wd-l">支取本金</text>
+        <text class="wd-v">{{amount}} 元 → {{accountName}}</text>
+      </view>
+      <view class="wd-line">
+        <text class="wd-l">已得收益</text>
+        <input class="wd-input" type="digit" placeholder="请输入实际收益，没有可不填" placeholder-class="ph"
+               value="{{wdInterest}}" focus="{{wdSheet}}" bindinput="onWdInterest"></input>
+        <text class="f-unit">元</text>
+      </view>
+      <view class="sh-hint">本金立即回到存入账户的可用余额；填写的收益会记为今天的一笔「投资理财 · 利息」收入，提前支取后不再生成到期收益。</view>
+      <view class="wd-btns">
+        <view class="wd-btn wd-cancel" hover-class="wd-hover" bindtap="closeWithdraw">取消</view>
+        <view class="wd-btn wd-ok" hover-class="wd-ok-hover" bindtap="confirmWithdraw">确认支取</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 存入账户选择 -->
+  <view class="mask" wx:if="{{accSheet}}" bindtap="closeAcc" catchtouchmove="noop">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-title">存入账户</view>
+      <scroll-view scroll-y class="sh-scroll">
+        <view class="sh-row" wx:for="{{accList}}" wx:key="id" data-id="{{item.id}}" bindtap="pickAcc">
+          <image class="sh-ico" src="{{item.icon}}" mode="aspectFit"></image>
+          <text class="sh-name">{{item.name}}</text>
+          <text class="sh-avail">可用 {{item.availText}}</text>
+          <text class="sh-on" wx:if="{{accountId===item.id}}">✓</text>
+        </view>
+      </scroll-view>
+      <view class="sh-hint">定存本金从所选账户的可用余额中扣除，到期后连同收益回到该账户：到期当天自动记一笔「投资理财-利息」收入。</view>
+    </view>
+  </view>
+</view>

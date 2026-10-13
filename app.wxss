@@ -1,0 +1,19 @@
+/* app.wxss 全局样式 */
+page {
+  background: #F2F3F5;
+  color: #1A1A1A;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue',
+    'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 28rpx;
+  -webkit-font-smoothing: antialiased;
+}
+
+view, text, input, scroll-view { box-sizing: border-box; }
+
+.card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+}
+
+/* Logo 统一为圆角正方形（约 22% 圆角，近似 iOS 应用图标）；尺寸由各页面自己的 .logo 规则决定 */
+.logo { border-radius: 22%; overflow: hidden; }

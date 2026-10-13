@@ -1,0 +1,97 @@
+<!-- pages/search/search.wxml -->
+<view class="page">
+
+  <!-- 顶部搜索栏 -->
+  <view class="sh" style="padding-top:{{statusBarHeight}}px;">
+    <view class="sh-row">
+      <image class="sh-back" src="/images/ui/back.png" bindtap="goBack"></image>
+      <view class="search-box">
+        <image class="sb-icon" src="/images/ui/search_gray.png"></image>
+        <input class="sb-input" focus="true" placeholder="搜索关键词、标签、备注、金额"
+               placeholder-class="sb-ph" value="{{kw}}" bindinput="onKw"></input>
+        <view class="sb-clear" wx:if="{{kw}}" bindtap="clearKw">×</view>
+      </view>
+    </view>
+
+    <!-- 类型筛选 -->
+    <scroll-view scroll-x="true" class="filter-tabs" enhanced show-scrollbar="{{false}}">
+      <view class="ft-tab {{type===item.key?'ft-on':''}}"
+            wx:for="{{filters}}" wx:key="key"
+            data-key="{{item.key}}" bindtap="setType">{{item.label}}</view>
+    </scroll-view>
+
+    <!-- 日期筛选 -->
+    <view class="date-filter">
+      <picker mode="date" value="{{start}}" bindchange="onStart">
+        <view class="df-date {{start?'df-set':''}}">{{start||'开始日期'}}</view>
+      </picker>
+      <text class="df-line">至</text>
+      <picker mode="date" value="{{end}}" bindchange="onEnd">
+        <view class="df-date {{end?'df-set':''}}">{{end||'结束日期'}}</view>
+      </picker>
+      <view class="df-clear" wx:if="{{start||end}}" bindtap="clearDates">清除</view>
+    </view>
+    <view class="pick-tip" wx:if="{{exportMode}}">{{pickedCount ? '点击账单可切换选中，已选的账单会跨搜索保留' : '精准导出：搜索后长按账单开始选择，可多选'}}</view>
+  </view>
+
+  <!-- 搜索结果 -->
+  <view class="results {{exportMode ? 'results-tip' : ''}}">
+    <block wx:for="{{groups}}" wx:key="date" wx:for-item="g">
+      <view class="day-head">
+        <text class="day-md">{{g.md}}</text>
+        <text class="day-week">{{g.week}}</text>
+        <view class="day-sum">
+          <text class="ds-label">收</text>
+          <text class="ds-green">{{g.incomeText}}</text>
+          <text class="ds-label ds-gap">支</text>
+          <text class="ds-red">{{g.expenseText}}</text>
+        </view>
+      </view>
+      <view class="day-card card">
+        <view class="bill {{index !== g.items.length-1 ? 'bill-line' : ''}}"
+              wx:for="{{g.items}}" wx:key="id" wx:for-item="it"
+              data-id="{{it.id}}" bindtap="tapItem" bindlongpress="onLongPress">
+          <view class="pick {{picked[it.id] ? 'pick-on' : ''}}" wx:if="{{pickedCount}}"></view>
+          <image class="bill-icon" src="{{it.icon}}"></image>
+          <view class="bill-mid">
+            <view class="bill-title-row">
+              <text class="bill-title">{{it.title}}</text>
+              <text class="bill-badge {{bd.cls}}"
+                    wx:for="{{it.badges}}" wx:key="t" wx:for-item="bd">{{bd.t}}</text>
+            </view>
+            <view class="bill-sub-row" wx:if="{{viewMode==='detail' || (it.debtGen && it.remark)}}">
+              <text class="bill-tag" wx:for="{{it.tags}}" wx:key="*this" wx:for-item="tg">{{tg}}</text>
+              <text class="bill-remark" wx:if="{{it.remark}}">{{it.remark}}</text>
+            </view>
+          </view>
+          <view class="bill-right">
+            <view class="amt-row">
+              <text class="bill-amt-orig" wx:if="{{it.origAmount}}">{{it.origAmount}}</text>
+              <text class="bill-amt {{it.amountClass}}">{{it.amount}}</text>
+            </view>
+            <text class="bill-account bill-debt-path" wx:if="{{it.debtPath}}">{{it.debtPath}}</text>
+            <text class="bill-account" wx:elif="{{viewMode==='detail'}}">{{it.accountName}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <view class="empty" wx:if="{{groups.length===0}}">
+      <view class="empty-icon">
+        <image src="/images/ui/search_gray.png"></image>
+      </view>
+      <text class="empty-text">未找到相关账单</text>
+      <text class="empty-tip">可通过关键词、日期、标签或备注查找</text>
+    </view>
+
+    <view class="result-bottom" wx:if="{{groups.length>0}}">— 共 {{groups.length}} 天有相关账单 —</view>
+  </view>
+
+  <!-- 精准导出：已选 N 笔 -->
+  <view class="pick-bar" wx:if="{{pickedCount}}">
+    <text class="pb-cancel" bindtap="clearPicked">取消</text>
+    <text class="pb-count">已选 {{pickedCount}} 笔</text>
+    <text class="pb-all" bindtap="togglePickAll">{{allPicked ? '取消全选' : '全选'}}</text>
+    <button class="pb-go" bindtap="goExport">导出</button>
+  </view>
+</view>

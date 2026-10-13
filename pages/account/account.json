@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "账户",
+  "usingComponents": {
+    "fab": "/components/fab/fab"
+  }
+}

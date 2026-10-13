@@ -1,0 +1,8 @@
+.ta {
+  width: calc(100% - 104rpx);
+  height: 150rpx;
+  font-size: 32rpx;
+  line-height: 1.5;
+  color: #1A1A1A;
+}
+.ta-ph { color: #B3B9BF; font-size: 30rpx; line-height: 1.5; }

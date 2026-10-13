@@ -1,0 +1,87 @@
+<!-- pages/deposit-list/deposit-list.wxml 定存记录 -->
+<view class="page">
+
+  <!-- 顶部：返回 / 标题 / ＋（＋ 放在微信胶囊左侧） -->
+  <view class="hd" style="padding-top:{{statusBarHeight}}px;">
+    <view class="hd-inner" style="height:{{navH}}px;">
+      <image class="hd-back" src="/images/ui/back.png" bindtap="goBack"></image>
+      <text class="hd-title">定存记录</text>
+      <view class="hd-act" style="right:{{moreRight}}px" bindtap="addDeposit">
+        <view class="plus"><view class="plus-h"></view><view class="plus-v"></view></view>
+      </view>
+    </view>
+  </view>
+  <view style="height:calc({{statusBarHeight}}px + {{navH}}px + 16rpx);"></view>
+
+  <block wx:if="{{loaded && (active.length || done.length)}}">
+
+    <!-- 汇总：在存本金 / 预计收益（只统计未到期的） -->
+    <view class="sum-card">
+      <view class="sc-cell">
+        <text class="sc-label">在存本金</text>
+        <text class="sc-amount">{{principalText}}</text>
+      </view>
+      <view class="sc-sep"></view>
+      <view class="sc-cell">
+        <text class="sc-label">预计收益</text>
+        <text class="sc-amount">{{incomeText}}</text>
+      </view>
+    </view>
+    <view class="sc-note" wx:if="{{countText || scopeText}}">{{scopeText ? '仅显示「' + scopeText + '」的定存' : '显示全部账户的定存'}}{{countText ? '，' + countText : ''}}，在存本金已从存入账户的可用余额中扣除</view>
+
+    <!-- 进行中 -->
+    <view class="g-title" wx:if="{{active.length}}">进行中</view>
+    <view class="card" wx:if="{{active.length}}">
+      <view class="row {{index !== active.length-1 ? 'line':''}}" wx:for="{{active}}" wx:key="id"
+            data-id="{{item.id}}" bindtap="tapRow" hover-class="row-hover">
+        <view class="r-main">
+          <view class="r-top">
+            <text class="r-amount">{{item.amountText}}</text>
+            <text class="r-tag {{item.tagCls}}">{{item.tag}}</text>
+          </view>
+          <text class="r-line">{{item.rateTerm}}</text>
+          <text class="r-line">{{item.range}}</text>
+          <text class="r-line r-ok" wx:if="{{item.sub}}">{{item.sub}}</text>
+          <text class="r-line r-remark" wx:if="{{item.remark}}">{{item.remark}}</text>
+        </view>
+        <view class="r-side">
+          <text class="r-income">{{item.incomeText}}</text>
+          <text class="r-cap">预计收益</text>
+          <text class="r-cap r-acc">存入账户：{{item.account || '未关联账户'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 已到期 -->
+    <view class="g-title" wx:if="{{done.length}}">已结束</view>
+    <view class="card" wx:if="{{done.length}}">
+      <view class="row {{index !== done.length-1 ? 'line':''}}" wx:for="{{done}}" wx:key="id"
+            data-id="{{item.id}}" bindtap="tapRow" hover-class="row-hover">
+        <view class="r-main">
+          <view class="r-top">
+            <text class="r-amount r-gray">{{item.amountText}}</text>
+            <text class="r-tag {{item.tagCls}}">{{item.tag}}</text>
+          </view>
+          <text class="r-line">{{item.rateTerm}}</text>
+          <text class="r-line">{{item.range}}</text>
+          <text class="r-line r-ok" wx:if="{{item.sub}}">{{item.sub}}</text>
+          <text class="r-line r-remark" wx:if="{{item.remark}}">{{item.remark}}</text>
+        </view>
+        <view class="r-side">
+          <text class="r-income r-gray">{{item.incomeText}}</text>
+          <text class="r-cap">收益</text>
+          <text class="r-cap r-acc">存入账户：{{item.account || '未关联账户'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="tab-space"></view>
+  </block>
+
+  <!-- 空态 -->
+  <view class="empty" wx:if="{{loaded && !active.length && !done.length}}">
+    <image class="empty-img" src="/images/ui/empty_pencil.png" mode="widthFix"></image>
+    <text class="empty-t">空空如也</text>
+    <text class="empty-s">{{scopeText ? '「' + scopeText + '」暂无定存，点击右上角「＋」记录一笔' : '点击右上角「＋」记录一笔定期存款'}}</text>
+  </view>
+</view>

@@ -1,0 +1,63 @@
+/* packages/excel/pages/excel/excel.wxss */
+.page { min-height: 100vh; padding-bottom: 60rpx; }
+.block { margin: 24rpx; padding: 30rpx; }
+.imp { margin-top: 16rpx; }
+.center { text-align: center; }
+.h { display: block; font-size: 31rpx; font-weight: 700; color: #1F2A26; margin-bottom: 8rpx; }
+.p { display: block; margin-top: 12rpx; font-size: 26rpx; color: #5A6570; line-height: 1.7; }
+
+.sec { display: block; margin: 40rpx 36rpx 4rpx; font-size: 26rpx; color: #8C939B; }
+.e-card { margin: 16rpx 24rpx; padding: 0 30rpx; }
+.e-row { display: flex; align-items: center; padding: 30rpx 0; }
+.e-line { border-bottom: 1rpx solid #F0F1F3; }
+.e-hover { background: #F7F8F9; }
+.e-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.e-t { font-size: 32rpx; color: #1A1A1A; }
+.e-s { margin-top: 8rpx; font-size: 25rpx; color: #8C939B; }
+.chev {
+  width: 14rpx; height: 14rpx;
+  margin: 0 8rpx 0 16rpx;
+  border-top: 3rpx solid #B3B9BF;
+  border-right: 3rpx solid #B3B9BF;
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+.btn-row { display: flex; margin-top: 28rpx; }
+.btn-row .btn { flex: 1; margin-top: 0; }
+.btn-row .btn + .btn { margin-left: 24rpx; }
+.btn {
+  margin-top: 28rpx;
+  height: 84rpx;
+  line-height: 84rpx;
+  padding: 0;
+  border-radius: 42rpx;
+  background: #45A888;
+  color: #FFFFFF;
+  font-size: 29rpx;
+  font-weight: 600;
+}
+.btn::after { border: none; }
+.btn-ghost { background: #E9EAEC; color: #1A1A1A; }
+.foot { margin: 24rpx; }
+
+.sum { display: flex; margin-top: 20rpx; }
+.sum-it { flex: 1; display: flex; flex-direction: column; align-items: center; }
+.sum-n { font-size: 40rpx; font-weight: 700; color: #2E9C7C; }
+.sum-k { margin-top: 4rpx; font-size: 22rpx; color: #8A9097; }
+.note { display: block; margin-top: 12rpx; font-size: 24rpx; color: #7A838C; line-height: 1.6; }
+
+.list { padding: 8rpx 30rpx; }
+.row { display: flex; align-items: center; padding: 20rpx 0; border-bottom: 1rpx solid #F0F1F2; }
+.row:last-child { border-bottom: none; }
+.r-date { width: 92rpx; font-size: 24rpx; color: #9AA3AD; }
+.r-mid { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.r-name { font-size: 28rpx; color: #1F2A26; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.r-cat { margin-top: 4rpx; font-size: 22rpx; color: #8A9097; }
+.r-cat.weak { color: #E8923A; }
+.r-right { margin-left: 16rpx; max-width: 40%; display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
+.r-acc { margin-top: 4rpx; max-width: 100%; font-size: 22rpx; color: #8A9097; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.r-amt { font-size: 28rpx; font-weight: 600; color: #1F2A26; }
+.amt-red { color: #F25350; }
+.amt-green { color: #2E9C7C; }
+.more { display: block; padding: 20rpx 0; text-align: center; font-size: 24rpx; color: #9AA3AD; }

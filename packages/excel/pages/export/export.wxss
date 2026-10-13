@@ -1,0 +1,70 @@
+/* packages/excel/pages/export/export.wxss */
+.page { min-height: 100vh; padding: 24rpx 24rpx 0; }
+
+/* 概览卡 */
+.sum { padding: 36rpx 40rpx 40rpx; }
+.sum-title { display: block; font-size: 40rpx; font-weight: 700; color: #1A1A1A; }
+.sum-line { height: 1rpx; margin: 32rpx 0 28rpx; background: #EEF0F2; }
+.sum-row { display: flex; }
+.sum-col { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.sum-k { font-size: 26rpx; color: #8C939B; }
+.sum-n-row { margin-top: 10rpx; display: flex; align-items: baseline; }
+.sum-n { font-size: 64rpx; font-weight: 700; color: #1A1A1A; line-height: 1.2; }
+.sum-zero { color: #B3B9BF; }
+.sum-u { margin-left: 8rpx; font-size: 26rpx; color: #8C939B; }
+.sum-v { margin-top: 24rpx; font-size: 34rpx; font-weight: 700; color: #1A1A1A; }
+
+/* 分组标题 + 白卡 */
+.sec { display: block; margin: 56rpx 0 20rpx 12rpx; font-size: 28rpx; color: #8C939B; }
+.block { padding: 20rpx 28rpx; }
+
+/* 分段选择：选中项白底浮起 */
+.seg { display: flex; align-items: center; height: 80rpx; padding: 6rpx; border-radius: 20rpx; background: #F0F1F3; }
+.seg-item { flex: 1; height: 68rpx; line-height: 68rpx; text-align: center; font-size: 30rpx; color: #8C99A8; border-radius: 16rpx; }
+.seg-item.on { background: #FFFFFF; color: #1A1A1A; box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.12); }
+
+/* 行：左标题 + 右取值 + 箭头 */
+.row { display: flex; align-items: center; min-height: 112rpx; }
+.row.sub { min-height: 96rpx; padding-left: 24rpx; border-top: 1rpx solid #F0F1F2; }
+.r-k { flex: 1; font-size: 34rpx; color: #1A1A1A; }
+.r-v { font-size: 32rpx; color: #8C939B; }
+.r-set { color: #2E7E66; font-weight: 600; }
+.row-top { border-top: 1rpx solid #F0F1F2; margin-top: 8rpx; }
+.chev {
+  width: 14rpx; height: 14rpx;
+  margin: 0 8rpx 0 16rpx;
+  border-top: 3rpx solid #B3B9BF;
+  border-right: 3rpx solid #B3B9BF;
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+.chev-open { transform: rotate(135deg); }
+
+.hint { display: block; margin: 16rpx 12rpx 0; font-size: 26rpx; color: #B3B9BF; line-height: 1.6; }
+.hint-on { color: #6B737B; }
+
+/* 底部操作条 */
+.bar-space { height: 260rpx; }
+.bar {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  padding: 16rpx 24rpx calc(24rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, #F2F3F5 70%, rgba(242, 243, 245, 0));
+}
+.file-name { display: block; margin-bottom: 16rpx; font-size: 26rpx; color: #2E7E66; word-break: break-all; text-align: center; }
+.btn-row { display: flex; }
+.btn-row .btn + .btn { margin-left: 24rpx; }
+.btn-row .btn { flex: 1; }
+.btn {
+  height: 100rpx;
+  line-height: 100rpx;
+  padding: 0;
+  border-radius: 50rpx;
+  background: #45A888;
+  color: #FFFFFF;
+  font-size: 34rpx;
+  font-weight: 600;
+  box-shadow: 0 8rpx 24rpx rgba(69, 168, 136, 0.35);
+}
+.btn::after { border: none; }
+.btn-off { background: #C9CED3; box-shadow: none; }
+.btn-ghost { background: #E9EAEC; color: #1A1A1A; box-shadow: none; }

@@ -1,0 +1,272 @@
+<!-- pages/account-edit/account-edit.wxml -->
+<view class="page">
+
+  <!-- ================================================== 非债务分组：通用表单 -->
+  <block wx:if="{{group!=='debt'}}">
+    <view class="card form">
+      <view class="f-row">
+        <text class="f-label">名称</text>
+        <input class="f-input" placeholder="请输入账户名称" placeholder-class="ph"
+               value="{{name}}" maxlength="30" bindinput="onName"></input>
+      </view>
+      <view class="f-row">
+        <text class="f-label">{{isCredit ? '欠款' : '余额'}}</text>
+        <input class="f-input" type="{{isCredit ? 'text' : 'digit'}}" placeholder="{{isCredit ? '欠款正数，存款负数' : '请输入账户余额'}}"
+               placeholder-class="ph" value="{{initial}}" bindinput="onInitial"></input>
+      </view>
+      <view class="f-row">
+        <text class="f-label">简称</text>
+        <input class="f-input" placeholder="如工资卡、农行，可用于账户快速识别" placeholder-class="ph"
+               value="{{alias}}" maxlength="8" bindinput="onAlias"></input>
+      </view>
+      <view class="f-row">
+        <text class="f-label">备注</text>
+        <input class="f-input" placeholder="请输入备注" placeholder-class="ph"
+               value="{{remark}}" maxlength="30" bindinput="onRemark"></input>
+      </view>
+      <view class="f-row last">
+        <text class="f-label">卡号</text>
+        <input class="f-input" type="number" placeholder="请输入卡号，可为空" placeholder-class="ph"
+               value="{{cardNo}}" maxlength="30" bindinput="onCardNo"></input>
+      </view>
+      <view class="f-note">卡号仅用作个人备忘，不涉及任何金融交易，可不填写</view>
+    </view>
+
+    <!-- 信贷账户：额度 / 出账日 / 还款日 / 年费 -->
+    <view class="card form" wx:if="{{isCredit}}">
+      <view class="f-row">
+        <text class="f-label f-wide">总额度</text>
+        <text class="f-value f-dark" wx:if="{{shareWith}}">{{shareLimit || '0.00'}}</text>
+        <input wx:else class="f-input f-right" type="digit" placeholder="0.00" placeholder-class="ph"
+               value="{{limit}}" bindinput="onLimit"></input>
+      </view>
+      <view class="f-row" bindtap="openShare">
+        <text class="f-label f-wide">额度共享</text>
+        <text class="f-value">{{shareWith ? '与' + shareName + '共享' : '不共享'}}</text>
+        <view class="chev"></view>
+      </view>
+      <picker class="f-pick" mode="selector" range="{{dayRange}}" value="{{billDay}}" data-key="billDay" bindchange="pickDay">
+        <view class="f-row">
+          <text class="f-label f-wide">出账日期</text>
+          <text class="f-value">{{billDay ? '每月' + billDay + '日' : '出账日期，选填'}}</text>
+          <view class="chev"></view>
+        </view>
+      </picker>
+      <picker class="f-pick" mode="selector" range="{{dayRange}}" value="{{repayDay}}" data-key="repayDay" bindchange="pickDay">
+        <view class="f-row">
+          <text class="f-label f-wide">还款日期</text>
+          <text class="f-value">{{repayDay ? '每月' + repayDay + '日' : '还款日期，选填'}}</text>
+          <view class="chev"></view>
+        </view>
+      </picker>
+      <view class="f-row">
+        <text class="f-label f-wide">出账日消费计入下一期</text>
+        <switch class="f-switch" checked="{{nextPeriod}}" color="#45A888" bindchange="onNextPeriod"></switch>
+      </view>
+      <view class="f-row last" bindtap="openFee">
+        <text class="f-label f-wide">年费设置</text>
+        <text class="f-value">{{feeText || '无'}}</text>
+        <view class="chev"></view>
+      </view>
+    </view>
+
+    <view class="card form">
+      <view class="f-row" bindtap="openIcons">
+        <text class="f-label">账户图标</text>
+        <image class="f-icon" src="{{icon}}" mode="aspectFit"></image>
+        <view class="chev"></view>
+      </view>
+      <view class="f-row" bindtap="pickGroup">
+        <text class="f-label">所属分组</text>
+        <text class="f-value">{{groupLabel}}</text>
+        <view class="chev"></view>
+      </view>
+      <view class="f-row last" bindtap="showCurrencyTip">
+        <text class="f-label">币种</text>
+        <text class="f-value">CNY</text>
+      </view>
+    </view>
+
+    <view class="card form">
+      <view class="f-row last">
+        <text class="f-label f-wide">计入总资产</text>
+        <switch class="f-switch" checked="{{inTotal}}" color="#45A888" bindchange="onInTotal"></switch>
+      </view>
+    </view>
+
+    <view class="tip">提示：账户简称可在智能记账时执行账户匹配，如不设置，则需要输入账户全称。</view>
+    <view class="tip tip-gap" wx:if="{{isCredit}}">欠款填正数，有存款（多还的钱）填负数；欠款计入「总负债」。设置年费后，每年扣费日会自动记一笔支出。</view>
+  </block>
+
+  <!-- ================================================== 债务分组：应付款/借入、应收款/借出 -->
+  <block wx:if="{{group==='debt' && kind!=='reimburse'}}">
+
+    <!-- 基本信息 -->
+    <view class="card form">
+      <view class="f-row">
+        <text class="f-label">姓名</text>
+        <input class="f-input" placeholder="{{namePh}}" placeholder-class="ph"
+               value="{{name}}" maxlength="30" bindinput="onName"></input>
+      </view>
+      <view class="f-row">
+        <text class="f-label">初始金额</text>
+        <input class="f-input" type="digit" placeholder="{{amountPh}}"
+               placeholder-class="ph" value="{{amount}}" bindinput="onAmount"></input>
+      </view>
+      <view class="f-row">
+        <text class="f-label">备注</text>
+        <input class="f-input" placeholder="请输入备注" placeholder-class="ph"
+               value="{{remark}}" maxlength="30" bindinput="onRemark"></input>
+      </view>
+      <view class="f-row {{attachments.length?'':'last'}}" bindtap="addAttachment">
+        <text class="f-label">附件</text>
+        <text class="f-value" wx:if="{{!attachments.length}}">点击添加</text>
+      </view>
+      <view class="att-list" wx:if="{{attachments.length}}">
+        <view class="att-chip" wx:for="{{attachments}}" wx:key="id"
+              catchtap="removeAttach" data-id="{{item.id}}">
+          <image wx:if="{{item.type==='image'}}" class="att-img" src="{{item.path}}" mode="aspectFill"></image>
+          <text class="att-name" wx:else>{{item.name}}</text>
+          <view class="att-x">×</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 初始那一笔账单：日期 / 资金账户 / 生成账单只在新增账户时出现；编辑已有账户时不出现，之后每一笔在记账页记 -->
+    <view class="card form" wx:if="{{!id}}">
+      <picker class="f-pick" mode="date" value="{{occurDate}}" bindchange="pickOccurDate">
+        <view class="f-row">
+          <text class="f-label">{{occurLabel}}</text>
+          <text class="f-value">{{occurDate || occurPh}}</text>
+          <view class="chev"></view>
+        </view>
+      </picker>
+      <picker class="f-pick" mode="date" value="{{dueDate}}" bindchange="pickDueDate">
+        <view class="f-row last">
+          <text class="f-label">还款日期</text>
+          <text class="f-value">{{dueDate || duePh}}</text>
+          <view class="chev"></view>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 资金账户 + 生成账单：两项相互独立 -->
+    <view class="card form" wx:if="{{!id}}">
+      <view class="f-row" bindtap="pickFundAccount">
+        <text class="f-label f-wide">{{fundLabel}}</text>
+        <text class="f-value">{{fundAccountName || '无账户'}}</text>
+        <view class="chev"></view>
+      </view>
+      <view class="f-row last">
+        <view class="f-text">
+          <text class="f-label">{{genBillLabel}}</text>
+          <text class="f-sub">选择生成账单后将计入收支</text>
+        </view>
+        <switch class="f-switch" checked="{{genBill}}" color="#45A888" bindchange="onGenBill"></switch>
+      </view>
+    </view>
+    <view class="f-note f-note-flush" wx:if="{{!id}}">{{fundHint}}</view>
+  </block>
+
+  <!-- ================================================== 债务分组：报销账户 -->
+  <block wx:if="{{group==='debt' && kind==='reimburse'}}">
+    <view class="card form">
+      <view class="f-row">
+        <text class="f-label">名称</text>
+        <input class="f-input" placeholder="请输入报销账户名称" placeholder-class="ph"
+               value="{{name}}" maxlength="30" bindinput="onName"></input>
+      </view>
+      <view class="f-row last">
+        <text class="f-label">备注</text>
+        <input class="f-input" placeholder="请输入备注" placeholder-class="ph"
+               value="{{remark}}" maxlength="30" bindinput="onRemark"></input>
+      </view>
+    </view>
+  </block>
+
+  <!-- ================================================== 债务分组共用：图标/分组、计入总资产 -->
+  <block wx:if="{{group==='debt'}}">
+    <view class="card form">
+      <view class="f-row" bindtap="openIcons">
+        <text class="f-label">账户图标</text>
+        <image class="f-icon" src="{{icon}}" mode="aspectFit"></image>
+        <view class="chev"></view>
+      </view>
+      <view class="f-row last" bindtap="pickDebtKind">
+        <text class="f-label">所属分组</text>
+        <text class="f-value">{{groupDisplay}}</text>
+        <view class="chev"></view>
+      </view>
+    </view>
+
+    <view class="card form">
+      <view class="f-row last">
+        <text class="f-label f-wide">计入总资产</text>
+        <switch class="f-switch" checked="{{inTotal}}" color="#45A888" bindchange="onInTotal"></switch>
+      </view>
+    </view>
+  </block>
+
+  <!-- 给底部固定的保存栏让出位置 -->
+  <view class="bar-space"></view>
+
+  <!-- 保存：固定在屏幕底部，避开右上角微信胶囊按钮 -->
+  <view class="save-bar">
+    <view class="save-btn" hover-class="save-btn-hover" bindtap="save">保存</view>
+  </view>
+
+  <!-- 额度共享：选一个信贷账户共用它的总额度 -->
+  <view class="mask" wx:if="{{shareSheet}}" bindtap="closeShare" catchtouchmove="noop">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-title">额度共享</view>
+      <view class="sh-row" data-id="" bindtap="pickShare">
+        <text class="sh-name">不共享</text>
+        <text class="sh-on" wx:if="{{!shareWith}}">✓</text>
+      </view>
+      <view class="sh-row" wx:for="{{shareList}}" wx:key="id" data-id="{{item.id}}" bindtap="pickShare">
+        <image class="sh-ico" src="{{item.icon}}" mode="aspectFit"></image>
+        <text class="sh-name">{{item.name}}</text>
+        <text class="sh-sub" wx:if="{{item.limit}}">额度 {{item.limit}}</text>
+        <text class="sh-on" wx:if="{{shareWith===item.id}}">✓</text>
+      </view>
+      <view class="sh-empty" wx:if="{{!shareList.length}}">还没有可共享的其他信贷账户</view>
+    </view>
+  </view>
+
+  <!-- 年费设置 -->
+  <view class="mask" wx:if="{{feeSheet}}" bindtap="closeFee" catchtouchmove="noop">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-title">年费设置</view>
+      <view class="f-row sh-form">
+        <text class="f-label">年费金额</text>
+        <input class="f-input f-right" type="digit" placeholder="0.00" placeholder-class="ph"
+               value="{{feeAmountInput}}" bindinput="onFeeAmount"></input>
+      </view>
+      <picker class="f-pick" mode="date" value="{{feeDateInput || today}}" start="{{today}}" bindchange="pickFeeDate">
+        <view class="f-row sh-form">
+          <text class="f-label">扣费日期</text>
+          <text class="f-value">{{feeDateInput || '首次扣费日，之后每年同一天'}}</text>
+          <view class="chev"></view>
+        </view>
+      </picker>
+      <view class="sh-btns">
+        <view class="sh-btn sh-btn-gray" bindtap="clearFee">无年费</view>
+        <view class="sh-btn" bindtap="confirmFee">确定</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 账户图标选择 -->
+  <view class="mask" wx:if="{{iconSheet}}" bindtap="closeIcons" catchtouchmove="noop">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-title">选择账户图标</view>
+      <view class="icon-grid">
+        <view class="ig-item {{icon===item?'ig-on':''}}" wx:for="{{icons}}" wx:key="*this"
+              data-src="{{item}}" bindtap="pickIcon">
+          <image class="ig-img" src="{{item}}" mode="aspectFit"></image>
+        </view>
+      </view>
+    </view>
+  </view>
+
+</view>

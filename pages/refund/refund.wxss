@@ -1,0 +1,168 @@
+/* pages/refund/refund.wxss */
+.page { min-height: 100vh; background: #F2F3F5; padding-bottom: 170rpx; box-sizing: border-box; }
+
+/* ---------------- 顶部导航 */
+.hd {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  background: #FFFFFF;
+  box-shadow: 0 1rpx 0 rgba(0, 0, 0, 0.04);
+}
+.hd-inner {
+  position: relative;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+}
+.hd-back {
+  position: absolute;
+  left: 24rpx;
+  width: 52rpx; height: 52rpx;
+}
+.hd-title {
+  flex: 1;
+  text-align: center;
+  font-size: 35rpx;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+/* ---------------- 表单卡片 */
+.form {
+  margin: 24rpx 24rpx 0;
+  padding: 0 28rpx;
+  border-radius: 24rpx;
+  background: #FFFFFF;
+  box-shadow: 0 4rpx 16rpx rgba(30, 50, 45, 0.05);
+}
+.form + .form { margin-top: 24rpx; }
+.f-row {
+  display: flex;
+  align-items: center;
+  min-height: 104rpx;
+}
+.f-label {
+  width: 150rpx;
+  flex-shrink: 0;
+  font-size: 30rpx;
+  color: #1A1A1A;
+}
+.f-input {
+  flex: 1;
+  font-size: 30rpx;
+  text-align: right;
+  color: #1A1A1A;
+}
+.f-line { height: 1rpx; background: #F0F1F3; }
+.f-left { display: flex; flex-direction: column; justify-content: center; }
+.f-sub { font-size: 23rpx; color: #A8AEB5; margin-top: 6rpx; }
+.f-val { margin-left: auto; font-size: 29rpx; color: #7A828A; }
+.f-chev { width: 36rpx; height: 36rpx; margin-left: 12rpx; }
+
+/* ---------------- 账户选择弹层 */
+.as-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 60;
+  background: rgba(0, 0, 0, 0.35);
+}
+.as-sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 70;
+  max-height: 75vh;
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  border-radius: 28rpx 28rpx 0 0;
+  padding: 26rpx 24rpx calc(36rpx + env(safe-area-inset-bottom));
+}
+.as-head { padding: 0 10rpx 14rpx; }
+.as-title { font-size: 31rpx; font-weight: 700; color: #1F2A26; }
+.as-list { margin: 0 -6rpx; }
+.as-row {
+  display: flex;
+  align-items: center;
+  padding: 22rpx 16rpx;
+  border-radius: 16rpx;
+}
+.as-ico { width: 48rpx; height: 48rpx; margin-right: 18rpx; }
+.as-name { font-size: 28rpx; color: #2A333C; }
+.as-bal { margin-left: auto; font-size: 27rpx; color: #9AA0A6; }
+.as-row.ar-on { background: #E9F5F0; }
+.as-row.ar-on .as-name { color: #3E9E80; font-weight: 600; }
+
+/* ---------------- 修改提示条 */
+.edit-tip {
+  margin: 24rpx 24rpx 0;
+  padding: 14rpx 24rpx;
+  border-radius: 16rpx;
+  background: #FFF6E5;
+  font-size: 26rpx;
+  color: #B07D2E;
+  display: flex;
+  align-items: center;
+}
+.et-cancel { margin-left: auto; color: #3E9E80; }
+
+/* ---------------- 退款记录列表（补齐卡片样式，与 .form 统一） */
+.rlist {
+  margin: 24rpx 24rpx 0;
+  padding: 0 28rpx;
+  border-radius: 24rpx;
+  background: #FFFFFF;
+  box-shadow: 0 4rpx 16rpx rgba(30, 50, 45, 0.05);
+}
+.rl-head {
+  padding: 24rpx 0 12rpx;
+  font-size: 25rpx;
+  color: #8C99A8;
+}
+.rl-row {
+  display: flex;
+  align-items: center;
+  padding: 22rpx 0;
+  border-top: 1rpx solid #F0F1F3;
+}
+.rl-left { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.rl-amount { font-size: 30rpx; font-weight: 600; color: #3E9E80; }
+.rl-sub {
+  margin-top: 6rpx;
+  font-size: 23rpx;
+  color: #9AA0A6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rl-del {
+  flex-shrink: 0;
+  margin-left: 20rpx;
+  font-size: 25rpx;
+  color: #F25350;
+  padding: 8rpx 18rpx;
+  border: 1rpx solid #F3C2C1;
+  border-radius: 24rpx;
+}
+
+/* ---------------- 底部确认栏 */
+.bottom-bar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 50;
+  background: #FFFFFF;
+  padding: 16rpx 24rpx calc(20rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+}
+.confirm-btn {
+  height: 92rpx;
+  border-radius: 46rpx;
+  background: linear-gradient(135deg, #51B090 0%, #3E9E80 100%);
+  color: #FFFFFF;
+  font-size: 31rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rl-tag { margin-left: 12rpx; padding: 2rpx 12rpx; font-size: 21rpx; font-weight: 400; color: #2E9C7C; background: #E9F5F0; border-radius: 8rpx; vertical-align: middle; }

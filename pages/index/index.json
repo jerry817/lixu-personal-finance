@@ -1,0 +1,6 @@
+{
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "fab": "/components/fab/fab"
+  }
+}

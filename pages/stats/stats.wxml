@@ -1,0 +1,725 @@
+<!-- pages/stats/stats.wxml -->
+<view class="page">
+
+  <!-- 顶部 tab -->
+  <view class="top-tabs">
+    <view class="tt {{tab==='daily'?'on':''}}" data-tab="daily" bindtap="switchTab">日常</view>
+    <view class="tt {{tab==='month'?'on':''}}" data-tab="month" bindtap="switchTab">月统计</view>
+    <view class="tt {{tab==='year'?'on':''}}" data-tab="year" bindtap="switchTab">年统计</view>
+    <view class="tt {{tab==='custom'?'on':''}}" data-tab="custom" bindtap="switchTab">自定义</view>
+  </view>
+
+  <!-- ============================================================== 日常 -->
+  <block wx:if="{{tab==='daily'}}">
+
+    <!-- 近7日统计 -->
+    <view class="card sec">
+      <view class="sec-head">
+        <text class="sec-title">近7日统计</text>
+        <view class="mini-seg">
+          <view class="ms-item {{weekType==='expense'?'on':''}}" data-t="expense" bindtap="toggleWeekType">支出</view>
+          <view class="ms-item {{weekType==='income'?'on':''}}" data-t="income" bindtap="toggleWeekType">收入</view>
+          <view class="ms-item {{weekType==='balance'?'on':''}}" data-t="balance" bindtap="toggleWeekType">结余</view>
+        </view>
+      </view>
+
+      <view class="bars7">
+        <view class="b7-col" wx:for="{{week.days}}" wx:key="label">
+          <view class="b7-track">
+            <view class="b7-zero" wx:if="{{weekType==='balance'}}"></view>
+            <view class="b7-box {{item.down?'b7-down':''}}" style="{{item.box}}">
+              <text class="b7-val">{{item.valueText}}</text>
+              <view class="b7-bar {{item.barCls}}"></view>
+            </view>
+          </view>
+          <text class="b7-lab">{{item.label}}</text>
+        </view>
+      </view>
+
+      <view class="kv-grid">
+        <view class="kv"><text class="kv-label">总支出</text><text class="kv-val">{{week.totalExpense}}</text></view>
+        <view class="kv"><text class="kv-label">日均支出</text><text class="kv-val">{{week.avgExpense}}</text></view>
+        <view class="kv"><text class="kv-label">总收入</text><text class="kv-val">{{week.totalIncome}}</text></view>
+        <view class="kv"><text class="kv-label">日均收入</text><text class="kv-val">{{week.avgIncome}}</text></view>
+      </view>
+    </view>
+
+    <!-- 资产汇总 -->
+    <view class="card sec">
+      <view class="sec-head">
+        <text class="sec-title">资产汇总</text>
+        <view class="dropdown">
+          <view class="dd-head" bindtap="openAssetMenu">
+            <text>{{assetModeText}}</text>
+            <view class="dd-arrow {{assetMenu?'up':''}}"></view>
+          </view>
+          <view class="dd-menu" wx:if="{{assetMenu}}">
+            <view class="dd-item {{assetMode==='assets'?'sel':''}}" data-m="assets" bindtap="pickAssetMode">总资产</view>
+            <view class="dd-item {{assetMode==='net'?'sel':''}}" data-m="net" bindtap="pickAssetMode">净资产</view>
+            <view class="dd-item {{assetMode==='liability'?'sel':''}}" data-m="liability" bindtap="pickAssetMode">总负债</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="ring-wrap">
+        <view class="ring" style="background:{{assetRing.bg}}">
+          <view class="ring-inner">
+            <text class="ri-label">资产金额</text>
+            <text class="ri-money">{{assetCenter}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="legend" wx:if="{{!assetRing.empty}}">
+        <view class="lg-row" wx:for="{{assetRing.segments}}" wx:key="label">
+          <view class="lg-dot" style="background:{{item.color}}"></view>
+          <text class="lg-label">{{item.label}}</text>
+          <text class="lg-pct">{{item.percentText}}%</text>
+          <text class="lg-val">{{item.valueText}}</text>
+        </view>
+      </view>
+      <view class="ring-empty" wx:else>暂无资产数据</view>
+      <text class="debt-note" wx:if="{{assetDebtText}}">{{assetDebtText}}</text>
+
+      <view class="check-row" bindtap="toggleAssetFilter">
+        <view class="checkbox {{assetFilter?'checked':''}}"><text class="cb-tick" wx:if="{{assetFilter}}">✓</text></view>
+        <text>过滤占比小于 1% 的资产</text>
+      </view>
+    </view>
+
+    <!-- 标签数据 -->
+    <view class="card sec">
+      <view class="sec-head">
+        <text class="sec-title">标签数据（近一月）</text>
+        <text class="head-link" bindtap="goTags">查看全部</text>
+      </view>
+      <view class="tag-rows" wx:if="{{tagMonth.list.length}}">
+        <view class="tag-row" wx:for="{{tagMonth.list}}" wx:key="tag">
+          <view class="tag-chip">{{item.tag}}</view>
+          <text class="tag-count">{{item.count}}笔</text>
+          <text class="tag-e d-red" wx:if="{{item.eText!=='0.00'}}">{{item.eText}}</text>
+          <text class="tag-i d-green" wx:if="{{item.iText!=='0.00'}}">{{item.iText}}</text>
+        </view>
+      </view>
+      <view class="mini-empty" wx:else>近一月暂无标签记录</view>
+    </view>
+  </block>
+
+  <!-- ============================================================== 月统计 -->
+  <block wx:if="{{tab==='month'}}">
+
+    <!-- 月份横滑 -->
+    <scroll-view scroll-x="true" enhanced show-scrollbar="{{false}}" class="h-tabs">
+      <picker class="ht-picker" mode="date" fields="month" bindchange="pickMonthYear">
+        <view class="ht ht-year">{{monthYear}}</view>
+      </picker>
+      <view class="ht {{item.ym===ym?'on':''}}" wx:for="{{monthTabs}}" wx:key="ym"
+            data-ym="{{item.ym}}" bindtap="pickMonthTab">{{item.text}}</view>
+    </scroll-view>
+
+    <!-- 月汇总卡：首行常显，箭头呼出 / 折叠其余数据 -->
+    <template is="summary-card" data="{{top: mCard.top, more: mCard.more, fold: sumFold}}"/>
+
+      <!-- 收支统计 -->
+      <view class="card sec">
+        <view class="sec-head">
+          <text class="sec-title">收支统计</text>
+          <view class="mini-seg">
+            <view class="ms-item {{monthBarType==='expense'?'on':''}}" data-t="expense" bindtap="toggleMonthBarType">支出</view>
+            <view class="ms-item {{monthBarType==='income'?'on':''}}" data-t="income" bindtap="toggleMonthBarType">收入</view>
+            <view class="ms-item {{monthBarType==='balance'?'on':''}}" data-t="balance" bindtap="toggleMonthBarType">结余</view>
+          </view>
+        </view>
+        <view class="bars-m">
+          <view class="bm-yaxis">
+            <text class="bmy-t" wx:for="{{monthYAxis}}" wx:key="k">{{item.t}}</text>
+          </view>
+          <view class="bm-area">
+            <view class="bm-col" wx:for="{{monthBars}}" wx:key="day">
+              <view class="bm-track {{monthBarType==='balance'?'track-bal':''}}">
+                <view class="bm-bar {{item.cls}}" wx:if="{{item.box}}" style="{{item.box}}"></view>
+              </view>
+              <text class="bm-lab">{{item.lab}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 资产走势 -->
+      <view class="card sec">
+        <view class="sec-head">
+          <text class="sec-title">资产走势</text>
+        </view>
+        <template is="trend-chart" data="{{d: mTrend}}"/>
+      </view>
+
+      <!-- 收支对比 -->
+      <view class="card sec">
+        <view class="sec-head">
+          <text class="sec-title">收支对比</text>
+          <view class="mini-seg seg-green">
+            <view class="ms-item {{mScope==='major'?'on':''}}" data-s="major" bindtap="toggleMScope">大类</view>
+            <view class="ms-item {{mScope==='all'?'on':''}}" data-s="all" bindtap="toggleMScope">全部</view>
+          </view>
+        </view>
+        <canvas type="2d" id="monthSankey" class="cv cv-sankey" style="height:{{mSankeyH}}px"></canvas>
+        <view class="check-row" bindtap="toggleMSankeyFilter">
+          <view class="checkbox {{mSankeyFilter?'checked':''}}"><text class="cb-tick" wx:if="{{mSankeyFilter}}">✓</text></view>
+          <text>过滤占比小于 1%</text>
+        </view>
+      </view>
+
+      <!-- 支出/收入占比 -->
+      <view class="card sec">
+        <view class="sec-head">
+          <text class="sec-title">{{mRingType==='expense'?'支出':'收入'}}占比</text>
+          <view class="mini-seg seg-green">
+            <view class="ms-item {{mScope==='major'?'on':''}}" data-s="major" bindtap="toggleMScope">大类</view>
+            <view class="ms-item {{mScope==='all'?'on':''}}" data-s="all" bindtap="toggleMScope">全部</view>
+          </view>
+        </view>
+        <view class="ring-wrap">
+          <view class="ring" style="background:{{mRing.bg}}">
+            <view class="ring-inner ring-btn" bindtap="toggleMRing">
+              <text class="ri-icon">⇌</text>
+              <text class="ri-text">{{mRingType==='expense'?'切换到收入':'切换到支出'}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="legend" wx:if="{{!mRing.empty}}">
+          <view class="lg-row" wx:for="{{mRing.segments}}" wx:key="label">
+            <view class="lg-dot" style="background:{{item.color}}"></view>
+            <text class="lg-label">{{item.label}}</text>
+            <text class="lg-pct">{{item.percentText}}%</text>
+            <text class="lg-val" wx:if="{{mShowAmt}}">{{item.valueText}}</text>
+          </view>
+        </view>
+        <view class="ring-empty" wx:else>本月暂无{{mRingType==='expense'?'支出':'收入'}}记录</view>
+        <view class="check-row" bindtap="toggleMShowAmt">
+          <view class="checkbox {{mShowAmt?'checked':''}}"><text class="cb-tick" wx:if="{{mShowAmt}}">✓</text></view>
+          <text>显示金额</text>
+        </view>
+      </view>
+
+      <!-- 支出/收入数据 -->
+      <view class="card sec">
+        <view class="sec-head">
+          <text class="sec-title">{{mRingType==='expense'?'支出':'收入'}}数据</text>
+          <view class="head-right">
+            <text class="head-link" bindtap="goSearch">当月账单</text>
+            <view class="list-ic {{mScope==='all'?'ic-on':''}}" data-s="{{mScope==='all'?'major':'all'}}" bindtap="toggleMScope">
+              <view class="li-line"></view>
+              <view class="li-line"></view>
+              <view class="li-line short"></view>
+            </view>
+          </view>
+        </view>
+
+        <view class="data-list" wx:if="{{mList.length}}">
+          <view class="di" wx:for="{{mList}}" wx:key="key">
+            <image class="di-icon" src="{{item.icon}}"></image>
+            <view class="di-mid">
+              <view class="di-l1">
+                <text class="di-label">{{item.label}}</text>
+                <text class="di-meta">{{item.count}}笔 {{item.percentText}}%</text>
+              </view>
+              <view class="di-bar">
+                <view class="di-bar-in" style="width:{{item.bar}}%"></view>
+              </view>
+              <view class="di-cmp">
+                <text class="cmp-t {{item.cmpMo.cls}}" wx:if="{{item.cmpMo}}">{{item.cmpMoLabel}}: {{item.cmpMo.text}}</text>
+                <text class="cmp-t {{item.cmpYr.cls}}" wx:if="{{item.cmpYr}}">{{item.cmpYrLabel}}: {{item.cmpYr.text}}</text>
+              </view>
+            </view>
+            <text class="di-amt {{item.amtCls}}">{{item.totalText}}</text>
+          </view>
+        </view>
+        <view class="mini-empty" wx:else>本月暂无{{mRingType==='expense'?'支出':'收入'}}记录</view>
+      </view>
+
+      <!-- 报表统计 -->
+      <view class="card sec">
+        <view class="sec-head"><text class="sec-title">报表统计</text></view>
+        <view class="tbl" wx:if="{{mReport.length}}">
+          <view class="tr tr-head">
+            <text class="td">日期</text><text class="td">支出</text><text class="td">收入</text><text class="td">结余</text>
+          </view>
+          <scroll-view scroll-y="true" class="tbl-body">
+            <view class="tr" wx:for="{{mReport}}" wx:key="date">
+              <text class="td">{{item.date}}</text>
+              <text class="td {{item.eOn?'d-red':''}}">{{item.e}}</text>
+              <text class="td {{item.iOn?'d-green':''}}">{{item.i}}</text>
+              <text class="td">{{item.bal}}</text>
+            </view>
+          </scroll-view>
+        </view>
+        <view class="mini-empty" wx:else>本月暂无记录</view>
+      </view>
+
+      <!-- 账户收支 -->
+      <view class="card sec">
+        <view class="sec-head">
+          <text class="sec-title">账户收支</text>
+          <view class="mini-seg seg-green">
+            <view class="ms-item {{mAccType==='expense'?'on':''}}" data-t="expense" bindtap="toggleMAccType">支出</view>
+            <view class="ms-item {{mAccType==='income'?'on':''}}" data-t="income" bindtap="toggleMAccType">收入</view>
+          </view>
+        </view>
+        <view class="ring-wrap">
+          <view class="ring" style="background:{{mAccRing.bg}}">
+            <view class="ring-inner">
+              <text class="ri-label">{{mAccType==='expense'?'总支出':'总收入'}}</text>
+              <text class="ri-money">{{mAccRing.totalText}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="legend" wx:if="{{!mAccRing.empty}}">
+          <view class="lg-row" wx:for="{{mAccRing.segments}}" wx:key="label">
+            <view class="lg-dot" style="background:{{item.color}}"></view>
+            <text class="lg-label">{{item.label}}</text>
+            <text class="lg-pct">{{item.percentText}}%</text>
+            <text class="lg-val" wx:if="{{mAccShowAmt}}">{{item.valueText}}</text>
+          </view>
+        </view>
+        <view class="ring-empty" wx:else>本月暂无账户{{mAccType==='expense'?'支出':'收入'}}记录</view>
+        <view class="check-row" bindtap="toggleMAccShowAmt">
+          <view class="checkbox {{mAccShowAmt?'checked':''}}"><text class="cb-tick" wx:if="{{mAccShowAmt}}">✓</text></view>
+          <text>显示金额</text>
+        </view>
+      </view>
+  </block>
+
+  <!-- ============================================================== 年统计 -->
+  <block wx:if="{{tab==='year'}}">
+
+    <!-- 年份横滑 -->
+    <scroll-view scroll-x="true" enhanced show-scrollbar="{{false}}" class="h-tabs">
+      <view class="ht {{item.year===year?'on':''}}" wx:for="{{yearTabs}}" wx:key="year"
+            data-year="{{item.year}}" bindtap="pickYearTab">{{item.text}}</view>
+    </scroll-view>
+
+    <!-- 年汇总卡：首行常显，箭头呼出 / 折叠其余数据 -->
+    <template is="summary-card" data="{{top: yCard.top, more: yCard.more, fold: sumFold}}"/>
+
+      <!-- 收支统计 -->
+      <view class="card sec">
+        <view class="sec-head">
+          <text class="sec-title">收支统计</text>
+          <view class="mini-seg">
+            <view class="ms-item {{yearBarType==='expense'?'on':''}}" data-t="expense" bindtap="toggleYearBarType">支出</view>
+            <view class="ms-item {{yearBarType==='income'?'on':''}}" data-t="income" bindtap="toggleYearBarType">收入</view>
+            <view class="ms-item {{yearBarType==='balance'?'on':''}}" data-t="balance" bindtap="toggleYearBarType">结余</view>
+          </view>
+        </view>
+        <view class="bars-y">
+          <view class="by-col" wx:for="{{yearBars}}" wx:key="m">
+            <!-- 固定高度的占位槽：保持所有列结构一致，柱底/x 轴/月份标签逐列对齐 -->
+            <view class="by-slot"></view>
+            <view class="by-track {{yearBarType==='balance'?'track-bal':''}}">
+              <!-- 柱顶金额：随柱子高度浮动（支出/收入） -->
+              <view class="by-val" wx:if="{{item.h && yearBarType!=='balance'}}"
+                    style="bottom:calc({{item.h}}% + 8rpx)">{{item.valText}}</view>
+              <!-- 柱顶金额：结余向上 -->
+              <view class="by-val" wx:if="{{item.h && yearBarType==='balance' && item.up}}"
+                    style="bottom:calc(50% + {{item.h}}% + 8rpx)">{{item.valText}}</view>
+              <!-- 柱底金额：结余向下 -->
+              <view class="by-val by-val-down" wx:if="{{item.h && yearBarType==='balance' && !item.up}}"
+                    style="top:calc(50% + {{item.h}}% + 8rpx)">{{item.valText}}</view>
+              <!-- 支出/收入：absolute + bottom:0 锚定 x 轴，margin auto 居中，宽度固定 26rpx -->
+              <view class="by-bar {{yearBarType==='expense'?'bar-red':'bar-green'}}"
+                    wx:if="{{item.h && yearBarType!=='balance'}}" style="height:{{item.h}}%"></view>
+              <!-- 结余：相对 0 轴双向，absolute -->
+              <view class="by-bar {{item.up?'bar-up bar-green':'bar-down bar-red'}}"
+                    wx:if="{{item.h && yearBarType==='balance'}}" style="height:{{item.h}}%"></view>
+            </view>
+            <view class="by-slot" wx:if="{{yearBarType==='balance'}}"></view>
+            <text class="by-lab">{{index+1}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 收支热力 -->
+      <view class="card sec">
+        <view class="sec-head">
+          <text class="sec-title">收支热力</text>
+          <view class="mini-seg">
+            <view class="ms-item {{heatType==='expense'?'on':''}}" data-t="expense" bindtap="toggleHeatType">支出</view>
+            <view class="ms-item {{heatType==='income'?'on':''}}" data-t="income" bindtap="toggleHeatType">收入</view>
+            <view class="ms-item {{heatType==='balance'?'on':''}}" data-t="balance" bindtap="toggleHeatType">结余</view>
+          </view>
+        </view>
+        <view class="heat-grid">
+          <view class="heat-m" wx:for="{{heat}}" wx:key="label">
+            <text class="hm-label {{item.current?'hm-cur':''}}">{{item.label}}</text>
+            <view class="hm-dots">
+              <view class="hm-cell" wx:for="{{item.cells}}" wx:for-item="c" wx:key="key">
+                <view class="hm-dot" wx:if="{{c.dot}}" style="{{c.style}}"></view>
+                <view class="hm-dot hm-zero" wx:if="{{c.zero}}"></view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 资产走势 -->
+      <view class="card sec">
+        <view class="sec-head"><text class="sec-title">资产走势</text></view>
+        <template is="trend-chart" data="{{d: yTrend}}"/>
+      </view>
+
+      <!-- 收支对比 -->
+      <view class="card sec">
+        <view class="sec-head">
+          <text class="sec-title">收支对比</text>
+          <view class="mini-seg seg-green">
+            <view class="ms-item {{yScope==='major'?'on':''}}" data-s="major" bindtap="toggleYScope">大类</view>
+            <view class="ms-item {{yScope==='all'?'on':''}}" data-s="all" bindtap="toggleYScope">全部</view>
+          </view>
+        </view>
+        <canvas type="2d" id="yearSankey" class="cv cv-sankey" style="height:{{ySankeyH}}px"></canvas>
+        <view class="check-row" bindtap="toggleYSankeyFilter">
+          <view class="checkbox {{ySankeyFilter?'checked':''}}"><text class="cb-tick" wx:if="{{ySankeyFilter}}">✓</text></view>
+          <text>过滤占比小于 1%</text>
+        </view>
+      </view>
+
+      <!-- 支出/收入占比 -->
+      <view class="card sec">
+        <view class="sec-head">
+          <text class="sec-title">{{yRingType==='expense'?'支出':'收入'}}占比</text>
+          <view class="mini-seg seg-green">
+            <view class="ms-item {{yScope==='major'?'on':''}}" data-s="major" bindtap="toggleYScope">大类</view>
+            <view class="ms-item {{yScope==='all'?'on':''}}" data-s="all" bindtap="toggleYScope">全部</view>
+          </view>
+        </view>
+        <view class="ring-wrap">
+          <view class="ring" style="background:{{yRing.bg}}">
+            <view class="ring-inner ring-btn" bindtap="toggleYRing">
+              <text class="ri-icon">⇌</text>
+              <text class="ri-text">{{yRingType==='expense'?'切换到收入':'切换到支出'}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="legend" wx:if="{{!yRing.empty}}">
+          <view class="lg-row" wx:for="{{yRing.segments}}" wx:key="label">
+            <view class="lg-dot" style="background:{{item.color}}"></view>
+            <text class="lg-label">{{item.label}}</text>
+            <text class="lg-pct">{{item.percentText}}%</text>
+            <text class="lg-val" wx:if="{{yShowAmt}}">{{item.valueText}}</text>
+          </view>
+        </view>
+        <view class="ring-empty" wx:else>本年暂无{{yRingType==='expense'?'支出':'收入'}}记录</view>
+        <view class="check-row" bindtap="toggleYShowAmt">
+          <view class="checkbox {{yShowAmt?'checked':''}}"><text class="cb-tick" wx:if="{{yShowAmt}}">✓</text></view>
+          <text>显示金额</text>
+        </view>
+      </view>
+
+      <!-- 支出/收入数据 -->
+      <view class="card sec">
+        <view class="sec-head">
+          <text class="sec-title">{{yRingType==='expense'?'支出':'收入'}}数据</text>
+          <view class="list-ic {{yScope==='all'?'ic-on':''}}" data-s="{{yScope==='all'?'major':'all'}}" bindtap="toggleYScope">
+            <view class="li-line"></view>
+            <view class="li-line"></view>
+            <view class="li-line short"></view>
+          </view>
+        </view>
+        <view class="data-list" wx:if="{{yList.length}}">
+          <view class="di" wx:for="{{yList}}" wx:key="key">
+            <image class="di-icon" src="{{item.icon}}"></image>
+            <view class="di-mid">
+              <view class="di-l1">
+                <text class="di-label">{{item.label}}</text>
+                <text class="di-meta">{{item.count}}笔 {{item.percentText}}%</text>
+              </view>
+              <view class="di-bar">
+                <view class="di-bar-in" style="width:{{item.bar}}%"></view>
+              </view>
+              <view class="di-cmp">
+                <text class="cmp-t {{item.cmpYr.cls}}" wx:if="{{item.cmpYr}}">{{item.cmpYrLabel}}: {{item.cmpYr.text}}</text>
+                <text class="cmp-t {{item.cmpPp.cls}}" wx:if="{{item.cmpPp}}">{{item.cmpPpLabel}}: {{item.cmpPp.text}}</text>
+              </view>
+            </view>
+            <text class="di-amt {{item.amtCls}}">{{item.totalText}}</text>
+          </view>
+        </view>
+        <view class="mini-empty" wx:else>本年暂无{{yRingType==='expense'?'支出':'收入'}}记录</view>
+      </view>
+
+      <!-- 报表统计 -->
+      <view class="card sec">
+        <view class="sec-head"><text class="sec-title">报表统计</text></view>
+        <view class="tbl" wx:if="{{yReport.length}}">
+          <view class="tr tr-head">
+            <text class="td">月份</text><text class="td">支出</text><text class="td">收入</text><text class="td">结余</text>
+          </view>
+          <scroll-view scroll-y="true" class="tbl-body">
+            <view class="tr" wx:for="{{yReport}}" wx:key="date">
+              <text class="td">{{item.date}}</text>
+              <text class="td {{item.eOn?'d-red':''}}">{{item.e}}</text>
+              <text class="td {{item.iOn?'d-green':''}}">{{item.i}}</text>
+              <text class="td">{{item.bal}}</text>
+            </view>
+          </scroll-view>
+        </view>
+        <view class="mini-empty" wx:else>本年暂无记录</view>
+      </view>
+
+      <!-- 账户收支 -->
+      <view class="card sec">
+        <view class="sec-head">
+          <text class="sec-title">账户收支</text>
+          <view class="mini-seg seg-green">
+            <view class="ms-item {{yAccType==='expense'?'on':''}}" data-t="expense" bindtap="toggleYAccType">支出</view>
+            <view class="ms-item {{yAccType==='income'?'on':''}}" data-t="income" bindtap="toggleYAccType">收入</view>
+          </view>
+        </view>
+        <view class="ring-wrap">
+          <view class="ring" style="background:{{yAccRing.bg}}">
+            <view class="ring-inner">
+              <text class="ri-label">{{yAccType==='expense'?'总支出':'总收入'}}</text>
+              <text class="ri-money">{{yAccRing.totalText}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="legend" wx:if="{{!yAccRing.empty}}">
+          <view class="lg-row" wx:for="{{yAccRing.segments}}" wx:key="label">
+            <view class="lg-dot" style="background:{{item.color}}"></view>
+            <text class="lg-label">{{item.label}}</text>
+            <text class="lg-pct">{{item.percentText}}%</text>
+            <text class="lg-val" wx:if="{{yAccShowAmt}}">{{item.valueText}}</text>
+          </view>
+        </view>
+        <view class="ring-empty" wx:else>本年暂无账户{{yAccType==='expense'?'支出':'收入'}}记录</view>
+        <view class="check-row" bindtap="toggleYAccShowAmt">
+          <view class="checkbox {{yAccShowAmt?'checked':''}}"><text class="cb-tick" wx:if="{{yAccShowAmt}}">✓</text></view>
+          <text>显示金额</text>
+        </view>
+      </view>
+
+      <!-- 标签占比 -->
+      <view class="card sec">
+        <view class="sec-head"><text class="sec-title">标签占比</text></view>
+        <view class="ring-wrap">
+          <view class="ring ring-sm" style="background:{{yTagRing.bg}}">
+            <view class="ring-inner">
+              <text class="ri-label">标签支出</text>
+              <text class="ri-money">{{yTagRing.totalText}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="legend" wx:if="{{!yTagRing.empty}}">
+          <view class="lg-row" wx:for="{{yTagRing.segments}}" wx:key="label">
+            <view class="lg-dot" style="background:{{item.color}}"></view>
+            <text class="lg-label">{{item.label}}</text>
+            <text class="lg-pct">{{item.percentText}}%</text>
+            <text class="lg-val">{{item.valueText}}</text>
+          </view>
+        </view>
+        <view class="ring-empty" wx:else>本年暂无标签支出</view>
+      </view>
+  </block>
+
+  <!-- ============================================================== 自定义 -->
+  <block wx:if="{{tab==='custom'}}">
+
+    <!-- 起止日期 -->
+    <view class="range-bar">
+      <picker mode="date" value="{{cStart}}" bindchange="pickCStart">
+        <view class="rb-date">{{cStart}}</view>
+      </picker>
+      <text class="rb-sep">至</text>
+      <picker mode="date" value="{{cEnd}}" bindchange="pickCEnd">
+        <view class="rb-date">{{cEnd}}</view>
+      </picker>
+    </view>
+
+    <!-- 汇总卡：首行常显，箭头呼出 / 折叠其余数据 -->
+    <template is="summary-card" data="{{top: cCard.top, more: cCard.more, fold: sumFold}}"/>
+
+      <!-- 收支走势 -->
+      <view class="card sec">
+        <view class="sec-head"><text class="sec-title">收支走势</text></view>
+        <template is="trend-chart" data="{{d: cFlow}}"/>
+      </view>
+
+      <!-- 资产走势 -->
+      <view class="card sec">
+        <view class="sec-head"><text class="sec-title">资产走势</text></view>
+        <template is="trend-chart" data="{{d: cTrend}}"/>
+      </view>
+
+      <!-- 收支对比 -->
+      <view class="card sec">
+        <view class="sec-head">
+          <text class="sec-title">收支对比</text>
+          <view class="mini-seg seg-green">
+            <view class="ms-item {{cScope==='major'?'on':''}}" data-s="major" bindtap="toggleCScope">大类</view>
+            <view class="ms-item {{cScope==='all'?'on':''}}" data-s="all" bindtap="toggleCScope">全部</view>
+          </view>
+        </view>
+        <canvas type="2d" id="customSankey" class="cv cv-sankey" style="height:{{cSankeyH}}px"></canvas>
+        <view class="check-row" bindtap="toggleCSankeyFilter">
+          <view class="checkbox {{cSankeyFilter?'checked':''}}"><text class="cb-tick" wx:if="{{cSankeyFilter}}">✓</text></view>
+          <text>过滤占比小于 1%</text>
+        </view>
+      </view>
+
+      <!-- 支出/收入占比 -->
+      <view class="card sec">
+        <view class="sec-head">
+          <text class="sec-title">{{cRingType==='expense'?'支出':'收入'}}占比</text>
+          <view class="mini-seg seg-green">
+            <view class="ms-item {{cScope==='major'?'on':''}}" data-s="major" bindtap="toggleCScope">大类</view>
+            <view class="ms-item {{cScope==='all'?'on':''}}" data-s="all" bindtap="toggleCScope">全部</view>
+          </view>
+        </view>
+        <view class="ring-wrap">
+          <view class="ring" style="background:{{cRing.bg}}">
+            <view class="ring-inner ring-btn" bindtap="toggleCRing">
+              <text class="ri-icon">⇌</text>
+              <text class="ri-text">{{cRingType==='expense'?'切换到收入':'切换到支出'}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="legend" wx:if="{{!cRing.empty}}">
+          <view class="lg-row" wx:for="{{cRing.segments}}" wx:key="label">
+            <view class="lg-dot" style="background:{{item.color}}"></view>
+            <text class="lg-label">{{item.label}}</text>
+            <text class="lg-pct">{{item.percentText}}%</text>
+            <text class="lg-val" wx:if="{{cShowAmt}}">{{item.valueText}}</text>
+          </view>
+        </view>
+        <view class="ring-empty" wx:else>区间暂无{{cRingType==='expense'?'支出':'收入'}}记录</view>
+        <view class="check-row" bindtap="toggleCShowAmt">
+          <view class="checkbox {{cShowAmt?'checked':''}}"><text class="cb-tick" wx:if="{{cShowAmt}}">✓</text></view>
+          <text>显示金额</text>
+        </view>
+      </view>
+
+      <!-- 支出/收入数据 -->
+      <view class="card sec">
+        <view class="sec-head">
+          <text class="sec-title">{{cRingType==='expense'?'支出':'收入'}}数据</text>
+        </view>
+        <view class="data-list" wx:if="{{cList.length}}">
+          <view class="di" wx:for="{{cList}}" wx:key="key">
+            <image class="di-icon" src="{{item.icon}}"></image>
+            <view class="di-mid">
+              <view class="di-l1">
+                <text class="di-label">{{item.label}}</text>
+                <text class="di-meta">{{item.count}}笔 {{item.percentText}}%</text>
+              </view>
+              <view class="di-bar">
+                <view class="di-bar-in" style="width:{{item.bar}}%"></view>
+              </view>
+              <view class="di-cmp">
+                <text class="cmp-t {{item.cmpMo.cls}}" wx:if="{{item.cmpMo}}">{{item.cmpMoLabel}}: {{item.cmpMo.text}}</text>
+              </view>
+            </view>
+            <text class="di-amt {{item.amtCls}}">{{item.totalText}}</text>
+          </view>
+        </view>
+        <view class="mini-empty" wx:else>区间暂无{{cRingType==='expense'?'支出':'收入'}}记录</view>
+      </view>
+
+      <!-- 报表统计 -->
+      <view class="card sec">
+        <view class="sec-head"><text class="sec-title">报表统计</text></view>
+        <view class="tbl" wx:if="{{cReport.length}}">
+          <view class="tr tr-head">
+            <text class="td">日期</text><text class="td">支出</text><text class="td">收入</text><text class="td">结余</text>
+          </view>
+          <scroll-view scroll-y="true" class="tbl-body">
+            <view class="tr" wx:for="{{cReport}}" wx:key="date">
+              <text class="td">{{item.date}}</text>
+              <text class="td {{item.eOn?'d-red':''}}">{{item.e}}</text>
+              <text class="td {{item.iOn?'d-green':''}}">{{item.i}}</text>
+              <text class="td">{{item.bal}}</text>
+            </view>
+          </scroll-view>
+        </view>
+        <view class="mini-empty" wx:else>区间暂无记录</view>
+      </view>
+
+      <!-- 账户收支 -->
+      <view class="card sec">
+        <view class="sec-head">
+          <text class="sec-title">账户收支</text>
+          <view class="mini-seg seg-green">
+            <view class="ms-item {{cAccType==='expense'?'on':''}}" data-t="expense" bindtap="toggleCAccType">支出</view>
+            <view class="ms-item {{cAccType==='income'?'on':''}}" data-t="income" bindtap="toggleCAccType">收入</view>
+          </view>
+        </view>
+        <view class="ring-wrap">
+          <view class="ring" style="background:{{cAccRing.bg}}">
+            <view class="ring-inner">
+              <text class="ri-label">{{cAccType==='expense'?'总支出':'总收入'}}</text>
+              <text class="ri-money">{{cAccRing.totalText}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="legend" wx:if="{{!cAccRing.empty}}">
+          <view class="lg-row" wx:for="{{cAccRing.segments}}" wx:key="label">
+            <view class="lg-dot" style="background:{{item.color}}"></view>
+            <text class="lg-label">{{item.label}}</text>
+            <text class="lg-pct">{{item.percentText}}%</text>
+            <text class="lg-val" wx:if="{{cAccShowAmt}}">{{item.valueText}}</text>
+          </view>
+        </view>
+        <view class="ring-empty" wx:else>区间暂无账户{{cAccType==='expense'?'支出':'收入'}}记录</view>
+        <view class="check-row" bindtap="toggleCAccShowAmt">
+          <view class="checkbox {{cAccShowAmt?'checked':''}}"><text class="cb-tick" wx:if="{{cAccShowAmt}}">✓</text></view>
+          <text>显示金额</text>
+        </view>
+      </view>
+  </block>
+
+  <view class="tab-space"></view>
+</view>
+
+<!-- ============================================================== 汇总卡模板
+     月统计 / 年统计 / 自定义共用：首行（总支出/总收入/总结余）常显，
+     箭头呼出或折叠其余 15 项数据，差异只在传入的 top / more -->
+<template name="summary-card">
+  <view class="sum-green">
+    <view class="sg-grid">
+      <view class="sg-i" wx:for="{{top}}" wx:key="label">
+        <text class="sg-label">{{item.label}}</text>
+        <text class="sg-val {{item.cls}}">{{item.value}}</text>
+      </view>
+    </view>
+    <view class="sg-more {{fold?'folded':''}}">
+      <view class="sg-grid">
+        <view class="sg-i" wx:for="{{more}}" wx:key="label">
+          <text class="sg-label">{{item.label}}</text>
+          <text class="sg-val">{{item.value}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="sg-fold {{fold?'folded':''}}" catchtap="toggleSumFold">
+      <view class="fold-arrow"></view>
+    </view>
+  </view>
+</template>
+
+<!-- ============================================================== 走势图模板（资产走势 / 收支走势）
+     与柱状图同一套做法：普通 view + clip-path 画出面积与折线，不用 canvas（原生组件不跟手，取图又会晚一拍） -->
+<template name="trend-chart">
+  <view class="ta" wx:if="{{d.on}}">
+    <view class="ta-yaxis">
+      <text class="ta-yt" wx:for="{{d.y}}" wx:key="k" style="top:{{item.top}}rpx">{{item.t}}</text>
+    </view>
+    <view class="ta-main">
+      <view class="ta-plot">
+        <view class="ta-grid" wx:for="{{d.y}}" wx:key="k" style="top:{{item.top}}rpx"></view>
+        <view class="{{item.cls}}" wx:for="{{d.layers}}" wx:key="k" style="{{item.style}}"></view>
+      </view>
+      <view class="ta-x">
+        <text class="ta-xl {{item.cls}}" wx:for="{{d.x}}" wx:key="k" style="{{item.style}}">{{item.t}}</text>
+      </view>
+    </view>
+  </view>
+  <view class="mini-empty" wx:else>暂无记录</view>
+</template>

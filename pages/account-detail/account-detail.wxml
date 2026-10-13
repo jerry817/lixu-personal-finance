@@ -1,0 +1,211 @@
+<!-- pages/account-detail/account-detail.wxml -->
+<view class="page">
+
+  <!-- 顶部：返回 / 标题 / ⋮（⋮ 放在微信胶囊左侧，点开二级菜单） -->
+  <view class="hd" style="padding-top:{{statusBarHeight}}px;">
+    <view class="hd-inner" style="height:{{navH}}px;">
+      <image class="hd-back" src="/images/ui/back.png" bindtap="goBack"></image>
+      <text class="hd-title">{{title}}</text>
+      <text class="hd-stat" style="right:calc({{moreRight}}px + 76rpx)" wx:if="{{credit}}" bindtap="openStats">统计</text>
+      <text class="hd-stat {{reimbFilter!=='all'?'hd-stat-on':''}}" style="right:calc({{moreRight}}px + 76rpx)" wx:if="{{reimb}}" bindtap="openFilter">筛选{{reimb.filterLabel ? '·' + reimb.filterLabel : ''}}</text>
+      <view class="hd-more" style="right:{{moreRight}}px" bindtap="openMenu">
+        <view class="hd-dot"></view><view class="hd-dot"></view><view class="hd-dot"></view>
+      </view>
+    </view>
+  </view>
+  <view style="height:calc({{statusBarHeight}}px + {{navH}}px);"></view>
+
+  <view class="menu-mask" wx:if="{{menu}}" bindtap="closeMenu" catchtouchmove="noop"></view>
+  <view class="menu" wx:if="{{menu}}" style="top:calc({{statusBarHeight}}px + {{navH}}px);right:{{moreRight}}px;">
+    <view class="menu-item" hover-class="menu-hover" wx:if="{{canDeposit}}" bindtap="openDeposit">定期存款</view>
+    <view class="menu-item" hover-class="menu-hover" bindtap="edit">编辑账户</view>
+    <view class="menu-item" hover-class="menu-hover" bindtap="toggleHidden">{{hidden?'显示账户':'隐藏账户'}}</view>
+    <view class="menu-item menu-del" hover-class="menu-hover" bindtap="del">删除账户</view>
+  </view>
+
+  <!-- 报销账户：绿色汇总卡（待报销 / 已报销 / 总报销）+ 添加一条报销 -->
+  <block wx:if="{{reimb}}">
+    <view class="d-card">
+      <view class="d-row">
+        <view class="d-cell">
+          <text class="d-label">待报销</text>
+          <text class="d-big">{{reimb.pending}}</text>
+        </view>
+      </view>
+      <view class="d-row d-row-sub">
+        <text class="d-cell d-sub">已报销: {{reimb.done}}</text>
+        <text class="d-cell d-sub">总报销: {{reimb.total}}</text>
+      </view>
+    </view>
+    <view class="d-actions">
+      <view class="d-act" hover-class="d-act-hover" bindtap="addReimbursable">
+        <image class="d-act-ic" src="/images/ui/plus_sq.png" mode="aspectFit"></image>
+        <text>添加一条报销</text>
+      </view>
+    </view>
+  </block>
+
+  <!-- 应付款 / 应收款账户：汇总卡 + 追加 / 还款（收款）操作 -->
+  <block wx:elif="{{debt}}">
+    <view class="d-card">
+      <view class="d-row">
+        <view class="d-cell">
+          <text class="d-label">{{debt.pendingLabel}}</text>
+          <text class="d-big">{{debt.pending}}</text>
+        </view>
+        <view class="d-cell">
+          <text class="d-label">{{debt.doneLabel}}</text>
+          <text class="d-big">{{debt.done}}</text>
+        </view>
+      </view>
+      <view class="d-row d-row-sub">
+        <text class="d-cell d-sub">{{debt.interestLabel}}: {{debt.interest}}</text>
+        <text class="d-cell d-sub">{{debt.nextLabel}}: {{debt.nextDue}}</text>
+      </view>
+    </view>
+    <view class="d-actions">
+      <view class="d-act" hover-class="d-act-hover" data-cat="{{debt.appendCat}}" bindtap="goDebtAction">
+        <image class="d-act-ic" src="/images/ui/plus_sq.png" mode="aspectFit"></image>
+        <text>{{debt.appendLabel}}</text>
+      </view>
+      <view class="d-sep"></view>
+      <view class="d-act" hover-class="d-act-hover" data-cat="{{debt.settleCat}}" bindtap="goDebtAction">
+        <image class="d-act-ic" src="/images/ui/exchange.png" mode="aspectFit"></image>
+        <text>{{debt.settleLabel}}</text>
+      </view>
+    </view>
+  </block>
+
+  <block wx:elif="{{credit}}">
+    <!-- 信贷账户：欠款 / 额度 / 出账日 / 还款日 + 添加 / 还款 / 转账 -->
+    <view class="d-card">
+      <view class="d-row">
+        <view class="d-cell">
+          <text class="d-label">{{credit.owedLabel}}</text>
+          <text class="d-big">{{credit.owed}}</text>
+        </view>
+      </view>
+      <view class="d-row d-row-sub">
+        <text class="d-cell d-sub">总额度: {{credit.limit}}</text>
+        <text class="d-cell d-sub">剩余额度: {{credit.remaining}}</text>
+      </view>
+      <view class="d-row d-row-sub2">
+        <text class="d-cell d-sub">出账日: {{credit.billDay}}</text>
+        <text class="d-cell d-sub">还款日: {{credit.repayDay}}</text>
+      </view>
+    </view>
+    <view class="d-actions">
+      <view class="d-act" hover-class="d-act-hover" data-kind="spend" bindtap="goCreditAction">
+        <image class="d-act-ic" src="/images/ui/plus_sq.png" mode="aspectFit"></image>
+        <text>添加</text>
+      </view>
+      <view class="d-sep"></view>
+      <view class="d-act" hover-class="d-act-hover" data-kind="repay" bindtap="goCreditAction">
+        <image class="d-act-ic" src="/images/ui/exchange.png" mode="aspectFit"></image>
+        <text>还款</text>
+      </view>
+      <view class="d-sep"></view>
+      <view class="d-act" hover-class="d-act-hover" data-kind="out" bindtap="goCreditAction">
+        <image class="d-act-ic" src="/images/ui/swap.png" mode="aspectFit"></image>
+        <text>转账</text>
+      </view>
+    </view>
+  </block>
+
+  <view class="head" wx:else>
+    <image class="h-icon" src="{{icon}}"></image>
+    <text class="h-type">{{typeLabel}}</text>
+    <text class="h-bal {{neg?'red':'green'}}">{{balance}}</text>
+    <text class="h-dep" wx:if="{{depositText}}">定存 {{depositText}}</text>
+  </view>
+
+  <!-- 报销账户的账单列表：日期头只有「日期 星期」，每条带状态标签，金额下方写付款账户 -->
+  <block wx:if="{{reimb}}">
+    <block wx:for="{{groups}}" wx:key="date" wx:for-item="g">
+      <view class="day-head">
+        <view class="dh-left">
+          <text class="dh-md">{{g.md}}</text>
+          <text class="dh-week">{{g.week}}</text>
+        </view>
+      </view>
+      <view class="day-card card">
+        <view class="bill {{index !== g.items.length-1 ? 'bill-line' : ''}}"
+              wx:for="{{g.items}}" wx:key="id" wx:for-item="it"
+              data-id="{{it.id}}" bindtap="tapItem">
+          <image class="bill-icon" src="{{it.icon}}"></image>
+          <view class="bill-mid">
+            <view class="bill-title-row">
+              <text class="bill-title">{{it.title}}</text>
+              <text class="bd {{bd.cls}}" wx:for="{{it.badges}}" wx:key="t" wx:for-item="bd">{{bd.t}}</text>
+            </view>
+            <view class="bill-sub-row" wx:if="{{it.remark}}">
+              <text class="bill-remark">{{it.remark}}</text>
+            </view>
+          </view>
+          <view class="bill-right">
+            <text class="bill-amt {{it.amountClass}}">{{it.amount}}</text>
+            <text class="bill-debt-path">{{it.accountName || '无账户'}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+    <view class="empty" wx:if="{{!groups.length}}">{{reimb.empty}}</view>
+  </block>
+
+  <block wx:else>
+  <block wx:for="{{groups}}" wx:key="date" wx:for-item="g">
+    <view class="day-head">
+      <view class="dh-left">
+        <text class="dh-md">{{g.md}}</text>
+        <text class="dh-week">{{g.week}}</text>
+      </view>
+      <view class="dh-summary">
+        <text class="dh-sum-label">收</text>
+        <text class="dh-sum-val income">{{g.incomeText}}</text>
+        <text class="dh-sum-label">支</text>
+        <text class="dh-sum-val expense">{{g.expenseText}}</text>
+      </view>
+    </view>
+    <view class="day-card card">
+      <view class="bill {{index !== g.items.length-1 ? 'bill-line' : ''}}"
+            wx:for="{{g.items}}" wx:key="id" wx:for-item="it"
+            data-id="{{it.id}}" bindtap="tapItem">
+        <image class="bill-icon" src="{{it.icon}}"></image>
+        <view class="bill-mid">
+          <view class="bill-title-row">
+            <text class="bill-title">{{it.title}}</text>
+          </view>
+          <view class="bill-sub-row">
+            <text class="bill-tag" wx:for="{{it.tags}}" wx:key="*this" wx:for-item="tg">{{tg}}</text>
+            <text class="bill-remark" wx:if="{{it.remark}}">{{it.remark}}</text>
+          </view>
+        </view>
+        <view class="bill-right">
+          <text class="bill-amt {{it.amountClass}}">{{it.amount}}</text>
+          <text class="bill-debt-path" wx:if="{{it.debtPath}}">{{it.debtPath}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <view class="empty" wx:if="{{!groups.length}}">{{debt || credit ? '该账户没有任何记录' : '该账户暂无账单'}}</view>
+  </block>
+
+  <view class="tab-space"></view>
+
+  <!-- 统计 -->
+  <view class="st-mask" wx:if="{{statsSheet}}" bindtap="closeStats" catchtouchmove="noop">
+    <view class="st-sheet" catchtap="noop">
+      <view class="st-title">账户统计</view>
+      <view class="st-row st-head">
+        <text class="st-c st-first"></text><text class="st-c">消费</text><text class="st-c">还款/转入</text><text class="st-c">转出</text>
+      </view>
+      <view class="st-row" wx:for="{{stats}}" wx:key="label">
+        <text class="st-c st-first">{{item.label}}</text>
+        <text class="st-c st-red">{{item.spend}}</text>
+        <text class="st-c st-green">{{item.repay}}</text>
+        <text class="st-c">{{item.out}}</text>
+      </view>
+    </view>
+  </view>
+</view>

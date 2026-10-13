@@ -1,0 +1,81 @@
+/* pages/debt-list/debt-list.wxss */
+.page { min-height: 100vh; padding-top: 24rpx; }
+
+/* ---------- 汇总卡（绿色） ---------- */
+.sum-card {
+  margin: 0 24rpx 24rpx;
+  border-radius: 28rpx;
+  background: linear-gradient(135deg, #51B090 0%, #3E9E80 100%);
+  display: flex;
+  align-items: center;
+  padding: 40rpx 0;
+}
+.sc-cell { flex: 1; display: flex; flex-direction: column; align-items: center; }
+.sc-label { font-size: 26rpx; color: rgba(255, 255, 255, 0.88); }
+.sc-amount { margin-top: 14rpx; font-size: 46rpx; color: #FFFFFF; font-weight: 600; }
+.sc-sep { width: 1rpx; height: 80rpx; background: rgba(255, 255, 255, 0.3); }
+
+/* ---------- 分组卡 ---------- */
+.card { margin: 0 24rpx 24rpx; background: #FFFFFF; border-radius: 24rpx; padding: 0 28rpx; }
+.grp-head {
+  display: flex;
+  align-items: center;
+  min-height: 108rpx;
+}
+.grp-name { font-size: 32rpx; font-weight: 600; color: #1F2A26; }
+.grp-total { margin-left: auto; font-size: 32rpx; font-weight: 600; color: #1F2A26; }
+.grp-total.red { color: #F25350; }
+.grp-total.green { color: #45A888; }
+
+/* 分组折叠箭头：纯 CSS */
+.grp-chev {
+  width: 14rpx;
+  height: 14rpx;
+  margin: 0 6rpx 0 18rpx;
+  border-top: 3rpx solid #B3B9BF;
+  border-right: 3rpx solid #B3B9BF;
+  transform: rotate(135deg);
+  flex-shrink: 0;
+}
+.grp-chev.up { transform: rotate(-45deg); margin-bottom: -10rpx; }
+
+.grp-row {
+  display: flex;
+  align-items: center;
+  min-height: 108rpx;
+}
+.grp-row.line { border-bottom: 1rpx solid #F2F3F5; }
+.grp-icon { width: 56rpx; height: 56rpx; margin-right: 24rpx; }
+.grp-row-name { flex: 1; min-width: 0; font-size: 30rpx; color: #1F2A26; }
+.grp-row-bal { font-size: 30rpx; color: #1F2A26; }
+.grp-row-bal.red { color: #F25350; }
+.grp-row-bal.green { color: #45A888; }
+
+/* ---------- 空态 / 添加 ---------- */
+.grp-empty {
+  min-height: 108rpx;
+  display: flex;
+  align-items: center;
+  font-size: 27rpx;
+  color: #9AA3AD;
+}
+.add-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx 0;
+  font-size: 28rpx;
+  color: #5A6570;
+}
+.add-circle {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 50%;
+  border: 3rpx solid #51B090;
+  color: #51B090;
+  text-align: center;
+  line-height: 40rpx;
+  margin-right: 14rpx;
+  font-size: 34rpx;
+}
+.tab-space { height: calc(40rpx + env(safe-area-inset-bottom)); }

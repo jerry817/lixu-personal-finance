@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "日历",
+  "usingComponents": {
+    "fab": "/components/fab/fab"
+  }
+}

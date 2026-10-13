@@ -1,0 +1,31 @@
+<!-- pages/reimburse/reimburse.wxml -->
+<view class="page">
+  <view class="hd" style="padding-top:{{statusBarHeight}}px;">
+    <view class="hd-inner">
+      <image class="hd-back" src="/images/ui/back.png" bindtap="goBack"></image>
+      <text class="hd-title">报销详情</text>
+    </view>
+  </view>
+  <view style="height:calc({{statusBarHeight}}px + 88rpx + 8rpx);"></view>
+
+  <view class="card sum">
+    <view class="row"><text class="r-l">报销账户</text><text class="r-v">{{accountName}}</text></view>
+    <view class="row"><text class="r-l">账单金额</text><text class="r-v">{{amountText}}</text></view>
+    <view class="row"><text class="r-l">已报销</text><text class="r-v green">{{receivedText}}</text></view>
+    <view class="row"><text class="r-l">待报销</text><text class="r-v {{done ? '' : 'red'}}">{{pendingText}}</text></view>
+    <view class="row"><text class="r-l">状态</text><text class="r-v">{{done ? '已结束' : '报销中'}}</text></view>
+  </view>
+
+  <view class="card list" wx:if="{{records.length}}">
+    <view class="rec" wx:for="{{records}}" wx:key="id">
+      <view class="rec-main">
+        <text class="rec-amt">{{item.amount}}</text>
+        <text class="rec-sub">{{item.account}} · {{item.date}}{{item.remark ? ' · ' + item.remark : ''}}</text>
+      </view>
+      <text class="rec-undo" data-id="{{item.id}}" bindtap="undo">撤销</text>
+    </view>
+  </view>
+  <view class="empty" wx:else>还没有报销到账记录</view>
+
+  <view class="reopen" wx:if="{{done}}" bindtap="reopen" hover-class="reopen-hover">重新开启报销</view>
+</view>

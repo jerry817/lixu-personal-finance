@@ -1,0 +1,25 @@
+<!-- pages/tags/tags.wxml -->
+<view class="page">
+
+  <view class="list card" wx:if="{{list.length}}">
+    <view class="tag-row {{index !== list.length-1?'line':''}}"
+          wx:for="{{list}}" wx:key="tag"
+          data-tag="{{item.tag}}" bindtap="tapTag">
+      <view class="tag-badge">{{item.tag}}</view>
+      <view class="tag-mid">
+        <text class="t-count">{{item.count}} 笔</text>
+        <view class="t-sums">
+          <text wx:if="{{item.expense!=='0.00'}}" class="red">支 {{item.expense}}</text>
+          <text wx:if="{{item.income!=='0.00'}}" class="green">收 {{item.income}}</text>
+        </view>
+      </view>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <view class="empty" wx:else>
+    <text>还没有标签</text>
+    <text class="e-sub">记账时添加标签，便于分类统计</text>
+  </view>
+
+</view>

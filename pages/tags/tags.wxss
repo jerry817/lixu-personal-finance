@@ -1,0 +1,39 @@
+/* pages/tags/tags.wxss */
+.page { min-height: 100vh; }
+
+.list { margin: 24rpx; padding: 0 28rpx; }
+.tag-row {
+  display: flex;
+  align-items: center;
+  padding: 26rpx 0;
+}
+.tag-row.line { border-bottom: 1rpx solid #F2F3F5; }
+.tag-badge {
+  background: #E9F5F0;
+  color: #2E9C7C;
+  border-radius: 10rpx;
+  padding: 8rpx 18rpx;
+  font-size: 28rpx;
+}
+.tag-mid {
+  flex: 1;
+  margin-left: 22rpx;
+  display: flex;
+  flex-direction: column;
+}
+.t-count { font-size: 28rpx; color: #1F2A26; }
+.t-sums { margin-top: 8rpx; display: flex; font-size: 23rpx; }
+.t-sums text { margin-right: 24rpx; }
+.red { color: #F25350; }
+.green { color: #43A787; }
+.arrow { color: #C2C8CE; font-size: 40rpx; }
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 140rpx 0;
+  color: #9AA3AD;
+  font-size: 28rpx;
+}
+.e-sub { margin-top: 16rpx; font-size: 24rpx; color: #B3B9BF; }

@@ -1,0 +1,154 @@
+<!-- pages/account/account.wxml -->
+<view class="page">
+
+  <!-- 资产横幅 -->
+  <view class="banner">
+    <view class="b-top">
+      <text class="b-label">净资产（元）</text>
+      <view class="b-top-right">
+        <text class="b-count">共{{totalCount}}个账户</text>
+        <image wx:if="{{hideMoney}}" class="b-eye" src="/images/ui/eye_off.png"
+               bindtap="toggleEye"></image>
+        <image wx:else class="b-eye" src="/images/ui/eye.png"
+               bindtap="toggleEye"></image>
+      </view>
+    </view>
+    <text class="b-net">{{hideMoney?'****':net}}</text>
+    <view class="b-sub">
+      <view class="bs-cell">
+        <text class="bs-l">总资产</text>
+        <text class="bs-v">{{hideMoney?'**':assets}}</text>
+      </view>
+      <view class="bs-cell">
+        <text class="bs-l">总负债</text>
+        <text class="bs-v red">{{hideMoney?'**':liability}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 债务（应付 + 应收合并）/ 待报销 / 定期存款 -->
+  <view class="mini-row">
+    <view class="mini" bindtap="tapDebt">
+      <text class="m-label">债务</text>
+      <view class="m-line">
+        <text class="m-tag">应付</text>
+        <text class="m-val-s red">{{hideMoney?'**':payable}}</text>
+      </view>
+      <view class="m-line">
+        <text class="m-tag">应收</text>
+        <text class="m-val-s green">{{hideMoney?'**':receivable}}</text>
+      </view>
+    </view>
+    <view class="mini" bindtap="tapReimburse">
+      <text class="m-label">待报销</text>
+      <text class="m-val">{{hideMoney?'**':reimburse}}</text>
+    </view>
+    <view class="mini" bindtap="tapDeposit">
+      <text class="m-label">定期存款</text>
+      <block wx:if="{{depositCount}}">
+        <view class="m-line">
+          <text class="m-tag">本金</text>
+          <text class="m-val-s">{{hideMoney?'**':depositPrincipal}}</text>
+        </view>
+        <view class="m-line">
+          <text class="m-tag">收益</text>
+          <text class="m-val-s green">{{hideMoney?'**':depositIncome}}</text>
+        </view>
+      </block>
+      <text wx:else class="m-val m-val-off">--</text>
+    </view>
+  </view>
+
+  <!-- 工具栏：排序 -->
+  <view class="tool-bar">
+    <view class="tool-sort">
+      <text class="sort-label">排序</text>
+      <view class="sort-options">
+        <text class="sort-opt {{sortMode==='default'?'on':''}}" data-mode="default" bindtap="changeSort">默认</text>
+        <text class="sort-opt {{sortMode==='balance_desc'?'on':''}}" data-mode="balance_desc" bindtap="changeSort">余额↓</text>
+        <text class="sort-opt {{sortMode==='balance_asc'?'on':''}}" data-mode="balance_asc" bindtap="changeSort">余额↑</text>
+        <text class="sort-opt {{sortMode==='name'?'on':''}}" data-mode="name" bindtap="changeSort">名称</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 资产账户：分组卡（可折叠），表头显示这些账户的余额合计 -->
+  <view class="list card" wx:if="{{assetGroups.length}}">
+    <view class="list-head fold-head" data-k="asset" bindtap="toggleGroup">
+      <text class="lh-title">资产账户</text>
+      <text class="fold-total">{{hideMoney?'****':assetTotal}}</text>
+      <view class="fold-arrow {{assetOpen?'':'fold-arrow-up'}}"></view>
+    </view>
+    <block wx:if="{{assetOpen}}">
+      <view class="acc-row {{index !== assetGroups.length-1 ? 'line':''}}"
+            wx:for="{{assetGroups}}" wx:key="id"
+            data-id="{{item.id}}" bindtap="tapAccount">
+        <image class="acc-icon" src="{{item.icon}}"></image>
+        <view class="acc-mid">
+          <text class="acc-name">{{item.name}}</text>
+          <view class="acc-sub" wx:if="{{item.typeLabel || item.depositText}}">
+            <text class="acc-type" wx:if="{{item.typeLabel}}">{{item.typeLabel}}</text>
+            <text class="acc-dep" wx:if="{{item.depositText}}">定存 {{hideMoney?'****':item.depositText}}</text>
+          </view>
+        </view>
+        <text class="acc-bal {{item.amtClass}}">{{hideMoney?'****':item.balanceText}}</text>
+      </view>
+    </block>
+  </view>
+
+  <!-- 信贷账户：分组卡（可折叠），每个账户显示欠款、额度使用进度条与剩余额度 -->
+  <view class="list card" wx:if="{{creditGroups.length}}">
+    <view class="list-head fold-head" data-k="credit" bindtap="toggleGroup">
+      <text class="lh-title">信贷账户</text>
+      <text class="fold-total">{{hideMoney?'****':creditTotal}}</text>
+      <view class="fold-arrow {{creditOpen?'':'fold-arrow-up'}}"></view>
+    </view>
+    <block wx:if="{{creditOpen}}">
+      <view class="cr-row {{index !== creditGroups.length-1 ? 'line':''}}"
+            wx:for="{{creditGroups}}" wx:key="id"
+            data-id="{{item.id}}" bindtap="tapAccount">
+        <image class="acc-icon" src="{{item.icon}}"></image>
+        <view class="cr-mid">
+          <view class="cr-top">
+            <text class="acc-name">{{item.name}}</text>
+            <text class="acc-bal {{item.amtClass}}">{{hideMoney?'****':'¥' + item.owedText}}</text>
+          </view>
+          <view class="cr-bar"><view class="cr-fill" style="width:{{item.pct}}%"></view></view>
+          <text class="cr-cap">{{hideMoney?'****':item.limitText}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 无账户 -->
+  <view class="empty" wx:if="{{!assetGroups.length && !creditGroups.length}}">
+    <text>暂无账户，点击右下角添加</text>
+  </view>
+
+  <!-- 隐藏账户入口 -->
+  <view class="hidden-tip" wx:if="{{hiddenCount}}" bindtap="toggleHiddenPanel">
+    <text>有 {{hiddenCount}} 个隐藏账户</text>
+    <text class="ht-arrow {{showHiddenPanel?'up':''}}">▾</text>
+  </view>
+
+  <!-- 隐藏账户面板 -->
+  <view class="hidden-panel card" wx:if="{{showHiddenPanel && hiddenAccounts.length}}">
+    <view class="hp-title">隐藏账户（点击恢复显示）</view>
+    <view class="hp-row {{index !== hiddenAccounts.length-1 ? 'line':''}}"
+          wx:for="{{hiddenAccounts}}" wx:key="id"
+          data-id="{{item.id}}" bindtap="restoreAccount">
+      <image class="hp-icon" src="{{item.icon}}"></image>
+      <text class="hp-name">{{item.name}}</text>
+      <text class="hp-restore">恢复</text>
+    </view>
+  </view>
+
+  <view class="tab-space"></view>
+
+  <!-- 添加账户悬浮钮（与首页同款）；要换图标 / 文字，只改下面 text 这一行 -->
+  <fab
+    id="fab"
+    text="➕"
+    bind:press="addAccount"
+  ></fab>
+</view>

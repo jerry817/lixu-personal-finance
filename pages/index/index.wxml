@@ -1,0 +1,223 @@
+<!-- pages/index/index.wxml -->
+<view class="page" bindtouchstart="onTouchStart" bindtouchmove="onTouchMove" bindtouchend="onTouchEnd" bindtouchcancel="onTouchCancel">
+
+  <!-- 自定义导航 -->
+  <view class="nav" style="padding-top:{{statusBarHeight}}px;">
+    <view class="nav-row" style="height:{{navH}}px;">
+      <view class="nav-left">
+        <image class="logo" src="/images/ui/logo.png" mode="aspectFit"></image>
+        <text class="book-name" wx:if="{{timeRange==='all'}}">日常账本</text>
+        <!-- 按月：当前月份，点击切换月份（取代账本名，右侧图标区留不出两者的宽度） -->
+        <picker wx:else class="month-pick" mode="date" fields="month" value="{{ym}}" bindchange="pickMonth">
+          <view class="month-pill">
+            <text>{{monthLabel}}</text>
+            <view class="month-arrow"></view>
+          </view>
+        </picker>
+      </view>
+      <view class="nav-right" style="margin-right:{{rightInset}}px;">
+        <image class="nav-icon" src="/images/ui/search.png" mode="aspectFit" bindtap="openSearch"></image>
+        <view class="more-dots" bindtap="toggleMore">
+          <view class="vd"></view>
+          <view class="vd"></view>
+          <view class="vd"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 刷新中动画药丸，位于导航栏下方，避免被遮挡 -->
+  <view class="top-loading {{refreshing?'tl-show':''}}" style="top:calc({{navBottom}}px + 16rpx);">
+    <view class="tl-spin"></view>
+    <text class="tl-text">刷新中</text>
+  </view>
+
+  <!-- 更多弹层 -->
+  <view class="mask" wx:if="{{moreVisible}}" bindtap="closeMore"></view>
+  <view class="more-pop" wx:if="{{moreVisible}}" style="top:{{popTop}}px; right:{{popRight}}px;">
+    <view class="mp-item" bindtap="moreCard">
+      <image class="mp-icon" src="/images/ui/m_card.png"></image>
+      <text>数据小卡片</text>
+    </view>
+    <view class="mp-item" bindtap="moreAIImport">
+      <image class="mp-icon" src="/images/ui/m_aiimg.png"></image>
+      <text>截图导入</text>
+    </view>
+    <view class="mp-item" bindtap="moreTemplate">
+      <image class="mp-icon" src="/images/ui/m_tpl.png"></image>
+      <text>模版记账</text>
+    </view>
+    <view class="mp-item" bindtap="moreBudget">
+      <image class="mp-icon" src="/images/ui/m_budget.png"></image>
+      <text>预算管理</text>
+    </view>
+
+    <view class="mp-label">视图</view>
+    <view class="mp-chips">
+      <view class="mp-chip {{viewMode==='simple'?'chip-on':''}}" data-mode="simple" bindtap="setView">简约</view>
+      <view class="mp-chip {{viewMode==='detail'?'chip-on':''}}" data-mode="detail" bindtap="setView">详细</view>
+    </view>
+
+    <view class="mp-label">时间范围</view>
+    <view class="mp-chips">
+      <view class="mp-chip {{timeRange==='all'?'chip-on':''}}" data-range="all" bindtap="setRange">全部</view>
+      <view class="mp-chip {{timeRange==='month'?'chip-on':''}}" data-range="month" bindtap="setRange">按月</view>
+    </view>
+
+    <view class="mp-label">截图导入</view>
+    <view class="mp-chips">
+      <view class="mp-chip" data-src="微信" bindtap="importShot">微信</view>
+      <view class="mp-chip" data-src="支付宝" bindtap="importShot">支付宝</view>
+    </view>
+  </view>
+
+  <view class="content {{manageMode?'content-manage':''}}" style="padding-top:calc({{navBottom}}px + 16rpx);">
+
+    <!-- 下拉添加账单：页面内的弹性横幅。绝对定位、向上延伸到导航栏后面，底边 = 导航栏底边 + 下拉距离；
+         下面的内容层（.pull-body）同步下移 pullDist，两者之间留 16rpx 间距 -->
+    <view class="pull-banner {{pullActive?'pb-on':''}} {{pulling?'':'pb-anim'}} {{pullReady?'pb-ready':''}}"
+          style="height:calc({{navBottom}}px + {{pullDist}}px + 300rpx);">
+      <view class="pull-inner" style="height:{{pullDist}}px;">
+        <text class="pull-text" style="opacity:{{pullDist>=60?1:pullDist/60}};">{{pullReady?'松开添加一条账单':'下拉添加一条账单'}}</text>
+      </view>
+    </view>
+
+    <view class="pull-body {{pullActive?'pbd-on':''}} {{pulling?'':'pbd-anim'}}"
+          style="{{pullActive?'transform:translateY('+pullDist+'px);':''}}">
+
+    <!-- 顶部数据卡片（点击自定义） -->
+    <view class="sum-card" bindtap="openCardSetting">
+      <!-- 植物装饰 -->
+      <view class="deco">
+        <view class="mt mt1"></view>
+        <view class="mt mt2"></view>
+        <view class="mt mt3"></view>
+        <view class="cactus c1"></view>
+        <view class="cactus c2"></view>
+        <view class="cactus c3"></view>
+        <view class="carm ca1"></view>
+        <view class="carm ca2"></view>
+        <view class="leaf l1"></view>
+        <view class="leaf l2"></view>
+        <view class="flower f1"></view>
+        <view class="flower f2"></view>
+        <view class="flower f3"></view>
+      </view>
+
+      <view class="sum-row">
+        <view class="sum-cell" wx:for="{{slots.row}}" wx:key="key">
+          <text class="sum-label">{{item.label}}</text>
+          <text class="sum-value">{{item.value}}</text>
+        </view>
+      </view>
+      <view class="sum-big">
+        <text class="sum-big-label">{{slots.big.label}}{{slots.big.unit}}</text>
+        <text class="sum-big-value">{{slots.big.value}}</text>
+      </view>
+    </view>
+
+    <!-- 预算卡片（点击进入预算管理） -->
+    <view class="budget card" bindtap="goBudget">
+      <view class="budget-top">
+        <view class="budget-title">
+          <image class="budget-icon" src="/images/ui/budget.png"></image>
+          <text>{{budget.title}}</text>
+        </view>
+        <text class="budget-num">{{budget.left}}/{{budget.total}}</text>
+      </view>
+      <view class="bar">
+        <view class="bar-in" style="width:{{budget.percent}}%;"></view>
+      </view>
+      <view class="budget-grid" wx:if="{{viewMode==='detail'}}">
+        <view class="bg-cell"><text class="bg-label">预算支出</text><text class="bg-val">{{budget.used}}</text></view>
+        <view class="bg-cell"><text class="bg-label">日均预算</text><text class="bg-val">{{budget.dailyBudget}}</text></view>
+        <view class="bg-cell"><text class="bg-label">日均支出</text><text class="bg-val">{{budget.dailyAvg}}</text></view>
+        <view class="bg-cell"><text class="bg-label">今日剩余</text><text class="bg-val">{{budget.todayLeft}}</text></view>
+      </view>
+    </view>
+
+    <!-- 添加记账按钮 -->
+    <view class="add-btn" bindtap="goAdd">
+      <view class="add-ico">
+        <view class="ai-h"></view>
+        <view class="ai-v"></view>
+      </view>
+      <text class="add-text">添加一条新记账</text>
+    </view>
+
+    <!-- 账单列表（按日分组） -->
+    <block wx:for="{{groups}}" wx:key="date" wx:for-item="g">
+      <view class="day-head">
+        <text class="day-md">{{g.md}}</text>
+        <text class="day-week">{{g.week}}</text>
+        <view class="day-sum">
+          <text class="ds-label">收</text>
+          <text class="ds-green">{{g.incomeText}}</text>
+          <text class="ds-label ds-gap">支</text>
+          <text class="ds-red">{{g.expenseText}}</text>
+        </view>
+      </view>
+
+      <view class="day-card card">
+        <view class="bill {{index !== g.items.length-1 ? 'bill-line' : ''}}"
+              wx:for="{{g.items}}" wx:key="id" wx:for-item="it"
+              data-id="{{it.id}}" bindtap="tapBill" bindlongpress="longPressBill">
+          <view class="sel-circle {{it.sel?'sc-on':''}}" wx:if="{{manageMode}}">
+            <text wx:if="{{it.sel}}">✓</text>
+          </view>
+          <image class="bill-icon" src="{{it.icon}}"></image>
+          <view class="bill-mid">
+            <view class="bill-title-row">
+              <text class="bill-title">{{it.title}}</text>
+              <text class="bill-badge {{bd.cls}}"
+                    wx:for="{{it.badges}}" wx:key="t" wx:for-item="bd">{{bd.t}}</text>
+            </view>
+            <view class="bill-sub-row" wx:if="{{viewMode==='detail' || (it.debtGen && it.remark)}}">
+              <text class="bill-tag" wx:for="{{it.tags}}" wx:key="*this" wx:for-item="tg">{{tg}}</text>
+              <text class="bill-remark" wx:if="{{it.remark}}">{{it.remark}}</text>
+            </view>
+          </view>
+          <view class="bill-right">
+            <view class="amt-row">
+              <text class="bill-amt-orig" wx:if="{{it.origAmount}}">{{it.origAmount}}</text>
+              <text class="bill-amt {{it.amountClass}}">{{it.amount}}</text>
+            </view>
+            <text class="bill-account bill-debt-path" wx:if="{{it.debtPath}}">{{it.debtPath}}</text>
+            <text class="bill-account" wx:elif="{{viewMode==='detail'}}">{{it.accountName}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <view class="list-bottom">{{groups.length===0?'— 暂无账单，点击上方按钮记一笔 —':(hasMore?'— 上拉加载更多 —':'— 已经到底啦 —')}}</view>
+    <view class="tab-space"></view>
+    </view>
+  </view>
+
+  <!-- 记账悬浮钮（管理模式下隐藏） -->
+  <fab id="fab" wx:if="{{!manageMode}}" ai bind:saved="refresh"></fab>
+
+  <!-- 批量管理底部栏 -->
+  <view class="manage-bar" wx:if="{{manageMode}}">
+    <view class="mb-side mb-all" bindtap="toggleAll">{{allSelected ? '取消全选' : '全选'}}</view>
+    <view class="mb-actions">
+      <view class="mb-item" bindtap="manageCombine">
+        <text class="mb-ico">▦</text><text class="mb-t">组合</text>
+      </view>
+      <view class="mb-item" bindtap="manageStats">
+        <text class="mb-ico">◔</text><text class="mb-t">统计</text>
+      </view>
+      <view class="mb-item" bindtap="manageExport">
+        <text class="mb-ico">↗</text><text class="mb-t">导出</text>
+      </view>
+      <view class="mb-item" bindtap="manageEdit">
+        <text class="mb-ico">✎</text><text class="mb-t">编辑</text>
+      </view>
+      <view class="mb-item danger" bindtap="manageDelete">
+        <text class="mb-ico">✕</text><text class="mb-t">删除</text>
+      </view>
+    </view>
+    <view class="mb-side mb-done" bindtap="exitManage">✓</view>
+  </view>
+
+</view>

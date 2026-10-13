@@ -1,0 +1,281 @@
+/* pages/budget/budget.wxss */
+.page { min-height: 100vh; padding-bottom: 40rpx; }
+
+/* 顶部分段：月度 / 年度 / 特定周期 */
+.mode-bar {
+  display: flex;
+  margin: 24rpx 24rpx 0;
+  background: #F0F1F3;
+  border-radius: 16rpx;
+  padding: 6rpx;
+}
+.mode-tab {
+  flex: 1;
+  text-align: center;
+  font-size: 27rpx;
+  color: #6B7075;
+  padding: 16rpx 0;
+  border-radius: 12rpx;
+}
+.mode-tab.on {
+  background: #FFFFFF;
+  color: #2E9C7C;
+  font-weight: 600;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.06);
+}
+
+/* 月份 / 年份 切换 */
+.nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20rpx;
+}
+.nav-arrow {
+  width: 64rpx;
+  text-align: center;
+  font-size: 40rpx;
+  color: #8A8F96;
+  line-height: 1;
+}
+.nav-title {
+  margin: 0 20rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.hero {
+  margin: 20rpx 24rpx 0;
+  border-radius: 26rpx;
+  padding: 34rpx 32rpx 30rpx;
+  background: #FFFFFF;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.05);
+}
+.h-label { font-size: 27rpx; color: #8C99A8; }
+.h-input {
+  margin-top: 14rpx;
+  font-size: 68rpx;
+  font-weight: 700;
+  color: #1F2A26;
+  height: 96rpx;
+  line-height: 96rpx;
+  padding: 0;
+}
+/* 占位提示：避免沿用数值字号导致长文案撑爆卡片换行、和下方内容重叠 */
+.h-ph { font-size: 32rpx; font-weight: 400; color: #B3B9BF; }
+.h-line {
+  margin-top: 10rpx;
+  height: 2rpx;
+  background: #F0F1F3;
+}
+.h-grid { margin-top: 26rpx; display: flex; }
+.hg-cell { flex: 1; display: flex; flex-direction: column; }
+.hg-l { font-size: 25rpx; color: #9AA0A6; }
+.hg-v { margin-top: 8rpx; font-size: 36rpx; font-weight: 600; color: #1F2A26; }
+.hg-v.red { color: #F25350; }
+.hg-v.green { color: #43A787; }
+
+/* 本月单独预算（覆盖每月预算） */
+.h-override-row {
+  margin-top: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.h-override-row .h-label { flex: 1; }
+.h-clear {
+  flex-shrink: 0;
+  font-size: 24rpx;
+  color: #45A888;
+  background: #E9F5F0;
+  border-radius: 20rpx;
+  padding: 6rpx 16rpx;
+  margin-left: 16rpx;
+}
+.h-input-sm {
+  margin-top: 10rpx;
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #1F2A26;
+  height: 56rpx;
+  line-height: 56rpx;
+  padding: 0;
+}
+.h-ph-sm { font-size: 26rpx; font-weight: 400; color: #B3B9BF; }
+
+.settings { margin: 22rpx 24rpx 0; padding: 0 30rpx; }
+.s-row {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 0;
+  border-bottom: 1rpx solid #F2F3F5;
+}
+.s-row:last-child { border-bottom: none; }
+.s-text { flex: 1; display: flex; flex-direction: column; }
+.s-title { font-size: 30rpx; color: #1F2A26; }
+.s-desc { margin-top: 8rpx; font-size: 23rpx; color: #9AA3AD; }
+
+.save-btn {
+  margin: 40rpx 24rpx 0;
+  height: 92rpx;
+  border-radius: 20rpx;
+  background: linear-gradient(135deg, #51B090 0%, #3E9E80 100%);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+}
+
+/* ---------------- 特定周期预算 ---------------- */
+.period-add {
+  margin: 20rpx 24rpx 0;
+  height: 84rpx;
+  border-radius: 18rpx;
+  border: 2rpx dashed #BFD9CE;
+  color: #2E9C7C;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+}
+.period-add-plus { font-size: 34rpx; margin-right: 8rpx; line-height: 1; }
+
+.period-list { margin: 20rpx 24rpx 0; }
+.period-card {
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 24rpx 26rpx;
+  margin-bottom: 18rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.04);
+}
+.pc-top { display: flex; align-items: center; justify-content: space-between; }
+.pc-name { font-size: 30rpx; font-weight: 600; color: #1A1A1A; }
+.pc-del { font-size: 24rpx; color: #B3B9BF; padding: 4rpx 10rpx; }
+.pc-range { margin-top: 6rpx; font-size: 23rpx; color: #9AA3AD; display: block; }
+.pc-bar-track {
+  margin-top: 18rpx;
+  height: 14rpx;
+  border-radius: 7rpx;
+  background: #F0F1F3;
+  overflow: hidden;
+}
+.pc-bar-fill { height: 100%; background: #45A888; border-radius: 7rpx; }
+.pc-bar-fill.over { background: #F25350; }
+.pc-nums { margin-top: 16rpx; display: flex; flex-wrap: wrap; }
+.pc-num-item {
+  font-size: 23rpx;
+  color: #8A8F96;
+  margin-right: 24rpx;
+  margin-top: 4rpx;
+}
+.pc-strong { font-size: 25rpx; font-weight: 600; color: #333; }
+.pc-strong.red { color: #F25350; }
+.pc-strong.green { color: #2E9C7C; }
+
+.empty-state {
+  margin: 100rpx 50rpx 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.empty-title { font-size: 28rpx; color: #6B7075; }
+.empty-desc { margin-top: 12rpx; font-size: 24rpx; color: #B3B9BF; line-height: 1.6; }
+
+/* ---------------- 新建 / 编辑周期预算弹层 ---------------- */
+.as-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 80;
+  background: rgba(0, 0, 0, 0.32);
+}
+.period-sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 90;
+  background: #FFFFFF;
+  border-radius: 28rpx 28rpx 0 0;
+  box-shadow: 0 -8rpx 30rpx rgba(0,0,0,0.12);
+  padding: 0 28rpx calc(28rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+.ps-head {
+  position: relative;
+  height: 92rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ps-title { font-size: 30rpx; font-weight: 700; color: #1A1A1A; }
+.ps-close {
+  position: absolute;
+  right: 0; top: 50%;
+  transform: translateY(-50%);
+  font-size: 44rpx;
+  line-height: 1;
+  color: #B3B9BF;
+  padding: 8rpx;
+}
+.ps-row {
+  display: flex;
+  align-items: center;
+  padding: 22rpx 0;
+  border-bottom: 1rpx solid #F2F3F5;
+}
+.ps-label { width: 100rpx; flex-shrink: 0; font-size: 27rpx; color: #6B7075; }
+.ps-input { flex: 1; font-size: 28rpx; color: #1A1A1A; }
+.ps-ph { color: #B3B9BF; }
+.ps-date { flex: 1; font-size: 28rpx; color: #1A1A1A; }
+.ps-save {
+  margin-top: 28rpx;
+  height: 88rpx;
+  border-radius: 20rpx;
+  background: linear-gradient(135deg, #51B090 0%, #3E9E80 100%);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+/* ---------------- 预算趋势（DOM 折线图；尺寸与 budget.js 里的 BT 常量同步） ---------------- */
+.bt-split { margin-top: 30rpx; }
+.bt-head { margin-top: 28rpx; display: flex; align-items: center; justify-content: space-between; }
+.bt-title { font-size: 34rpx; font-weight: 700; color: #1A1A1A; }
+.bt-legend { display: flex; align-items: center; }
+.bt-lg { display: flex; align-items: center; margin-left: 28rpx; }
+.bt-pill { width: 40rpx; height: 12rpx; border-radius: 6rpx; margin-right: 12rpx; }
+.bt-pill.bt-red { background: #F25350; }
+.bt-pill.bt-green { background: #46AD8F; }
+.bt-lt { font-size: 28rpx; color: #8A9199; }
+
+.bt-chart { margin-top: 36rpx; display: flex; }
+.bt-yaxis { position: relative; width: 74rpx; height: 160rpx; flex-shrink: 0; }
+.bt-yt {
+  position: absolute;
+  right: 12rpx;
+  transform: translateY(-50%);
+  font-size: 21rpx;
+  line-height: 1;
+  color: #555B61;
+  white-space: nowrap;
+}
+.bt-main { width: 552rpx; flex-shrink: 0; }
+.bt-plot { position: relative; width: 552rpx; height: 160rpx; }
+.bt-axis-y { position: absolute; left: 0; top: 0; bottom: 0; width: 2rpx; background: #6E747A; }
+.bt-axis-x { position: absolute; left: 0; right: 0; bottom: 0; height: 2rpx; background: #6E747A; }
+.bt-layer { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+.bt-x { position: relative; height: 36rpx; }
+.bt-xl {
+  position: absolute;
+  top: 14rpx;
+  transform: translateX(-50%);
+  font-size: 21rpx;
+  line-height: 1;
+  color: #555B61;
+  white-space: nowrap;
+}
+.bt-empty { margin: 36rpx 0 8rpx; text-align: center; font-size: 26rpx; color: #B3B9BF; }

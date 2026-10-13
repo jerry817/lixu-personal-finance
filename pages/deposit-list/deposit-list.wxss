@@ -1,0 +1,73 @@
+/* pages/deposit-list/deposit-list.wxss */
+.page { min-height: 100vh; }
+
+/* ---------------- 自定义顶栏 */
+.hd { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: #F2F3F5; }
+.hd-inner { position: relative; display: flex; align-items: center; }
+.hd-back { position: absolute; left: 24rpx; width: 52rpx; height: 52rpx; }
+.hd-title { flex: 1; text-align: center; font-size: 35rpx; font-weight: 600; color: #1A1A1A; }
+.hd-act {
+  position: absolute;
+  width: 64rpx; height: 64rpx;
+  display: flex; align-items: center; justify-content: center;
+}
+/* ＋：两条线拼成，不占图片体积 */
+.plus { position: relative; width: 40rpx; height: 40rpx; }
+.plus-h, .plus-v { position: absolute; background: #1A1A1A; border-radius: 2rpx; }
+.plus-h { left: 0; right: 0; top: 18rpx; height: 4rpx; }
+.plus-v { top: 0; bottom: 0; left: 18rpx; width: 4rpx; }
+
+/* ---------------- 汇总卡（绿色，与债务页一致） */
+.sum-card {
+  margin: 8rpx 24rpx 0;
+  border-radius: 28rpx;
+  background: linear-gradient(135deg, #51B090 0%, #3E9E80 100%);
+  display: flex;
+  align-items: center;
+  padding: 40rpx 0;
+}
+.sc-cell { flex: 1; display: flex; flex-direction: column; align-items: center; }
+.sc-label { font-size: 26rpx; color: rgba(255, 255, 255, 0.88); }
+.sc-amount { margin-top: 14rpx; font-size: 46rpx; color: #FFFFFF; font-weight: 600; }
+.sc-sep { width: 1rpx; height: 80rpx; background: rgba(255, 255, 255, 0.3); }
+.sc-note { margin: 16rpx 40rpx 0; font-size: 23rpx; color: #9AA3AD; line-height: 1.5; }
+
+/* ---------------- 列表 */
+.g-title { margin: 28rpx 40rpx 12rpx; font-size: 26rpx; color: #9AA3AD; }
+.card { margin: 0 24rpx; background: #FFFFFF; border-radius: 24rpx; padding: 0 28rpx; }
+.row { display: flex; align-items: center; padding: 26rpx 0; }
+.row.line { border-bottom: 1rpx solid #F2F3F5; }
+.row-hover { background: #F7F8F9; }
+.r-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.r-top { display: flex; align-items: center; }
+.r-amount { font-size: 34rpx; font-weight: 600; color: #1F2A26; }
+.r-amount.r-gray, .r-income.r-gray { color: #9AA3AD; }
+.r-tag {
+  margin-left: 16rpx;
+  padding: 2rpx 14rpx;
+  border-radius: 8rpx;
+  font-size: 21rpx;
+  line-height: 1.6;
+}
+.r-tag.on { color: #3E9E80; background: #E4F2EC; }
+.r-tag.off { color: #9AA3AD; background: #F2F3F5; }
+.r-line { margin-top: 8rpx; font-size: 24rpx; color: #8C99A8; line-height: 1.5; }
+.r-ok { color: #3E9E80; }
+/* 存入账户：右侧「预计收益」下方，账户名过长时省略 */
+.r-acc { max-width: 280rpx; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.r-remark { color: #B3B9BF; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.r-side { margin-left: 24rpx; display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
+.r-income { font-size: 32rpx; font-weight: 600; color: #45A888; }
+.r-cap { margin-top: 6rpx; font-size: 22rpx; color: #B3B9BF; }
+.tab-space { height: calc(40rpx + env(safe-area-inset-bottom)); }
+
+/* ---------------- 空态（设计图 1：插画 + 空空如也） */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 380rpx;
+}
+.empty-img { width: 300rpx; }
+.empty-t { margin-top: 36rpx; font-size: 30rpx; color: #9AA3AD; }
+.empty-s { margin-top: 12rpx; font-size: 24rpx; color: #B3B9BF; }

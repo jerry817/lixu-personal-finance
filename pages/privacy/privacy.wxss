@@ -1,0 +1,33 @@
+/* pages/privacy/privacy.wxss */
+.page { min-height: 100vh; padding-bottom: 40rpx; }
+.page-foot { padding-bottom: 260rpx; }
+
+.block { margin: 24rpx; padding: 30rpx; }
+.title { display: block; font-size: 36rpx; font-weight: 700; color: #1F2A26; }
+.ver { display: block; margin-top: 10rpx; font-size: 23rpx; color: #9AA3AD; }
+.h { display: block; font-size: 30rpx; font-weight: 700; color: #1F2A26; margin-bottom: 8rpx; }
+.p { display: block; margin-top: 10rpx; font-size: 27rpx; color: #5A6570; line-height: 1.75; }
+
+.foot {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  padding: 20rpx 40rpx calc(20rpx + env(safe-area-inset-bottom));
+  background: #FFFFFF;
+  box-shadow: 0 -6rpx 24rpx rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.btn-agree {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  border-radius: 44rpx;
+  background: linear-gradient(135deg, #49A989 0%, #3C9A7C 100%);
+  color: #FFFFFF;
+  font-size: 29rpx;
+  font-weight: 600;
+  padding: 0;
+}
+.btn-agree::after { border: none; }
+.btn-back { margin-top: 18rpx; font-size: 25rpx; color: #9AA3AD; }

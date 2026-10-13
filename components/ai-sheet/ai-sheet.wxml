@@ -1,0 +1,165 @@
+<!-- components/ai-sheet/ai-sheet.wxml -->
+<!-- 层级：mask(遮罩淡入淡出) > wrap(进退场) > lift(随键盘平移) > stack(日历弹出时整体收起) > [浮层 + 卡片]；
+     日期底部面板 date-sheet 与 wrap 同级，贴屏幕底（设计图 2） -->
+<view class="mask {{closing ? 'mask-out' : ''}}" wx:if="{{rendered}}" bindtap="onMaskTap" catchtouchmove="noop">
+  <view class="wrap {{closing ? 'wrap-out' : 'wrap-in'}}" catchtap="noop">
+    <view class="lift" style="transform:translate3d(0,-{{lift}}px,0);transition-duration:{{dur}}ms">
+     <view class="stack {{pop === 'date' ? 'stack-hide' : ''}}">
+
+      <view class="ledger">{{ledger}}</view>
+
+      <view class="card-wrap">
+
+        <!-- ================= 浮层：账户（一级 / 二级菜单） ================= -->
+        <view class="pop pop-acc" wx:if="{{pop === 'acc'}}" catchtap="noop">
+          <view class="pop-head">
+            <view class="pop-back" wx:if="{{accMode === 'group' && accGroup}}" bindtap="accBack"><view class="chev chev-l"></view></view>
+            <text class="pop-title">{{accGroup ? accGroupLabel : '选择账户'}}</text>
+            <view class="pop-tog {{accMode === 'group' ? 'on' : ''}}" bindtap="toggleAccMode">
+              <view class="tg-bar"></view>
+              <view class="tg-bar"></view>
+            </view>
+          </view>
+          <scroll-view scroll-y class="pop-scroll" style="max-height:{{popMax}}px">
+            <!-- 一级：无账户 -->
+            <view class="pop-row" wx:if="{{!accGroup}}" data-id="" bindtap="pickAcc">
+              <view class="noacc"><view class="noacc-x"></view></view>
+              <text class="pr-name">无账户</text>
+              <view class="tick" wx:if="{{!accId}}"></view>
+            </view>
+            <!-- 二级菜单·一级：分组 -->
+            <view class="pop-row" wx:if="{{accMode === 'group' && !accGroup}}" wx:for="{{accGroups}}" wx:key="key"
+                  data-g="{{item.key}}" bindtap="openGroup">
+              <image class="pr-icon" src="{{item.icon}}" mode="aspectFit"></image>
+              <text class="pr-name">{{item.label}}</text>
+              <view class="dot-sel" wx:if="{{accSelGroup === item.key}}"></view>
+              <text class="pr-cnt">{{item.count}}</text>
+              <view class="chev"></view>
+            </view>
+            <!-- 账户（平铺 / 二级菜单·分组内） -->
+            <view class="pop-row" wx:if="{{accMode === 'flat' || accGroup}}" wx:for="{{accList}}" wx:key="id"
+                  data-id="{{item.id}}" bindtap="pickAcc">
+              <image class="pr-icon" src="{{item.icon}}" mode="aspectFit"></image>
+              <text class="pr-name">{{item.name}}</text>
+              <view class="tick" wx:if="{{accId === item.id}}"></view>
+            </view>
+          </scroll-view>
+        </view>
+
+        <!-- ================= 浮层：标签 ================= -->
+        <view class="pop pop-acc" wx:if="{{pop === 'tag'}}" catchtap="noop">
+          <view class="pop-head"><text class="pop-title">选择标签</text></view>
+          <view class="tag-new">
+            <input class="tag-input" value="{{newTag}}" placeholder="新建标签，回车确认" placeholder-class="ph"
+                   maxlength="30" confirm-type="done" hold-keyboard="{{true}}" adjust-position="{{false}}"
+                   bindinput="onNewTag" bindconfirm="addTag" bindfocus="onTagFocus" bindblur="onTagBlur"></input>
+            <text class="tag-add {{newTag ? 'on' : ''}}" bindtap="addTag">添加</text>
+          </view>
+          <scroll-view scroll-y class="pop-scroll" style="max-height:{{popMax}}px">
+            <view class="pop-row" data-t="" bindtap="pickTag">
+              <image class="pr-icon pr-tag" src="/images/ui/tag.png" mode="aspectFit"></image>
+              <text class="pr-name">无标签</text>
+              <view class="tick" wx:if="{{!tag}}"></view>
+            </view>
+            <view class="pop-row" wx:for="{{tags}}" wx:key="*this" data-t="{{item}}" bindtap="pickTag">
+              <image class="pr-icon pr-tag" src="/images/ui/tag.png" mode="aspectFit"></image>
+              <text class="pr-name">{{item}}</text>
+              <view class="tick" wx:if="{{tag === item}}"></view>
+            </view>
+          </scroll-view>
+        </view>
+
+        <!-- ================= 浮层：报销账户（不报销 + 各报销账户） ================= -->
+        <view class="pop pop-acc" wx:if="{{pop === 'reimb'}}" catchtap="noop">
+          <view class="pop-head"><text class="pop-title">选择报销账户</text></view>
+          <scroll-view scroll-y class="pop-scroll" style="max-height:{{popMax}}px">
+            <view class="pop-row" data-id="" bindtap="pickReimb">
+              <image class="pr-icon" src="/images/ui/noslip.png" mode="aspectFit"></image>
+              <text class="pr-name">不报销</text>
+              <view class="tick" wx:if="{{!reimburseAccountId}}"></view>
+            </view>
+            <view class="pop-row" wx:for="{{reimbList}}" wx:key="id" data-id="{{item.id}}" bindtap="pickReimb">
+              <image class="pr-icon" src="{{item.icon}}" mode="aspectFit"></image>
+              <text class="pr-name">{{item.name}}</text>
+              <view class="tick" wx:if="{{reimburseAccountId === item.id}}"></view>
+            </view>
+          </scroll-view>
+        </view>
+
+        <!-- ================= 输入卡片 ================= -->
+        <view class="card-box" bindtap="closePop">
+          <sheet-field value="{{text}}" focus="{{focus}}"
+                      bind:input="onText" bind:focus="onFocus" bind:blur="onBlur" bind:kb="onKb"></sheet-field>
+
+          <!-- ✓：点击记账，长按记账并继续 -->
+          <view class="ok {{text ? 'ok-on' : ''}}" catchtap="submit" bindlongpress="submitKeep">
+            <view class="ok-spin" wx:if="{{loading}}"></view>
+            <view class="ok-tick" wx:else></view>
+          </view>
+
+          <!-- 属性 chips：日期 / 标签 / 账户 / 报销（全部是浮层 / 开关，不会收起键盘） -->
+          <view class="chips">
+            <view class="chip {{dateTouched ? 'chip-active' : ''}}" data-p="date" catchtap="openPop">
+              <view class="cal-ico"><text class="cal-num">{{dateDay}}</text></view>
+            </view>
+
+            <view class="chip {{tag ? 'chip-active' : ''}} {{pop === 'tag' ? 'chip-open' : ''}}" data-p="tag" catchtap="openPop">
+              <image class="chip-img" src="/images/ui/tag.png"></image>
+              <text wx:if="{{tag}}" class="chip-t">{{tag}}</text>
+            </view>
+
+            <view class="chip {{accTouched ? 'chip-active' : ''}} {{pop === 'acc' ? 'chip-open' : ''}}" data-p="acc" catchtap="openPop">
+              <view class="chip-noacc" wx:if="{{!accId}}"><view class="chip-noacc-slash"></view></view>
+              <image wx:else class="chip-img" src="{{accIcon}}"></image>
+              <text class="chip-t">{{accName}}</text>
+            </view>
+
+            <view class="chip {{reimburseAccountName ? 'chip-active' : ''}} {{pop === 'reimb' ? 'chip-open' : ''}}" data-p="reimb" catchtap="openPop">
+              <image class="chip-img" src="{{reimburseAccountIcon || '/images/ui/noslip.png'}}"></image>
+              <text class="chip-t">{{reimburseAccountName || '不报销'}}</text>
+            </view>
+          </view>
+        </view>
+
+      </view>
+     </view>
+    </view>
+  </view>
+
+  <!-- ================= 日期：底部面板（月历）。弹出时上方输入卡片整体收起，完成 / 取消后一起展开 ================= -->
+  <view class="date-sheet {{pop === 'date' ? 'date-sheet-on' : ''}}" catchtap="noop">
+    <view class="date-handle"></view>
+    <view class="date-head">
+      <picker mode="date" fields="month" value="{{calYm}}" bindchange="onPickMonth">
+        <view class="cal-title">
+          <text>{{calYm}}</text>
+          <view class="cal-caret"></view>
+        </view>
+      </picker>
+      <view class="cal-today" bindtap="backToday">回今天</view>
+    </view>
+    <view class="cal-week">
+      <text class="cw" wx:for="{{weekHead}}" wx:key="*this">{{item}}</text>
+    </view>
+    <view class="cal-grid">
+      <view class="cal-slot" wx:for="{{calCells}}" wx:key="id">
+        <view wx:if="{{!item.empty}}" class="cal-cell {{item.wk ? 'wk' : ''}} {{item.sel ? 'sel' : ''}} {{item.today ? 'today' : ''}}"
+              data-date="{{item.date}}" bindtap="pickDate">{{item.day}}</view>
+      </view>
+    </view>
+    <!-- 时间行：原生 time picker 选 HH:mm -->
+    <picker mode="time" value="{{selTime}}" bindchange="onPickTime">
+      <view class="dt-time">
+        <view class="dt-time-ico"></view>
+        <text class="dt-time-label">时间</text>
+        <text class="dt-time-val">{{selTime}}</text>
+        <view class="dt-time-arrow"></view>
+      </view>
+    </picker>
+    <!-- 取消 / 完成：收起日历、展开输入卡片并弹回键盘 -->
+    <view class="dt-actions">
+      <view class="dt-btn dt-cancel" hover-class="dt-cancel-hover" bindtap="cancelDate">取消</view>
+      <view class="dt-btn dt-ok" hover-class="dt-ok-hover" bindtap="confirmDate">完成</view>
+    </view>
+  </view>
+</view>

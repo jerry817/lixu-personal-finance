@@ -1,0 +1,212 @@
+/* pages/calendar/calendar.wxss */
+.page { min-height: 100vh; }
+
+/* 月份切换 */
+.m-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx 0 8rpx;
+}
+.m-arrow {
+  width: 80rpx;
+  height: 70rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ar {
+  width: 22rpx;
+  height: 22rpx;
+  border-left: 4rpx solid #5A6570;
+  border-bottom: 4rpx solid #5A6570;
+}
+.ar-left { transform: rotate(45deg); }
+.ar-right { transform: rotate(-135deg); }
+.m-title { font-size: 36rpx; font-weight: 700; color: #1F2A26; margin: 0 30rpx; }
+
+/* 月度收支汇总 */
+.m-summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 12rpx 24rpx 0;
+  padding: 18rpx 0;
+  background: #F7F9F8;
+  border-radius: 16rpx;
+}
+.ms-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ms-l { font-size: 22rpx; color: #8C99A8; }
+.ms-v { margin-top: 6rpx; font-size: 28rpx; font-weight: 600; color: #2A333C; }
+.ms-v.red { color: #F25350; }
+.ms-v.green { color: #43A787; }
+.ms-divider {
+  width: 1rpx;
+  height: 48rpx;
+  background: #E2E6E9;
+}
+
+/* 星期表头 */
+/* 星期表头：左右内边距 = 卡片外边距 24 + 卡片内边距 16，与下方列严格对齐 */
+.w-head {
+  display: flex;
+  padding: 14rpx 40rpx 0;
+}
+.wh-cell {
+  flex: 1;
+  text-align: center;
+  font-size: 26rpx;
+  color: #9AA3AD;
+}
+
+/* 月历 */
+.cal {
+  margin: 12rpx 24rpx 0;
+  padding: 8rpx 16rpx;
+}
+.row { display: flex; }
+/* 列：等分一行，padding 即格间距（上下左右各 7rpx → 相邻格相隔 14rpx） */
+.slot {
+  flex: 1;
+  min-width: 0;
+  padding: 7rpx;
+  box-sizing: border-box;
+}
+/* 1:1 圆角方块：padding-top:100% 按宽度撑出高度（不依赖 aspect-ratio 的基础库版本） */
+.cell {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-top: 100%;
+  border-radius: 6rpx; /* 微圆角：约为格宽的 7%，对齐设计稿 */
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.cell-in {
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 7rpx;
+}
+/* 选中：无描边，内部文字（含收/支金额、今天标记）全部白色。
+   未选中的格子里，收入绿 / 支出红始终保持原色，不随热力底色变化 */
+.cell.sel { background: #51B090; border: none; box-shadow: none; }
+.cell.sel .c-num,
+.cell.sel .c-exp,
+.cell.sel .c-inc { color: #FFFFFF; }
+.cell.sel .c-num.today { background: rgba(255, 255, 255, 0.3); }
+.cell.sel .c-dot { background: #FFFFFF; }
+
+.c-num { font-size: 25rpx; color: #2A333C; line-height: 1.2; }
+.c-num.today {
+  color: #FFFFFF;
+  background: #45A888;
+  border-radius: 50%;
+  width: 36rpx; height: 36rpx;
+  text-align: center;
+  line-height: 36rpx;
+}
+/* 金额容器：收支同行显示，避免重叠 */
+.c-amt {
+  margin-top: 2rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.15;
+}
+.c-exp { font-size: 17rpx; color: #F25350; line-height: 1.15; }
+.c-inc { font-size: 17rpx; color: #43A787; line-height: 1.15; }
+/* 有数据但金额被compact为空时的小圆点标记 */
+.c-dot {
+  margin-top: 8rpx;
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background: #B8C4CC;
+}
+
+.today-btn {
+  margin: 18rpx auto 0;
+  width: 200rpx;
+  text-align: center;
+  font-size: 26rpx;
+  color: #45A888;
+  background: #E9F5F0;
+  border-radius: 30rpx;
+  padding: 10rpx 0;
+}
+
+/* 选中日摘要 */
+.day-summary {
+  margin: 22rpx 24rpx 0;
+  padding: 24rpx 30rpx;
+  display: flex;
+  align-items: center;
+}
+.ds-left { display: flex; flex-direction: column; }
+.ds-date { font-size: 34rpx; font-weight: 700; color: #1F2A26; }
+.ds-week { margin-top: 8rpx; font-size: 25rpx; color: #9AA3AD; }
+.ds-right { margin-left: auto; display: flex; }
+.ds-line { display: flex; flex-direction: column; align-items: flex-end; margin-left: 40rpx; }
+.ds-l { font-size: 24rpx; color: #9AA3AD; }
+.ds-v { margin-top: 6rpx; font-size: 30rpx; font-weight: 600; }
+.ds-v.red { color: #F25350; }
+.ds-v.green { color: #43A787; }
+
+/* 账单行（与首页一致） */
+.day-card { margin: 22rpx 24rpx 0; }
+.bill { display: flex; align-items: center; padding: 18rpx 18rpx; }
+.bill-line { border-bottom: 1rpx solid #F0F1F3; }
+.bill-icon { width: 50rpx; height: 50rpx; flex-shrink: 0; }
+.bill-mid { flex: 1; min-width: 0; margin-left: 20rpx; display: flex; flex-direction: column; }
+.bill-title-row { display: flex; align-items: center; }
+.bill-title { font-size: 29rpx; color: #1A1A1A; }
+.bill-badge {
+  margin-left: 12rpx;
+  font-size: 19rpx;
+  line-height: 1.5;
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+}
+.bd-reimb { background: #FDECEC; color: #F25350; }
+.bd-gray { background: #F0F1F3; color: #8A9199; }
+.bill-sub-row { margin-top: 10rpx; display: flex; align-items: center; flex-wrap: wrap; }
+.bill-tag {
+  font-size: 20rpx;
+  color: #45A888;
+  background: #E9F5F0;
+  border-radius: 6rpx;
+  padding: 2rpx 10rpx;
+  margin-right: 10rpx;
+}
+.bill-remark { font-size: 24rpx; color: #9AA0A6; }
+.bill-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+  margin-left: 16rpx;
+}
+.bill-amt { font-size: 31rpx; font-weight: 600; }
+.bill-account { margin-top: 8rpx; font-size: 22rpx; color: #B3B9BF; }
+.bill-debt-path { font-size: 24rpx; color: #9AA0A6; }
+.amt-dark { color: #1A1A1A; }
+.amt-red { color: #F25350; }
+.amt-green { color: #43A787; }
+
+.empty {
+  text-align: center;
+  color: #B3B9BF;
+  font-size: 26rpx;
+  padding: 60rpx 0;
+}
+
+.tab-space { height: 150rpx; } /* 给悬浮钮留位，最后一笔账单不被遮住 */

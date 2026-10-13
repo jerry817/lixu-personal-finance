@@ -1,0 +1,32 @@
+/* components/fab 悬浮钮：毛玻璃（半透明 + 背景高斯模糊） */
+.fab {
+  position: fixed;
+  right: 40rpx;
+  bottom: 150rpx;
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 56rpx;
+  /* 无纯色底：半透明白渐变 + 背景模糊，下方内容隐约透出 */
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.58) 0%, rgba(255, 255, 255, 0.22) 100%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+  border: 1rpx solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 8rpx 28rpx rgba(31, 42, 38, 0.16), inset 0 1rpx 0 rgba(255, 255, 255, 0.85);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.28s ease;
+}
+/* 向下滚动时淡出，向上滚动时淡入（pointer-events:none 避免透明状态下被误点） */
+.fab.fab-hide {
+  opacity: 0;
+  pointer-events: none;
+}
+.fab-icon {
+  font-size: 30rpx;
+  font-weight: 700;
+  letter-spacing: 1rpx;
+  color: #2E9C7C;
+}

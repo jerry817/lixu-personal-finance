@@ -1,0 +1,705 @@
+/* pages/stats/stats.wxss */
+.page { min-height: 100vh; }
+
+.d-red { color: #F25350; }
+.d-green { color: #45A888; }
+.d-gray { color: #9AA3AD; }
+.bar-red { background: #F25350; }
+.bar-green { background: #45A888; }
+
+/* ---------------- 顶部 tab ---------------- */
+.top-tabs {
+  display: flex;
+  padding: 18rpx 24rpx 6rpx;
+}
+.tt {
+  padding: 11rpx 28rpx;
+  font-size: 27rpx;
+  color: #7A8087;
+  border-radius: 16rpx;
+  margin-right: 14rpx;
+}
+.tt.on {
+  background: #45A888;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* ---------------- 卡片 ---------------- */
+.sec {
+  margin: 20rpx 24rpx 0;
+  padding: 26rpx 26rpx 24rpx;
+}
+.sec-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sec-title { font-size: 29rpx; font-weight: 700; color: #1F2A26; }
+
+/* 小分段控件 */
+.mini-seg {
+  display: flex;
+  background: #ECEEF0;
+  border-radius: 14rpx;
+  padding: 4rpx;
+}
+.ms-item {
+  font-size: 23rpx;
+  color: #6B7075;
+  padding: 8rpx 20rpx;
+  border-radius: 11rpx;
+  line-height: 1.3;
+}
+.ms-item.on {
+  background: #45A888;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* ---------------- 近7日柱状 ---------------- */
+.bars7 {
+  display: flex;
+  margin-top: 30rpx;
+}
+.b7-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.b7-track {
+  position: relative;
+  width: 100%;
+  height: 260rpx;
+}
+/* 结余模式 0 轴 */
+.b7-zero {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1rpx;
+  background: #E2E5E9;
+}
+/* 数值与柱子组成整体，绝对定位（top/bottom/height 由 js 按柱高给出），
+   数值随柱顶一起浮动，而非固定一行 */
+.b7-box {
+  position: absolute;
+  left: 50%;
+  width: 64rpx;
+  margin-left: -32rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.b7-box.b7-down { flex-direction: column-reverse; }
+.b7-val {
+  font-size: 20rpx;
+  color: #8A9097;
+  white-space: nowrap;
+  margin-bottom: 4rpx;
+}
+.b7-down .b7-val { margin-bottom: 0; margin-top: 4rpx; }
+.b7-bar {
+  width: 38rpx;
+  flex: 1;
+  border-radius: 8rpx 8rpx 0 0;
+}
+.b7-down .b7-bar { border-radius: 0 0 8rpx 8rpx; }
+.b7-lab {
+  margin-top: 14rpx;
+  font-size: 22rpx;
+  color: #7A8087;
+}
+
+/* 四格汇总 */
+.kv-grid {
+  margin-top: 24rpx;
+  display: flex;
+  flex-wrap: wrap;
+  border-top: 1rpx solid #F0F2F1;
+  padding-top: 20rpx;
+}
+.kv {
+  width: 50%;
+  display: flex;
+  align-items: baseline;
+  padding: 8rpx 0;
+}
+.kv-label { font-size: 23rpx; color: #8A9097; }
+.kv-val {
+  margin-left: 16rpx;
+  font-size: 27rpx;
+  font-weight: 600;
+  color: #2A333C;
+}
+
+/* ---------------- 下拉菜单 ---------------- */
+.dropdown { position: relative; }
+.dd-head {
+  display: flex;
+  align-items: center;
+  font-size: 27rpx;
+  color: #2A333C;
+}
+.dd-arrow {
+  width: 14rpx; height: 14rpx;
+  margin-left: 10rpx;
+  border-right: 3rpx solid #5A6570;
+  border-bottom: 3rpx solid #5A6570;
+  transform: rotate(45deg) translateY(-4rpx);
+  transition: transform .2s;
+}
+.dd-arrow.up { transform: rotate(225deg) translate(-2rpx, -2rpx); }
+.dd-menu {
+  position: absolute;
+  top: 48rpx; right: 0;
+  z-index: 20;
+  background: #FFFFFF;
+  border-radius: 14rpx;
+  box-shadow: 0 8rpx 30rpx rgba(0,0,0,0.12);
+  padding: 8rpx 0;
+  min-width: 170rpx;
+}
+.dd-item {
+  font-size: 26rpx;
+  color: #3A4148;
+  padding: 14rpx 28rpx;
+}
+.dd-item.sel { color: #45A888; font-weight: 600; }
+
+/* ---------------- 环形图 ---------------- */
+.ring-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 34rpx 0 10rpx;
+}
+.ring {
+  width: 300rpx;
+  height: 300rpx;
+  border-radius: 50%;
+}
+.ring.ring-sm { width: 260rpx; height: 260rpx; }
+.ring-inner {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 196rpx;
+  height: 196rpx;
+  border-radius: 50%;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.ring-sm .ring-inner { width: 168rpx; height: 168rpx; }
+.ring { position: relative; }
+.ri-icon { font-size: 30rpx; color: #7A8087; line-height: 1; }
+.ri-label { margin-top: 8rpx; font-size: 22rpx; color: #8A9097; }
+.ri-money { margin-top: 6rpx; font-size: 25rpx; font-weight: 700; color: #2A333C; }
+.ri-text { margin-top: 8rpx; font-size: 23rpx; color: #3A4148; }
+.ring-btn { width: 204rpx; height: 204rpx; }
+.ring-empty {
+  text-align: center;
+  font-size: 25rpx;
+  color: #B3B9BF;
+  padding: 30rpx 0 10rpx;
+}
+
+/* ---------------- 图例 ---------------- */
+.legend {
+  margin-top: 18rpx;
+  border-top: 1rpx solid #F0F2F1;
+  padding-top: 12rpx;
+}
+.lg-row {
+  display: flex;
+  align-items: center;
+  padding: 12rpx 4rpx;
+}
+.lg-dot {
+  width: 20rpx; height: 20rpx;
+  border-radius: 6rpx;
+  margin-right: 14rpx;
+}
+.lg-label {
+  flex: 1;
+  font-size: 25rpx;
+  color: #3A4148;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.lg-pct { font-size: 23rpx; color: #9AA3AD; margin-left: 16rpx; }
+.lg-val {
+  width: 150rpx;
+  text-align: right;
+  font-size: 24rpx;
+  color: #5A6570;
+  margin-left: 16rpx;
+}
+
+.debt-note {
+  display: block;
+  text-align: center;
+  font-size: 22rpx;
+  color: #F25350;
+  padding-top: 8rpx;
+}
+
+/* ---------------- 复选行 ---------------- */
+.check-row {
+  display: flex;
+  align-items: center;
+  margin-top: 14rpx;
+  justify-content: flex-end;
+}
+.checkbox {
+  width: 34rpx; height: 34rpx;
+  border: 2rpx solid #B9C0C4;
+  border-radius: 8rpx;
+  margin-right: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.checkbox.checked {
+  background: #45A888;
+  border-color: #45A888;
+}
+.cb-tick {
+  color: #FFFFFF;
+  font-size: 24rpx;
+  line-height: 1;
+}
+.check-row text { font-size: 25rpx; color: #5A6570; }
+
+/* ---------------- 标签数据 ---------------- */
+.tag-rows { margin-top: 10rpx; }
+.tag-row {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 4rpx;
+}
+.tag-chip {
+  font-size: 24rpx;
+  color: #45A888;
+  background: #E7F4EF;
+  border-radius: 8rpx;
+  padding: 6rpx 16rpx;
+  max-width: 260rpx;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.tag-count {
+  margin-left: 18rpx;
+  font-size: 24rpx;
+  color: #9AA3AD;
+  flex: 1;
+}
+.tag-e, .tag-i { font-size: 26rpx; font-weight: 600; margin-left: 16rpx; }
+
+.mini-empty {
+  text-align: center;
+  font-size: 25rpx;
+  color: #B3B9BF;
+  padding: 40rpx 0 16rpx;
+}
+
+/* ---------------- 横向时间切换 ---------------- */
+.h-tabs {
+  white-space: nowrap;
+  padding: 16rpx 18rpx 4rpx;
+}
+.ht {
+  display: inline-block;
+  padding: 12rpx 26rpx;
+  font-size: 27rpx;
+  color: #3A4148;
+  margin-right: 8rpx;
+  border-radius: 14rpx;
+}
+.ht-year { color: #1F2A26; font-weight: 700; }
+.ht.on {
+  color: #45A888;
+  font-weight: 700;
+  position: relative;
+}
+.ht.on::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 16rpx; height: 16rpx;
+  background: #45A888;
+  border-radius: 4rpx;
+}
+.ht-picker { display: inline-block; }
+
+/* ---------------- 汇总卡（首行常显 + 可呼出 / 折叠的 3 列数据网格） ---------------- */
+.sum-green {
+  position: relative;
+  margin: 16rpx 24rpx 0;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 22rpx 16rpx 46rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.06);
+}
+.sg-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+/* 值默认取容器色，首行的收支配色由 .d-red / .d-green 直接覆盖 */
+.sg-i {
+  width: 33.33%;
+  padding: 14rpx 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #1F2A26;
+}
+.sg-label { font-size: 23rpx; color: #8C99A8; }
+.sg-val {
+  margin-top: 12rpx;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+/* 展开区：呼出 / 折叠动画（5 行高约 570rpx，留出余量避免裁切） */
+.sg-more {
+  max-height: 660rpx;
+  overflow: hidden;
+  opacity: 1;
+  transition: max-height 0.3s ease, opacity 0.25s ease;
+}
+.sg-more.folded {
+  max-height: 0;
+  opacity: 0;
+}
+.sg-fold {
+  position: absolute;
+  left: 50%;
+  bottom: 6rpx;
+  transform: translateX(-50%);
+  width: 60rpx; height: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* 展开态 ∧（点击折叠）、折叠态 ∨（点击呼出） */
+.fold-arrow {
+  width: 16rpx; height: 16rpx;
+  border-right: 3rpx solid #8C99A8;
+  border-bottom: 3rpx solid #8C99A8;
+  transform: rotate(225deg) translate(-2rpx,-2rpx);
+}
+.sg-fold.folded .fold-arrow { transform: rotate(45deg) translateY(-4rpx); }
+
+/* ---------------- 月柱状（左侧纵轴标定金额 + 网格线） ---------------- */
+.bars-m {
+  display: flex;
+  align-items: stretch;
+  margin-top: 24rpx;
+}
+.bm-yaxis {
+  width: 58rpx;
+  height: 300rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.bmy-t {
+  font-size: 17rpx;
+  color: #9AA3AD;
+  line-height: 1;
+  transform: translateY(6rpx); /* 数字基线对准网格线 */
+}
+.bmy-t:first-child { transform: translateY(-6rpx); }
+.bm-area {
+  flex: 1;
+  display: flex;
+}
+.bm-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.bm-track {
+  position: relative;
+  width: 100%;
+  height: 300rpx;
+  /* 每 25% 一条淡网格线，与纵轴 5 个刻度对齐 */
+  background-image: repeating-linear-gradient(to top, #EEF1F0 0, #EEF1F0 1rpx, transparent 1rpx, transparent 25%);
+}
+/* 结余模式 0 轴加深（中线本就有网格线，这里覆盖为深色） */
+.bm-track.track-bal::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 50%;
+  height: 1rpx;
+  background: #C9CFCC;
+}
+.bm-bar {
+  position: absolute;
+  left: 50%;
+  margin-left: -6rpx;
+  width: 12rpx;
+  border-radius: 6rpx 6rpx 0 0;
+}
+.bm-lab {
+  margin-top: 10rpx;
+  font-size: 18rpx;
+  color: #9AA3AD;
+}
+
+/* ---------------- 图表（canvas） ----------------
+   canvas 是原生组件，页面滚动与布局动画（如汇总卡折叠）时它不跟手：会停在原处、动画结束才跳到新位置。
+   剩下的只有「收支对比」桑基图（贝塞尔飘带没法用百分比 clip-path 表达）；
+   资产走势 / 收支走势已改成普通 view + CSS 的 DOM 折线图（见下方 .ta-*）。 */
+.cv { display: block; width: 100%; }
+.cv-sankey { height: 560rpx; margin-top: 8rpx; } /* 实际高度由页面按节点数内联设置 */
+
+/* ---------------- 资产走势 / 收支走势（DOM 折线图，与柱状图同一套做法） ----------------
+   绘图区宽 592rpx / 高 300rpx 是 pages/stats 里算 clip-path 坐标的依据，改这里必须同步改 TA。 */
+.ta {
+  display: flex;
+  align-items: stretch;
+  margin-top: 24rpx;
+}
+.ta-yaxis { position: relative; width: 58rpx; height: 300rpx; }
+.ta-yt {
+  position: absolute;
+  right: 4rpx;
+  font-size: 17rpx;
+  color: #9AA3AD;
+  line-height: 1;
+  transform: translateY(-50%);
+}
+.ta-main { flex: 1; }
+.ta-plot { position: relative; height: 300rpx; }
+/* 网格线与纵轴刻度同高（top 由页面按刻度位置内联给出） */
+.ta-grid { position: absolute; left: 0; right: 0; height: 1rpx; background: #EEF1F0; }
+.ta-area, .ta-line { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+.ta-x { position: relative; height: 30rpx; }
+.ta-xl { position: absolute; top: 8rpx; font-size: 18rpx; color: #9AA3AD; white-space: nowrap; }
+.ta-xc { transform: translateX(-50%); }
+
+/* ---------------- 数据排行 ---------------- */
+.head-right { display: flex; align-items: center; }
+.head-link {
+  font-size: 24rpx;
+  color: #45A888;
+  margin-right: 22rpx;
+}
+.list-ic {
+  width: 40rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.li-line {
+  height: 4rpx;
+  background: #7A8087;
+  border-radius: 2rpx;
+  margin-bottom: 7rpx;
+}
+.li-line.short { width: 70%; }
+.list-ic.ic-on .li-line { background: #45A888; }
+
+.data-list { margin-top: 8rpx; }
+.di {
+  display: flex;
+  padding: 22rpx 0 18rpx;
+  border-bottom: 1rpx solid #F2F4F3;
+}
+.di:last-child { border-bottom: none; }
+.di-icon {
+  width: 52rpx; height: 52rpx;
+  margin: 4rpx 18rpx 0 2rpx;
+}
+.di-mid { flex: 1; min-width: 0; }
+.di-l1 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.di-label { font-size: 27rpx; color: #2A333C; }
+.di-meta { font-size: 22rpx; color: #9AA3AD; }
+.di-bar {
+  margin-top: 12rpx;
+  height: 10rpx;
+  border-radius: 5rpx;
+  background: #EEF0F2;
+  overflow: hidden;
+}
+.di-bar-in {
+  height: 100%;
+  border-radius: 5rpx;
+  background: linear-gradient(90deg, #52B292, #3F9E80);
+}
+.di-cmp { margin-top: 10rpx; display: flex; flex-wrap: wrap; }
+.cmp-t {
+  font-size: 22rpx;
+  margin-right: 24rpx;
+  line-height: 1.6;
+}
+.di-amt {
+  width: 150rpx;
+  text-align: right;
+  font-size: 27rpx;
+  font-weight: 700;
+  margin: 6rpx 0 0 14rpx;
+}
+
+/* ---------------- 报表表格 ---------------- */
+.tbl { margin-top: 18rpx; }
+.tr {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 6rpx;
+  border-bottom: 1rpx solid #F2F4F3;
+}
+.tr-head {
+  border-bottom: 1rpx solid #E6E9E8;
+  padding: 8rpx 6rpx 16rpx;
+}
+.tr-head .td { font-size: 25rpx; color: #5A6570; font-weight: 600; }
+.td {
+  flex: 1;
+  text-align: center;
+  font-size: 26rpx;
+  color: #2A333C;
+}
+.td:first-child { text-align: left; }
+.td:last-child { text-align: right; }
+.tbl-body { max-height: 640rpx; }
+
+/* ---------------- 年柱状（含结余双向） ---------------- */
+.bars-y {
+  display: flex;
+  margin-top: 30rpx;
+}
+.by-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+/* 固定高度的标注槽：所有列结构一致，柱底/x 轴/标签才能逐列对齐 */
+.by-slot {
+  width: 100%;
+  height: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.by-track {
+  position: relative;
+  width: 100%;
+  height: 320rpx;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+.by-track::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2rpx;
+  background: #DDE2E0;
+}
+.by-track.track-bal::before {
+  bottom: 50%;
+  background: #C9CFCC;
+}
+/* 所有柱：absolute 锚定，bottom:0 让支出/收入柱底严格贴 x 轴（最高柱也不溢出）；
+   水平居中用 left/right:0 + margin auto，不用 transform——
+   既避免真机 transform 下柱宽撑满列，又保证柱底始终齐平 */
+.by-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 26rpx;
+  border-radius: 6rpx;
+  bottom: 0;
+}
+.bar-up { bottom: 50%; border-radius: 6rpx 6rpx 0 0; }
+.bar-down { top: 50%; border-radius: 0 0 6rpx 6rpx; }
+/* 柱顶浮动金额：absolute 居中，随柱子高度定位 */
+.by-val {
+  position: absolute;
+  left: 0; right: 0;
+  margin: 0 auto;
+  width: 100%;
+  text-align: center;
+  font-size: 17rpx;
+  line-height: 1;
+  white-space: nowrap;
+  color: #8A9097;
+}
+.by-val-down { color: #B3B9BF; }
+.by-lab {
+  margin-top: 10rpx;
+  font-size: 20rpx;
+  color: #9AA3AD;
+}
+
+/* ---------------- 收支热力 ---------------- */
+.heat-grid {
+  margin-top: 20rpx;
+  display: flex;
+  flex-wrap: wrap;
+}
+.heat-m {
+  width: 25%;
+  padding: 0 8rpx 22rpx;
+}
+.hm-label {
+  display: block;
+  font-size: 24rpx;
+  color: #5A6570;
+  padding: 4rpx 2rpx 10rpx;
+}
+.hm-label.hm-cur { color: #45A888; font-weight: 700; }
+.hm-dots {
+  display: flex;
+  flex-wrap: wrap;
+}
+.hm-cell {
+  width: calc(100% / 7);
+  height: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hm-dot {
+  width: 18rpx; height: 18rpx;
+  border-radius: 50%;
+}
+.hm-zero { background: #EDEEF0; }
+
+/* ---------------- 自定义区间 ---------------- */
+.range-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20rpx 24rpx 0;
+  background: #FFFFFF;
+  border-radius: 18rpx;
+  padding: 16rpx 0;
+}
+.rb-date {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1F2A26;
+  padding: 0 34rpx;
+}
+.rb-sep { font-size: 25rpx; color: #9AA3AD; }
+
+.tab-space { height: 60rpx; }

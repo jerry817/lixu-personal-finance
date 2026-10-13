@@ -1,0 +1,14 @@
+<!-- pages/account-add/account-add.wxml -->
+<view class="page">
+  <block wx:for="{{groups}}" wx:key="key" wx:for-item="g">
+    <view class="g-title">{{g.label}}</view>
+    <view class="g-card card">
+      <view class="k-item" wx:for="{{g.kinds}}" wx:key="key" wx:for-item="k"
+            data-g="{{g.key}}" data-k="{{k.key}}" bindtap="pick">
+        <image class="k-icon" src="{{k.icon}}" mode="aspectFit"></image>
+        <text class="k-label {{k.long?'k-long':''}}">{{k.label}}</text>
+      </view>
+    </view>
+  </block>
+  <view class="safe-space"></view>
+</view>

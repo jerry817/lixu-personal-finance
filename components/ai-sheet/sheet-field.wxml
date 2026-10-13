@@ -1,0 +1,6 @@
+<textarea class="ta" value="{{value}}" focus="{{focus}}" maxlength="200"
+          placeholder="试试“工资卡收入100元”、“昨天打车20元”、“支付宝转到微信15元”"
+          placeholder-class="ta-ph" adjust-position="{{false}}" show-confirm-bar="{{false}}"
+          hold-keyboard="{{true}}" cursor-spacing="20"
+          bindinput="onText" bindfocus="onFocus" bindblur="onBlur"
+          bindkeyboardheightchange="onKb"></textarea>
